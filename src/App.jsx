@@ -1,11 +1,9 @@
+import { RouterProvider } from "react-router" // Enable Routing
+import { routes } from "./routes/router" // Custom Routing
 
 function App() {
   return (
-    <>
-      <div className='test'>
-          test
-      </div>
-    </>
+    <RouterProvider router={routes} />
   )
 }
 
