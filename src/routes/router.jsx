@@ -2,22 +2,17 @@ import { createBrowserRouter } from "react-router";
 import Landing from "../pages/Landing";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Login";
-import Auth from "../pages/Auth";
+import Register from "../pages/Register";
 
 export const routes = createBrowserRouter([
-    { index : true, Component : Landing}, // index : true = when route to "/"
+    { index : true, Component : Landing },
     {
         path : "/auth",
-        Component : Auth,
+        Component : AuthLayout,
         children: [
-            { 
-                index : true, 
-                Component : AuthLayout, 
-                children : [
-                    { path : "/login", Component : Login },
-                    { path : "/register", Component : Login },
-                ]
-            }
+            { index : true, Component : Login },
+            { path : "login", Component : Login },
+            { path : "register", Component : Register },
         ]
     }
 ]);
