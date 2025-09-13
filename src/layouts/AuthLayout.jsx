@@ -3,8 +3,7 @@ import { Outlet } from 'react-router'
 export default function AuthLayout() {
   return (
     <>
-    <div>
-        <h1> AuthLayout Running </h1>
+    <div className="min-h-screen m-0 bg-white flex justify-center items-center">
         <Outlet />
     </div>
     </>
