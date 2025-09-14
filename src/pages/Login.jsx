@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import { Link } from "react-router";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -6,9 +7,9 @@ export default function Login() {
     const [rememberMe, setRememberMe] = useState(false);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
-    const userEmailId = useId();
-    const userPasswordId = useId();
-    const rememberMeId = useId();
+    const elementUserEmailId = useId();
+    const elementPasswordId = useId();
+    const elementRememberMeId = useId();
 
     function validateForm(){
         const newErrors = {};
@@ -63,10 +64,10 @@ export default function Login() {
 
                         {/* EMAIL */}
                         <div className="flex flex-col">
-                            <label htmlFor={userEmailId}>Email</label>
+                            <label htmlFor={elementUserEmailId}>Email</label>
                             <input
                                 type="text"
-                                id={userEmailId}
+                                id={elementUserEmailId}
                                 name="user-email"
                                 className="p-2 border-2 border-gray-300 rounded-md"
                                 placeholder="Enter your email address..."
@@ -78,10 +79,10 @@ export default function Login() {
 
                         {/* PASSWORD */}
                         <div className="flex flex-col">
-                            <label htmlFor={userPasswordId}>password</label>
+                            <label htmlFor={elementPasswordId}>password</label>
                             <input
                                 type="password"
-                                id={userPasswordId}
+                                id={elementPasswordId}
                                 name="password"
                                 className="p-2 border-2 border-gray-300 rounded-md"
                                 placeholder="Enter your password..."
@@ -97,18 +98,18 @@ export default function Login() {
                             <div className="flex items-center gap-1">
                                 <input
                                     type="checkbox"
-                                    id={rememberMeId}
+                                    id={elementRememberMeId}
                                     name="remember-me"
                                     className="border-2 border-gray-300 rounded-md"
                                     defaultChecked={rememberMe}
                                     onChange={(e) => setRememberMe(e.target.checked)}
                                 />
-                                <label htmlFor={rememberMeId}>Remember Me</label>
+                                <label htmlFor={elementRememberMeId}>Remember Me</label>
                             </div>
                             <div>
-                                <a href="#">
+                                <Link to="/auth/forgot-password">
                                     <p>Forgot password</p>
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -130,6 +131,19 @@ export default function Login() {
                             {loading ? "Logging in..." : "Login"}
                         </button>
                     </div>
+
+                    <div className="flex justify-between gap-3">
+                        <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div> 
+                            or 
+                        <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div> 
+                    </div>
+
+                    <button type="button" className="flex justify-center items-center">
+                        <Link to="/auth/register">
+                            Create an account
+                        </Link>
+                    </button>
+
 
                 </div>
             </form>
