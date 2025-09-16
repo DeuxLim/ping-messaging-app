@@ -61,21 +61,30 @@ export default function Login() {
 
         setLoading(true);
 
-        // simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
         // Dummy data response from backend
-        /* const response = {
-            error : {
-                auth : "This user already exists"
-            },
-            status : 401
-        }; */
+        // const response = {
+        //     error : { auth : "This user already exists" },
+        //     status : 401
+        // };
 
-        const response = {
-            message : "User created successfully.",
-            status : 301
-        };
+        // const response = {
+        //     message : "User created successfully.",
+        //     status : 301
+        // };
+
+        // simulate API call
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+            method: "POST",
+            headers: { "Content-Type" : "application/json" },
+            body: JSON.stringify({
+                firstName,
+                lastName,
+                userName,
+                email,
+                password,
+                confirmPassword
+            })
+        });
 
         if (response.error && Object.keys(response.error).length > 0) {
             setErrors(response.error);
