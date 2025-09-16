@@ -1,9 +1,12 @@
-const http = require("node:http");
+import express from 'express';
+import cors from 'cors';
 
-const server = http.createServer((req, res) => {
-    res.end("Welcome to the backend");
-});
+/* Initialize express */
+const app = express();
+app.use(cors());
 
-server.listen(3000, () => {
-    console.log("Server is now up");
-});
+/* Routes */
+app.get("/welcome", (req, res) => res.send("Welcome!"));
+
+/* Listen for requests */
+app.listen(5001);
