@@ -21,7 +21,7 @@ export default function Login() {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-    function validateForm(){
+    function validateForm() {
         const newErrors = {};
 
         if (!firstName.trim()) {
@@ -38,14 +38,20 @@ export default function Login() {
 
         if (!email.trim()) {
             newErrors.email = "Email cannot be empty";
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            newErrors.email = "Invalid email format";
         }
 
         if (!password.trim()) {
-            newErrors.password = "password cannot be empty";
+            newErrors.password = "Password cannot be empty";
+        } else if (password.length < 6) {
+            newErrors.password = "Password must be at least 6 characters";
         }
 
         if (!confirmPassword.trim()) {
-            newErrors.confirmPassword = "password should match";
+            newErrors.confirmPassword = "Confirm Password cannot be empty";
+        } else if (confirmPassword !== password) {
+            newErrors.confirmPassword = "Passwords do not match";
         }
 
         return newErrors;
@@ -60,17 +66,6 @@ export default function Login() {
         if (Object.keys(validationErrors).length > 0) return;
 
         setLoading(true);
-
-        // Dummy data response from backend
-        // const response = {
-        //     error : { auth : "This user already exists" },
-        //     status : 401
-        // };
-
-        // const response = {
-        //     message : "User created successfully.",
-        //     status : 301
-        // };
 
         // simulate API call
         const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
