@@ -1,5 +1,5 @@
 import User from "../../models/user.js";
-
+import authValidation from "../../validations/auth/authValidation.js";
 class AuthController 
 {
     constructor()
@@ -8,6 +8,12 @@ class AuthController
     }
 
     register = async (req,res) => {
+        const errors = authValidation.validateRegistration(req.body);
+
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).json({ status: 400, error });
+        }
+
         const newUser = await User.create(req.body);
 
         if (!newUser || !newUser._id) {
@@ -16,7 +22,7 @@ class AuthController
 
         res.status(201).json({
             message : "user successfully created.",
-            user : newUser
+            status : 201
         });
     }
 
