@@ -7,9 +7,9 @@ class AuthController
         this.model =  User;
     }
 
-    register = async (req,res) => {
+    register = async (req,res) => 
+    {
         const errors = authValidation.validateRegistration(req.body);
-
         if (Object.keys(errors).length > 0) {
             return res.status(400).json({ status: 400, error });
         }
@@ -28,7 +28,32 @@ class AuthController
 
     login = async (req, res) =>
     {
-        res.status(200).json({ message : "LOGIN endpoint is currently underdevelopment...."});
+        const errors = authValidation.validateLogin(req.body);
+        if(Object.keys(errors).length > 0){
+            return res.status(400).json({ status: 400, error });
+        }
+
+        const { email, password, rememberMe } = req.body;
+
+        let user = await User.findOne({ email });
+        if(!user){
+            res.status(401).json({ 
+                error : { 
+                    general : "Invalid Email or Password."
+                } 
+            });
+        }
+
+        const passwordMatches = await user.comparePassword(password);
+        if(!passwordMatches){
+            res.status(401).json({ 
+                error : { 
+                    general : "Invalid Email or Password."
+                } 
+            });
+        }
+
+        res.status(200).json({ authenticated : true });
     }
 }
 
