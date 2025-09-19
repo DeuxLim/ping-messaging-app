@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { Link } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -10,6 +10,7 @@ export default function Login() {
     const elementUserEmailId = useId();
     const elementPasswordId = useId();
     const elementRememberMeId = useId();
+    const navigate = useNavigate();
 
     function validateForm(){
         const newErrors = {};
@@ -30,27 +31,24 @@ export default function Login() {
         
         const validationErrors = validateForm();
         setErrors(validationErrors);
-
         if (Object.keys(validationErrors).length > 0) return;
 
         setLoading(true);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type" : "application/json" },
+            body: JSON.stringify({ email, password, rememberMe })
+        });
+        setLoading(false);
 
-        // simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Dummy data response from backend
-        const response = {
-            error : {
-                auth : "Invalid credentials."
-            },
-            status : 401
-        };
-
-        if(response.error?.auth){
-            setErrors({auth: "Invalid username or password."});
+        const responseJson = await response.json();
+        if(responseJson.error?.general){
+            setErrors(responseJson.error);
         }
 
-        setLoading(false);
+        if(responseJson.authenticated){
+            navigate("/");
+        }
     }
 
     return (
@@ -114,9 +112,9 @@ export default function Login() {
                         </div>
                     </div>
 
-                    { errors.auth && 
+                    { errors.general && 
                         <div className="flex justify-center text-red-500">
-                            <p>{errors.auth}</p>
+                            <p>{errors.general}</p>
                         </div>
                     }
 
