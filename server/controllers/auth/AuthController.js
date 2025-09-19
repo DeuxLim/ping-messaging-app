@@ -11,7 +11,7 @@ class AuthController
     {
         const errors = authValidation.validateRegistration(req.body);
         if (Object.keys(errors).length > 0) {
-            return res.status(400).json({ status: 400, error });
+            return res.status(400).json({ status: 400, errors });
         }
 
         const newUser = await User.create(req.body);
@@ -30,26 +30,22 @@ class AuthController
     {
         const errors = authValidation.validateLogin(req.body);
         if(Object.keys(errors).length > 0){
-            return res.status(400).json({ status: 400, error });
+            return res.status(400).json({ status: 400, errors });
         }
 
         const { email, password, rememberMe } = req.body;
 
         let user = await User.findOne({ email });
         if(!user){
-            res.status(401).json({ 
-                error : { 
-                    general : "Invalid Email or Password."
-                } 
+            return res.status(401).json({ 
+                error : { general : "Invalid Email or Password." }
             });
         }
 
         const passwordMatches = await user.comparePassword(password);
         if(!passwordMatches){
-            res.status(401).json({ 
-                error : { 
-                    general : "Invalid Email or Password."
-                } 
+            return res.status(401).json({ 
+                error : { general : "Invalid Email or Password." }
             });
         }
 
