@@ -6,7 +6,9 @@ const userSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   userName: { type: String, unique: true, required: true },
   email: { type: String, unique: true, required: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+  refreshToken : { type : String, default : null },
+  refreshTokenExpiresAt : { type : Date, default : null }
 });
 
 // Pre-save hook to hash password before saving
@@ -21,6 +23,26 @@ userSchema.pre("save", async function (next) {
   } catch (err) {
     next(err);
   }
+});
+
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    delete ret.refreshToken;
+    delete ret.refreshTokenExpiresAt;
+    return ret;
+  },
+});
+
+userSchema.set("toObject", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    delete ret.refreshToken;
+    delete ret.refreshTokenExpiresAt;
+    return ret;
+  },
 });
 
 // Add method to compare plain password with hashed one
