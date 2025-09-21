@@ -59,7 +59,7 @@ class AuthController
 
         // Process JWT Access and Refresh tokens
         const accessToken = signAccessToken({ email });
-        const refreshToken = signRefreshToken({ email, rememberMe });
+        const refreshToken = signRefreshToken({ email }, rememberMe);
         const { exp } = jwt.decode(refreshToken);
         const hashedRefreshToken = hashToken(refreshToken);
 
@@ -76,9 +76,20 @@ class AuthController
             sameSite: "strict",
             maxAge: ttlMs
         });
+
+        const userData = {
+            id : user._id,
+            firstName : user.firstName,
+            lastName : user.lastName,
+            userName : user.userName,
+            email : user.email
+        };
         
         // Send back response
-        res.status(200).json({ user, token : accessToken });
+        res.status(200).json({ 
+            user : userData, 
+            token : accessToken 
+        });
     }
 
 }
