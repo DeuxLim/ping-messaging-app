@@ -91,6 +91,69 @@ class AuthController
             accessToken 
         });
     }
+
+    refreshTokens = async (req, res) => {
+        // Get refreshToken from request httpCookie
+        const currentRefreshToken = req.cookies.refreshToken;
+        if (!currentRefreshToken) {
+            return res.status(401).json({ error: "No refresh token provided" });
+        }
+
+        // Verify refresh token
+        let payload;
+        try {
+            payload = jwt.verify(currentRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+        } catch (err) {
+            return res.status(403).json({ error: "Invalid or expired refresh token" });
+        }
+
+        // Get User based on the refreshToken data
+        const user = await User.findOne({ email : payload.email });
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        
+        // Check if current refresh token matches stored refresh token
+        const hashedCurrentRefreshToken = hashToken(currentRefreshToken);
+        if(hashedCurrentRefreshToken !== user.refreshToken){
+            return res.status(403).json({ error: "Invalid refresh token" });
+        }
+
+        // Generate new access and refresh token
+        const newRefreshToken = signRefreshToken( { email : payload.email } );
+        const newAccessToken = signAccessToken( { email : payload.email } );
+
+        // Process JWT Access and Refresh tokens
+        const { exp } = jwt.decode(newRefreshToken);
+        const hashedRefreshToken = hashToken(newRefreshToken);
+
+        // Store User's refresh token
+        user.refreshToken = hashedRefreshToken;
+        user.refreshTokenExpiresAt = new Date(exp * 1000);
+        await user.save();
+
+        // Send back refresh token through httpOnly cookie
+        const ttlMs = exp * 1000 - Date.now(); // how many ms until expiration
+            res.cookie("refreshToken", newRefreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: ttlMs
+        });
+
+        const userData = {
+            id : user._id,
+            firstName : user.firstName,
+            lastName : user.lastName,
+            userName : user.userName,
+            email : user.email
+        };
+
+        return res.status(200).json({ 
+            user : userData,
+            accessToken : newAccessToken
+        });
+    }
 }
 
 export default new AuthController();
