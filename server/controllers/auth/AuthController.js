@@ -154,6 +154,30 @@ class AuthController
             accessToken : newAccessToken
         });
     }
+
+    logout = async (req, res) => {
+        const currentRefreshToken = req.cookies.refreshToken;
+        if (currentRefreshToken) {
+            // Find user by hashed refresh token
+            const hashedToken = hashToken(currentRefreshToken);
+            const user = await User.findOne({ refreshToken: hashedToken });
+
+            if (user) {
+                user.refreshToken = null;
+                user.refreshTokenExpiresAt = null;
+                await user.save();
+            }
+        }
+
+        // Clear cookie either way
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict"
+        });
+
+        return res.status(200).json({ message: "Logged out successfully" });
+    };
 }
 
 export default new AuthController();
