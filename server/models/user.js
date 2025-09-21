@@ -29,8 +29,6 @@ userSchema.set("toJSON", {
   transform: (doc, ret) => {
     delete ret.password;
     delete ret.__v;
-    delete ret.refreshToken;
-    delete ret.refreshTokenExpiresAt;
     return ret;
   },
 });
@@ -39,8 +37,6 @@ userSchema.set("toObject", {
   transform: (doc, ret) => {
     delete ret.password;
     delete ret.__v;
-    delete ret.refreshToken;
-    delete ret.refreshTokenExpiresAt;
     return ret;
   },
 });
