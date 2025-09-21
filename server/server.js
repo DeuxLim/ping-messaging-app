@@ -3,6 +3,7 @@ import cors from 'cors';
 import { configDotenv } from 'dotenv';
 import connectDB from './config/database.js';
 import registerRoutes from './routes/index.js';
+import cookieParser from 'cookie-parser';
 
 /* Allow .env file usage : process.env.variableName */
 configDotenv();
@@ -17,6 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 /* Routes */
 registerRoutes(app);
