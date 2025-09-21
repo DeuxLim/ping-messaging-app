@@ -88,10 +88,9 @@ class AuthController
         // Send back response
         res.status(200).json({ 
             user : userData, 
-            token : accessToken 
+            accessToken 
         });
     }
-
 }
 
 export default new AuthController();

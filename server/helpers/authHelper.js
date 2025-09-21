@@ -5,7 +5,7 @@ import crypto from 'crypto'
 export const signAccessToken = (payload) =>
     jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
 
-export const signRefreshToken = (payload, rememberMe) =>
+export const signRefreshToken = (payload, rememberMe = false ) =>
     jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: rememberMe ? '30d' : '7d' })
 
 
