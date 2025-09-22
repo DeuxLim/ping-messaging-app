@@ -4,9 +4,9 @@ import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export const routes = createBrowserRouter([
-    { index : true, Component : Landing },
     {
         path : "/auth",
         Component : AuthLayout,
@@ -15,6 +15,12 @@ export const routes = createBrowserRouter([
             { path : "login", Component : Login },
             { path : "register", Component : Register },
             { path : "forgot-password", Component : ForgotPassword },
+        ]
+    },
+    {
+        element : <ProtectedRoute/>,
+        children : [
+            { index : true, Component : <Landing/> },
         ]
     }
 ]);
