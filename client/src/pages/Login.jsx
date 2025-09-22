@@ -1,5 +1,6 @@
 import { useId, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ export default function Login() {
     const elementPasswordId = useId();
     const elementRememberMeId = useId();
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     function validateForm(){
         const newErrors = {};
@@ -46,9 +48,14 @@ export default function Login() {
             setErrors(responseJson.error);
         }
 
-        if(responseJson.authenticated){
-            navigate("/");
+        if(Object.entries(responseJson.user).length === 0 || !responseJson.accessToken){
+            setErrors({
+                general : "Something went wrong..."
+            });
         }
+
+        login(responseJson.user, responseJson.accessToken);
+        navigate("/");
     }
 
     return (
