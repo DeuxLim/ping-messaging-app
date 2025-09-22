@@ -20,7 +20,7 @@ export const routes = createBrowserRouter([
     {
         element : <ProtectedRoute/>,
         children : [
-            { index : true, Component : <Landing/> },
+            { index : true, Component : Landing },
         ]
     }
 ]);
