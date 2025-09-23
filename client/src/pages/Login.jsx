@@ -38,6 +38,7 @@ export default function Login() {
         setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
             method: "POST",
+            credentials: "include", // send and receive cookies
             headers: { "Content-Type" : "application/json" },
             body: JSON.stringify({ email, password, rememberMe })
         });

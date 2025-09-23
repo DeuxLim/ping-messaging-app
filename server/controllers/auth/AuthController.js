@@ -70,7 +70,7 @@ class AuthController
 
         // Send back refresh token through httpOnly cookie
         const ttlMs = exp * 1000 - Date.now(); // how many ms until expiration
-            res.cookie("refreshToken", refreshToken, {
+        res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: true,
             sameSite: "strict",
