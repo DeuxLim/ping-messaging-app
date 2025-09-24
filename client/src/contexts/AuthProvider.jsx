@@ -17,10 +17,28 @@ export default function AuthProvider({ children }){
         setReady(true);
     }
 
-    const logout = () => {
-        setUser({});
-        setToken("");
-        setReady(true);
+    const logout = async () => {
+        try{
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+                method : "POST",
+                credentials : "include"
+            });
+
+            if(!response.ok){
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            if(response.status !== 200){
+                throw new Error("Log out unsuccessfull");
+            }
+
+            setUser({});
+            setToken("");
+            setReady(true);
+        } catch (error) {
+            console.log(error);
+            setReady(true);
+        }
     }
 
     const refreshToken = async () => {
