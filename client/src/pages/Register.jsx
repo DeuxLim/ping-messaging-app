@@ -1,5 +1,6 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { fetchAPI } from "../api/fetchApi";
 
 export default function Login() {
     const [firstName, setFirstName] = useState("");
@@ -67,30 +68,27 @@ export default function Login() {
 
         setLoading(true);
 
-        // simulate API call
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
-            method: "POST",
-            headers: { "Content-Type" : "application/json" },
-            body: JSON.stringify({
+        try {
+            const response = await fetchAPI.post('/auth/register', {
                 firstName,
                 lastName,
                 userName,
                 email,
                 password,
                 confirmPassword
-            })
-        });
+            });
 
-        if (response.error && Object.keys(response.error).length > 0) {
-            setErrors(response.error);
-        }   
-        
-        if (response.status < 200 || response.status > 299) {
+            if (response.error && Object.keys(response.error).length > 0) {
+                setErrors(response.error);
+            }   
+            
+            setLoading(false);
+            navigate("/auth/login", {replace:true});
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
             setErrors({general : "Something Went Wrong..."});
         }
-
-        setLoading(false);
-        navigate("/auth/login", {replace:true});
     }
 
     return (
