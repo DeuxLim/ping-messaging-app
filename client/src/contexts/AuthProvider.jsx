@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
+import { fetchAPI } from "../api/fetchApi";
 
 export default function AuthProvider({ children }){
     const [ user, setUser ] = useState({});
@@ -19,18 +20,7 @@ export default function AuthProvider({ children }){
 
     const logout = async () => {
         try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
-                method : "POST",
-                credentials : "include"
-            });
-
-            if(!response.ok){
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            if(response.status !== 200){
-                throw new Error("Log out unsuccessfull");
-            }
+            await fetchAPI.post('/auth/logout', null, { credentials: 'include' });
 
             setUser({});
             setToken("");
@@ -43,22 +33,14 @@ export default function AuthProvider({ children }){
 
     const refreshToken = async () => {
         try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh`, {
-                method: "POST",
-                credentials: "include"
-            });
+            const response = await fetchAPI.post('/auth/refresh', null, { credentials: 'include' });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const authData = await response.json();
-            if (!authData.user || !authData.accessToken) {
+            if (!response.user || !response.accessToken) {
                 throw new Error('Invalid response data');
             }
 
-            setUser(authData.user);
-            setToken(authData.accessToken);
+            setUser(response.user);
+            setToken(response.accessToken);
             setReady(true);
         } catch (error) {
             console.error('Token refresh failed:', error);
