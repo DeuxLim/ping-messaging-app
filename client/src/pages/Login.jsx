@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
 import useAuth from "../hooks/useAuth";
+import { fetchAPI } from "../api/fetchApi";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -28,7 +29,7 @@ export default function Login() {
         return newErrors;
     }
 
-    async function handleSubmit(e) {
+   async function handleSubmit(e) {
         e.preventDefault();
         
         const validationErrors = validateForm();
@@ -36,27 +37,31 @@ export default function Login() {
         if (Object.keys(validationErrors).length > 0) return;
 
         setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-            method: "POST",
-            credentials: "include", // send and receive cookies
-            headers: { "Content-Type" : "application/json" },
-            body: JSON.stringify({ email, password, rememberMe })
-        });
-        setLoading(false);
+        
+        try {
+            const responseJson = await fetchAPI.post('/auth/login', 
+                { email, password, rememberMe }, 
+                { credentials: 'include' }
+            );
+            setLoading(false);
 
-        const responseJson = await response.json();
-        if(responseJson.error?.general){
-            setErrors(responseJson.error);
+            if(responseJson.error?.general){
+                setErrors(responseJson.error);
+            }
+
+            if(Object.entries(responseJson.user).length === 0 || !responseJson.accessToken){
+                setErrors({
+                    general : "Something went wrong..."
+                });
+            }
+
+            login(responseJson.user, responseJson.accessToken);
+            navigate("/");
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
+            setErrors({ general: "Login failed" });
         }
-
-        if(Object.entries(responseJson.user).length === 0 || !responseJson.accessToken){
-            setErrors({
-                general : "Something went wrong..."
-            });
-        }
-
-        login(responseJson.user, responseJson.accessToken);
-        navigate("/");
     }
 
     return (
