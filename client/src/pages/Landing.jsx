@@ -70,7 +70,7 @@ export default function Landing () {
                                 </div>
 
                                 {/* Chat outbound */}
-                                <div className="flex text-sm justify-end pr-2.5">
+                                <div className="flex text-sm justify-end pr-2.5 flex-col">
 
                                     {/* Outbound messages */}
                                     <div className="flex gap-2 justify-end items-end  flex-col">
