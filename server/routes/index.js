@@ -1,4 +1,6 @@
+import protectedRoute from "../middlewares/protectedRoute.js";
 import authRoutes from "./auth/index.js";
+import userRoutes from "./user/index.js";
 
 export default function registerRoutes(app)
 {
@@ -7,4 +9,7 @@ export default function registerRoutes(app)
 
     /* Authentication routes */
     app.use("/auth", authRoutes);
+
+    /* User routes */
+    app.use("/users", protectedRoute, userRoutes);
 }
