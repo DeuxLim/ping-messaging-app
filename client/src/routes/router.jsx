@@ -9,18 +9,18 @@ import ProtectedRoute from "../components/ProtectedRoute";
 export const routes = createBrowserRouter([
     {
         path : "/auth",
-        Component : AuthLayout,
+        element : <AuthLayout/>,
         children: [
-            { index : true, Component : Login },
-            { path : "login", Component : Login },
-            { path : "register", Component : Register },
-            { path : "forgot-password", Component : ForgotPassword },
+            { index : true, element : <Login/> },
+            { path : "login", element : <Login/> },
+            { path : "register", element : <Register/> },
+            { path : "forgot-password", element : <ForgotPassword/> },
         ]
     },
     {
         element : <ProtectedRoute/>,
         children : [
-            { index : true, Component : Landing },
+            { index : true, element : <Landing/> }
         ]
     }
 ]);
