@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import Landing from "../pages/Landing";
+import Chat from "../pages/Chat";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
@@ -20,7 +20,7 @@ export const routes = createBrowserRouter([
     {
         element : <ProtectedRoute/>,
         children : [
-            { index : true, element : <Landing/> }
+            { index : true, element : <Chat/> }
         ]
     }
 ]);
