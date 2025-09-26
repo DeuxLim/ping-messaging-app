@@ -1,40 +1,11 @@
-import useAuth from "../hooks/useAuth";
+import Sidebar from "../components/chat/Sidebar";
 
 export default function Landing () {
-    const { logout } = useAuth();
-
-    const handleLogout = () => {
-        logout();
-    }
-
     return (
         <>
-            <div className="h-screen flex">
+            <div className="h-screen flex p-3 gap-3">
 
-                {/* SIDEBAR */}
-                <aside className="hidden md:flex w-88 shadow-lg h-full flex-col">
-                    {/* Header */}
-                    <header className="flex justify-between bg-red-500 p-3 h-16">
-                        <div>Ping</div>
-                        <div> New </div>
-                    </header>
-
-                    {/* Search */}
-                    <div>
-
-                    </div>
-
-                    {/* Accounts */}
-                    <section className="flex-1 p-3">
-                        friends go here
-                    </section>
-
-                    {/* Bottom */}
-                    <div className="flex justify-between p-3">
-                        <button type="button" className="" onClick={handleLogout}> Log out </button>
-                        <div>Dark</div>
-                    </div>
-                </aside>
+                <Sidebar/>
 
                 {/* MAIN */}
                 <main className="flex-1 h-full">
