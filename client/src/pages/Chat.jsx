@@ -1,6 +1,4 @@
-import ChatBoxHeader from "../components/chat/ChatBoxHeader";
-import ChatContent from "../components/chat/ChatContent";
-import ChatInput from "../components/chat/ChatInput";
+import Chat from "../components/chat/Chat";
 import Sidebar from "../components/chat/Sidebar";
 
 export default function Landing () {
@@ -10,22 +8,10 @@ export default function Landing () {
 
                 {/* SIDEBAR */}
                 <Sidebar/>
-
+                
                 {/* MAIN */}
-                <main className="flex-1 h-full">
-                    <div className="flex flex-col h-full">
+                <Chat/>
 
-                        {/* CHAT BOX HEADER */}
-                        <ChatBoxHeader/>
-
-                        {/* CHAT CONTENT */}
-                       <ChatContent/>
-
-                        {/* CHAT INPUTS */}
-                        <ChatInput/>
-
-                    </div>
-                </main>
             </div>
         </>
     );
