@@ -1,4 +1,5 @@
-import useAuth from '../../../hooks/useAuth.js';
+import useAuth from "../../../hooks/useAuth.js";
+import { TbMessagePlus } from "react-icons/tb";
 
 export default function SidebarHeader() {
 	const { user } = useAuth();
@@ -22,7 +23,11 @@ export default function SidebarHeader() {
 
 					{/* New message icon */}
 
-					<div className="flex justify-end items-center">icon</div>
+					<div className="flex">
+						<button type="button" className="text-3xl text-gray-500">
+							<TbMessagePlus />
+						</button>
+					</div>
 				</div>
 			</header>
 		</>
