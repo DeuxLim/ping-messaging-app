@@ -5,6 +5,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
+import ChatProvider from "../contexts/chat/ChatProvider";
 
 export const routes = createBrowserRouter([
     {
@@ -20,7 +21,14 @@ export const routes = createBrowserRouter([
     {
         element : <ProtectedRoute/>,
         children : [
-            { index : true, element : <Chat/> }
+            { 
+                index : true, 
+                element : (
+                    <ChatProvider>
+                        <Chat/>
+                    </ChatProvider>
+                ) 
+            }
         ]
     }
 ]);
