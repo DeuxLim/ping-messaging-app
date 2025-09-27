@@ -1,3 +1,4 @@
+import { BiMessageRounded } from "react-icons/bi";
 
 export default function SidebarChats() {
     return (
@@ -6,8 +7,10 @@ export default function SidebarChats() {
             <section className="flex-1 p-3">
                 {/* Section */}
                 <div className="flex justify-between mb-2">
-                    <div>messages title</div>
-                    <div>icon</div>
+                    <div>Messages</div>
+                    <div className="flex items-center">
+                        <BiMessageRounded />
+                    </div>
                 </div>
 
                 {/* Chat boxes */}
