@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
-import { fetchAPI } from "../api/fetchApi";
+import { fetchAPI } from "../../api/fetchApi";
 
 export default function AuthProvider({ children }){
     const [ user, setUser ] = useState({});
