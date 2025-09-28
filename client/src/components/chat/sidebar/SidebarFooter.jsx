@@ -48,7 +48,9 @@ export default function SidebarFooter() {
 
                     {/*  Settings popover */}
                     {isToggled && (
-                        <div className='absolute bottom-4 left-4 rounded-lg shadow-lg border-gray-200 border-1' ref={settingsMenuRef}>
+                        <div className='absolute bottom-4 left-4 rounded-lg shadow-lg border-gray-200 border-1 z-50 bg-white' ref={settingsMenuRef}>
+
+                            {/* Button 1 */}
                             <button
                                 type="button"
                                 className="w-full text-left px-4 py-2 hover:bg-gray-100"
@@ -64,19 +66,6 @@ export default function SidebarFooter() {
                                 </div>
                             </button>
 
-                            <button
-                                type="button"
-                                className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                            >
-                                <div className='flex justify-start items-center gap-2'>
-                                    <div className='text-2xl'>
-                                        <MdDarkMode />
-                                    </div>
-                                    <div>
-                                        Dark mode
-                                    </div>
-                                </div>
-                            </button>
                         </div>
                     )}
                 </div>
