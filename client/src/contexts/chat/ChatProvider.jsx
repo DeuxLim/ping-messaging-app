@@ -4,19 +4,24 @@ import ChatContext from "./ChatContext";
 export default function ChatProvider({ children }) {
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [isDesktop, setIsDesktop] = useState(false);
-    const [activeView, setActiveView] = useState("start");
+    const [activeView, setActiveView] = useState(null);
 
     useEffect(() => {
-        const mediaQuery = window.matchMedia("(min-width: 768px)");
+        // Returns boolean
+        const desktopQuery = window.matchMedia("(min-width: 768px)");
 
         // set initial value
-        setIsDesktop(mediaQuery.matches);
+        setIsDesktop(desktopQuery.matches);
+        setActiveView(desktopQuery.matches ? "start" : null);
 
         // listen for changes
-        const handler = (e) => setIsDesktop(e.matches);
-        mediaQuery.addEventListener("change", handler);
+        const handler = (e) => {
+            setIsDesktop(e.matches);
+            setActiveView(e.matches ? "start" : null);
+        }
+        desktopQuery.addEventListener("change", handler);
 
-        return () => mediaQuery.removeEventListener("change", handler);
+        return () => desktopQuery.removeEventListener("change", handler);
     }, []);
 
     const values = { 
