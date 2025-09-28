@@ -8,25 +8,21 @@ export default function Sidebar() {
     return (
         <>
             {/* SIDEBAR */}
-            {
-                sidebarVisible && (
-                    <aside className={`flex md:w-88 w-full shadow-xl h-full flex-col rounded-2xl border-1 border-gray-300 p-2`}>
+            <aside className="flex md:w-88 w-full shadow-xl h-full flex-col rounded-2xl border-1 border-gray-300 p-2">
 
-                        {/* HEADER */}
-                        <SidebarHeader />
+                {/* HEADER */}
+                <SidebarHeader />
 
-                        {/* SEARCH CHATS */}
-                        <SidebarSearch/>
+                {/* SEARCH CHATS */}
+                <SidebarSearch />
 
-                        {/* CHATS LIST */}
-                        <SidebarChats />
+                {/* CHATS LIST */}
+                <SidebarChats />
 
-                        {/* FOOTER */}
-                        <SidebarFooter/>
+                {/* FOOTER */}
+                <SidebarFooter />
 
-                    </aside>
-                )
-            }
+            </aside>
         </>
     )
 }
