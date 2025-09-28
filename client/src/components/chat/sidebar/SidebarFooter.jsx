@@ -15,17 +15,28 @@ export default function SidebarFooter() {
     }
 
     useEffect(() => {
-        document.addEventListener("mousedown", (event) => {
-            if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target) && !settingsButtonRef.current.contains(event.target)) {
+        const handleClickOutside = (event) => {
+            if (
+                settingsMenuRef.current &&
+                !settingsMenuRef.current.contains(event.target) &&
+                !settingsButtonRef.current.contains(event.target)
+            ) {
                 setIsToggled(prev => !prev);
             }
-        });
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     return (
         <>
             <div className="flex justify-between items-center p-3">
                 <div className="relative w-full">
+
+                    {/* Settings button */}
                     <button
                         type="button"
                         className="text-3xl flex items-center"
@@ -34,8 +45,10 @@ export default function SidebarFooter() {
                     >
                         <TbSettings />
                     </button>
+
+                    {/*  Settings popover */}
                     {isToggled && (
-                        <div className='absolute bottom-4 left-4 rounded-lg shadow-lg border-gray-200 border-1'>
+                        <div className='absolute bottom-4 left-4 rounded-lg shadow-lg border-gray-200 border-1' ref={settingsMenuRef}>
                             <button
                                 type="button"
                                 className="w-full text-left px-4 py-2 hover:bg-gray-100"
@@ -54,7 +67,6 @@ export default function SidebarFooter() {
                             <button
                                 type="button"
                                 className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                                ref={settingsMenuRef}
                             >
                                 <div className='flex justify-start items-center gap-2'>
                                     <div className='text-2xl'>
