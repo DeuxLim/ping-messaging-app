@@ -1,5 +1,6 @@
 import useChat from "../../hooks/useChat";
 import ChatWindow from "./chat/ChatWindow";
+import SearchUser from "./friend/SearchUser";
 import Start from "./start/start";
 
 export default function MainWindow() {
@@ -9,6 +10,7 @@ export default function MainWindow() {
             <main className="flex-1 h-full shadow-xl rounded-2xl md:border-1 border-gray-300 p-2  overflow-hidden">
                 {activeView === "start" && <Start />}
                 {activeView === "chat" && <ChatWindow />}
+                {activeView === "SearchUser" && <SearchUser />}
             </main>
         </>
     )
