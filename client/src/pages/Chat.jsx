@@ -1,4 +1,4 @@
-import Main from "../components/chat/Main";
+import MainWindow from "../components/chat/MainWindow";
 import Sidebar from "../components/chat/Sidebar";
 
 export default function Landing () {
