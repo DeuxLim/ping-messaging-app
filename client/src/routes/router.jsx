@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import Chat from "../pages/Chat";
+import ChatApp from "../pages/ChatApp";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
@@ -25,7 +25,7 @@ export const routes = createBrowserRouter([
                 index : true, 
                 element : (
                     <ChatProvider>
-                        <Chat/>
+                        <ChatApp/>
                     </ChatProvider>
                 ) 
             }
