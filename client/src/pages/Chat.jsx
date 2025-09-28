@@ -10,7 +10,7 @@ export default function Landing () {
                 <Sidebar/>
                 
                 {/* MAIN */}
-                <Main/>
+                <MainWindow/>
 
             </div>
         </>
