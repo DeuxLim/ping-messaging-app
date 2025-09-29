@@ -13,7 +13,7 @@ const chatSchema = new mongoose.Schema(
             }
         ],
         chatName : {
-            type : string
+            type : String
         },
         lastMessage : {
             type : mongoose.Schema.Types.ObjectId, 
