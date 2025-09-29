@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const friendship = new mongoose.Schema(
+const friendshipSchema = new mongoose.Schema(
     {
         requestor : {
             type : mongoose.Schema.Types.ObjectId,
@@ -18,3 +18,6 @@ const friendship = new mongoose.Schema(
     }, 
     { timestamps : true } 
 );
+
+const Friendship = new mongoose.model("Friendship", friendshipSchema);
+export default Friendship;
