@@ -9,7 +9,7 @@ export default function SearchUser() {
 	const { token } = useAuth();
 
 	useEffect(() => {
-		if (!token) return; // wait for token
+		if (!token) return;
 
 		const fetchUsers = async () => {
 			try {
@@ -59,8 +59,10 @@ export default function SearchUser() {
 					<div className="flex flex-col gap-2">
 
 						{
-							userList?.map((user, index) => {
-								return <ChatItem key={index} userInfo={user} />
+							userList?.map((user) => {
+								return (
+									<ChatItem key={user._id} userInfo={user}/>
+								)
 							})
 						}
 
