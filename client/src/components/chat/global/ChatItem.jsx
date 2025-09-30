@@ -1,13 +1,32 @@
+import { fetchAPI } from "../../../api/fetchApi";
+import useAuth from "../../../hooks/useAuth"
+import useChat from "../../../hooks/useChat";
 
-export default function ChatItem({ userInfo, chatInfo = {} }) {
-    const chatSelect = (e) => {
-        console.log(e);
+export default function ChatItem({ userInfo = {}, chatInfo = {}, type = "private" }) {
+    const { token } = useAuth();
+    const { selectChat } = useChat();
+
+    const handleSelectChat = async ({userInfo, chatInfo, type}) => {
+        const data = {
+            type : type,
+            participants : [ userInfo ],
+            chatInfo : chatInfo
+        };
+
+        fetchAPI.setAuth(token);
+        const response = await fetchAPI.post("/chat", data);
+
+        if(response.error){
+            console.log(response.error);
+        }
+
+        selectChat(response.data);
     }
 
     return (
         <>
             {/* Chat box */}
-            <div className="flex gap-4 items-center" onClick={chatSelect}>
+            <div className="flex gap-4 items-center" onClick={() => handleSelectChat({userInfo, chatInfo, type})}>
                 {/* Profile Picture */}
                 <div className="border-1 border-gray-300 flex justify-center items-center rounded-full w-15 h-15">
                     {userInfo.profilePicture}
