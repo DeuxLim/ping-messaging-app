@@ -61,7 +61,7 @@ export default function SearchUser() {
 						{
 							userList?.map((user) => {
 								return (
-									<ChatItem key={user._id} userInfo={user}/>
+									<ChatItem key={user._id} userInfo={user} type="private"/>
 								)
 							})
 						}
