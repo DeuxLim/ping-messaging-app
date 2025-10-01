@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import ChatContext from "./ChatContext";
+import ChatContext from "./ChatContext.js";
 import useAuth from "../../hooks/useAuth";
 
 export default function ChatProvider({ children }) {

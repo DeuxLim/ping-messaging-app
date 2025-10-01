@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AuthContext from "./AuthContext";
+import AuthContext from "./AuthContext.js";
 import { fetchAPI } from "../../api/fetchApi";
 
 export default function AuthProvider({ children }){
