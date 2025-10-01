@@ -3,7 +3,7 @@ import AuthContext from "./AuthContext";
 import { fetchAPI } from "../../api/fetchApi";
 
 export default function AuthProvider({ children }){
-    const [ user, setUser ] = useState({});
+    const [ currentUser, setCurrentUser ] = useState({});
     const [ token, setToken ] = useState("");
     const [ ready, setReady ] = useState(false);
 
@@ -13,7 +13,7 @@ export default function AuthProvider({ children }){
             return;
         }
 
-        setUser(user);
+        setCurrentUser(user);
         setToken(token);
         setReady(true);
     }
@@ -22,7 +22,7 @@ export default function AuthProvider({ children }){
         try{
             await fetchAPI.post('/auth/logout', null, { credentials: 'include' });
 
-            setUser({});
+            setCurrentUser({});
             setToken("");
             setReady(true);
         } catch (error) {
@@ -39,7 +39,7 @@ export default function AuthProvider({ children }){
                 throw new Error('Invalid response data');
             }
 
-            setUser(response.user);
+            setCurrentUser(response.user);
             setToken(response.accessToken);
             setReady(true);
         } catch (error) {
@@ -55,7 +55,7 @@ export default function AuthProvider({ children }){
     }, [token, ready]);
 
     return (
-        <AuthContext.Provider value={ { user, token,  login, logout, refreshToken, ready, isAuthenticated: Boolean(user && token) } } >
+        <AuthContext.Provider value={ { currentUser, token,  login, logout, refreshToken, ready, isAuthenticated: Boolean(currentUser && token) } } >
             { children }
         </AuthContext.Provider>
     );
