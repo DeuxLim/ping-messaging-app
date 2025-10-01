@@ -4,13 +4,13 @@ import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 
 export default function ChatBoxHeader() {
-	const { currentChatData, isSelfChat } = useChat();
+	const { currentChatData } = useChat();
 	const { currentUser } = useAuth();
 
 	// handle chat name logic
 	let chatName = "";
 	if (currentChatData.type === "private") {
-		if (isSelfChat) {
+		if (currentChatData.isSelfChat) {
 			const self = currentChatData.users[0];
 			chatName = `${self.firstName} ${self.lastName}`;
 		} else {

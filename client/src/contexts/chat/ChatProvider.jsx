@@ -8,13 +8,16 @@ export default function ChatProvider({ children }) {
     const [isDesktop, setIsDesktop] = useState(false);
     const [activeView, setActiveView] = useState(null);
     const [currentChatData, setCurrentChatData] = useState({});
-    const [isSelfChat, setIsSelfChat] = useState(false);
 
     const selectChat = (data) => {
+        if (!data || !data.participants) return;
+
         // Special condition if chat selected is own account
-        setIsSelfChat(data.participants.length === 1 && data.participants.some(participant => participant._id === currentUser._id));
+        const isSelf = data.participants.length === 1 && 
+                   data.participants[0]._id === currentUser._id;
 
         setCurrentChatData({
+            isSelfChat : isSelf,
             chat: data.chat,
             users: data.participants,
             type: data.chatType
@@ -47,8 +50,7 @@ export default function ChatProvider({ children }) {
         activeView,
         setActiveView,
         selectChat,
-        currentChatData,
-        isSelfChat
+        currentChatData
     };
 
     return (
