@@ -1,7 +1,29 @@
 import { IoChevronBackOutline } from "react-icons/io5";
 import { IoVideocamOutline } from "react-icons/io5";
+import useChat from "../../../hooks/useChat";
+import useAuth from "../../../hooks/useAuth";
 
 export default function ChatBoxHeader() {
+	const { currentChatData, isSelfChat } = useChat();
+	const { currentUser } = useAuth();
+
+	// handle chat name logic
+	let chatName = "";
+	if (currentChatData.type === "private") {
+		if (isSelfChat) {
+			const self = currentChatData.users[0];
+			chatName = `${self.firstName} ${self.lastName}`;
+		} else {
+			const otherUser = currentChatData.users.find(user => user._id !== currentUser._id);
+			chatName = `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`;
+		}
+	} else {
+		chatName = "group chat name setting still in development...";
+	}
+
+	// handle chat active status logic
+	let activeStatus = "Offline";
+
 	return (
 		<>
 			<header className="h-21 border-b-1 border-gray-300">
@@ -15,10 +37,10 @@ export default function ChatBoxHeader() {
 						</div>
 						<div className="">
 							<div>
-								Deux Lim
+								{chatName}
 							</div>
 							<div>
-								Online
+								{activeStatus}
 							</div>
 						</div>
 					</div>
