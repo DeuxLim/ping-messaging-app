@@ -78,7 +78,7 @@ class AuthController
         });
 
         const userData = {
-            id : user._id,
+            _id : user._id,
             firstName : user.firstName,
             lastName : user.lastName,
             userName : user.userName,
@@ -142,7 +142,7 @@ class AuthController
         });
 
         const userData = {
-            id : user._id,
+            _id : user._id,
             firstName : user.firstName,
             lastName : user.lastName,
             userName : user.userName,
