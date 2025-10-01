@@ -49,6 +49,7 @@ class ChatController {
 							success: true,
 							message: "Chat already exists",
 							data: {
+								chatType : chatType,
 								chat: existingChat,
 								participants: chatParticipantsCollection,
 							},
@@ -66,6 +67,7 @@ class ChatController {
 						success: true,
 						message: "Chat created successfully",
 						data: {
+							chatType : chatType,
 							chat: newChat,
 							participants: chatParticipantsCollection,
 						},
