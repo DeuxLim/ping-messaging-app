@@ -6,7 +6,7 @@ import { IoPersonAddSharp } from "react-icons/io5";
 import useChat from "../../../hooks/useChat.js";
 
 export default function SidebarHeader() {
-	const { user } = useAuth();
+	const { currentUser } = useAuth();
 	const { setActiveView } = useChat();
 	const [isToggled, setIsToggled] = useState(false);
 	const settingsMenuRef = useRef(null);
@@ -45,8 +45,8 @@ export default function SidebarHeader() {
 
 						{/* User Info */}
 						<div className="flex justify-center items-center text-sm">
-							{user.firstName} {user.lastName} <br />
-							{user.email}
+							{currentUser.firstName} {currentUser.lastName} <br />
+							{currentUser.email}
 						</div>
 					</div>
 
