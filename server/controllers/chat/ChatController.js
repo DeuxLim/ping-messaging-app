@@ -26,12 +26,12 @@ class ChatController {
 		try {
 			const chatType = req.body.type;
 			const chatParticipants = req.body.participants;
-			const currentUser = await User.findOne({ email : req.user.email });
+			const currentUser = await User.findOne({ email: req.user.email });
 
 			const chatParticipantsIds = chatParticipants?.map(
 				(user) => user._id
 			);
-			chatParticipantsIds.push(currentUser._id.toString()); 
+			chatParticipantsIds.push(currentUser._id.toString());
 
 			switch (chatType) {
 				case "private":
@@ -49,7 +49,7 @@ class ChatController {
 							success: true,
 							message: "Chat already exists",
 							data: {
-								chatType : chatType,
+								chatType: chatType,
 								chat: existingChat,
 								participants: chatParticipantsCollection,
 							},
@@ -59,7 +59,7 @@ class ChatController {
 					// Create Chat
 					const newChat = await Chat.create({
 						isGroup: false,
-						participants: chatParticipantsIds
+						participants: chatParticipantsIds,
 					});
 
 					// Send response
@@ -67,7 +67,7 @@ class ChatController {
 						success: true,
 						message: "Chat created successfully",
 						data: {
-							chatType : chatType,
+							chatType: chatType,
 							chat: newChat,
 							participants: chatParticipantsCollection,
 						},
@@ -79,9 +79,9 @@ class ChatController {
 					const chatInfo = req.body.chatInfo;
 
 					let chatName = [currentUser, ...chatUsers]
-							.map((u) => u.firstName)
-							.join(", ");
-					
+						.map((u) => u.firstName)
+						.join(", ");
+
 					break;
 			}
 		} catch (error) {
@@ -92,6 +92,18 @@ class ChatController {
 				error,
 			});
 		}
+	};
+
+	getUserChats = async (req, res) => {
+		const currentUser = await User.findOne({ email: req.user.email });
+
+		const existingChats = await Chat.find({ participants: currentUser._id })
+			.populate("participants", "firstName lastName userName email")
+			.populate("lastMessage")
+			.sort({ updatedAt: -1 })
+			.lean();
+
+		res.status(200).json(existingChats);
 	};
 }
 
