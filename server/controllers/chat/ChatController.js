@@ -24,65 +24,54 @@ import Message from "../../models/message.js";
 class ChatController {
 	findOrCreateChat = async (req, res) => {
 		try {
-			const chatType = req.body.type;
-			const chatParticipants = req.body.participants;
+			const selectionType = req.body.listType;
 			const currentUser = await User.findOne({ email: req.user.email });
 
-			const chatParticipantsIds = chatParticipants?.map(
-				(user) => user._id
-			);
-			chatParticipantsIds.push(currentUser._id.toString());
+			if (selectionType === "user") {
+				const chatParticipantsIds = [req.body._id, currentUser._id];
 
-			switch (chatType) {
-				case "private":
-					const chatParticipantsCollection = await User.find({
-						_id: { $in: chatParticipantsIds },
-					});
+				const chatParticipantsCollection = await User.find({
+					_id: { $in: chatParticipantsIds },
+				});
 
-					let existingChat = await Chat.findOne({
-						isGroup: false,
-						participants: { $all: chatParticipants, $size: 2 },
-					});
+				let existingChat = await Chat.findOne({
+					isGroup: false,
+					participants: {
+						$all: chatParticipantsIds,
+						$size: 2,
+					},
+				});
 
-					if (existingChat) {
-						return res.status(200).json({
-							success: true,
-							message: "Chat already exists",
-							data: {
-								chatType: chatType,
-								chat: existingChat,
-								participants: chatParticipantsCollection,
-							},
-						});
-					}
-
-					// Create Chat
-					const newChat = await Chat.create({
-						isGroup: false,
-						participants: chatParticipantsIds,
-					});
-
-					// Send response
-					res.status(201).json({
+				if (existingChat) {
+					return res.status(200).json({
 						success: true,
-						message: "Chat created successfully",
+						message: "Chat already exists",
 						data: {
-							chatType: chatType,
-							chat: newChat,
+							chat: existingChat,
 							participants: chatParticipantsCollection,
 						},
 					});
+				}
 
-					break;
+				// Create Chat
+				const newChat = await Chat.create({
+					isGroup: false,
+					participants: chatParticipantsIds,
+				});
 
-				case "group":
-					const chatInfo = req.body.chatInfo;
+				let data = {
+					chat: newChat,
+					participants: chatParticipantsCollection,
+				};
 
-					let chatName = [currentUser, ...chatUsers]
-						.map((u) => u.firstName)
-						.join(", ");
+				console.log(data);
 
-					break;
+				// Send response
+				res.status(201).json({
+					success: true,
+					message: "Chat created successfully",
+					data,
+				});
 			}
 		} catch (error) {
 			console.error("Error fetching users:", error);
@@ -97,13 +86,22 @@ class ChatController {
 	getUserChats = async (req, res) => {
 		const currentUser = await User.findOne({ email: req.user.email });
 
-		const existingChats = await Chat.find({ participants: currentUser._id })
-			.populate("participants", "firstName lastName userName email")
+		const existingChats = await Chat.find({
+			participants: currentUser._id,
+			lastMessage: { $ne: null }
+		})
+			.populate(
+				"participants",
+				"-refreshToken -refreshTokenExpiresAt -password"
+			)
 			.populate("lastMessage")
 			.sort({ updatedAt: -1 })
 			.lean();
 
-		res.status(200).json(existingChats);
+		const chats = existingChats.map((chat) => {
+			return { ...chat, listType: "chat" };
+		});
+		res.status(200).json(chats);
 	};
 }
 
