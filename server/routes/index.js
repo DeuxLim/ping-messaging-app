@@ -15,5 +15,5 @@ export default function registerRoutes(app)
     app.use("/users", protectedRoute, userRoutes);
 
     /* Chat routes */
-    app.use("/chat", protectedRoute, chatRoutes);
+    app.use("/chats", protectedRoute, chatRoutes);
 }
