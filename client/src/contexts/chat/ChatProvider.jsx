@@ -18,9 +18,7 @@ export default function ChatProvider({ children }) {
 
         setCurrentChatData({
             isSelfChat : isSelf,
-            chat: data.chat,
-            users: data.participants,
-            type: data.chatType
+            ...data
         });
         setActiveView("chat");
     }
