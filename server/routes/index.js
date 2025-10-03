@@ -1,7 +1,7 @@
 import protectedRoute from "../middlewares/protectedRoute.js";
-import authRoutes from "./auth/index.js";
-import userRoutes from "./user/index.js";
-import chatRoutes from "./chat/index.js";
+import authRoutes from "./authRoutes.js";
+import userRoutes from "./userRoutes.js";
+import chatRoutes from "./chatRoutes.js";
 
 export default function registerRoutes(app)
 {
