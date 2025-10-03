@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import AuthContext from "./AuthContext.js";
 import { fetchAPI } from "../../api/fetchApi";
 
@@ -31,7 +31,7 @@ export default function AuthProvider({ children }){
         }
     }
 
-    const refreshToken = async () => {
+    const refreshToken = useCallback(async () => {
         try{
             const response = await fetchAPI.post('/auth/refresh', null, { credentials: 'include' });
 
@@ -46,13 +46,7 @@ export default function AuthProvider({ children }){
             console.error('Token refresh failed:', error);
             setReady(true);
         }
-    }
-
-    useEffect(() => {
-        if(!token && !ready){
-            refreshToken();
-        }
-    }, [token, ready]);
+    }, []);
 
     return (
         <AuthContext.Provider value={ { currentUser, token,  login, logout, refreshToken, ready, isAuthenticated: Boolean(currentUser && token) } } >
