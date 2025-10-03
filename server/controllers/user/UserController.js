@@ -20,9 +20,8 @@ const suggested = async (req, res) => {
         // Find all chats where current user is participant
 		const existingChats = await Chat.find({
 			participants: currentUserId,
+			lastMessage: { $ne: null }
 		}).select("participants");
-
-        console.log(existingChats);
 
 		// Extract user IDs from those chats
 		const chattedUserIds = existingChats.flatMap((chat) =>
@@ -38,12 +37,17 @@ const suggested = async (req, res) => {
 			},
 		})
 			.select(
-				"firstName lastName userName profilePicture bio isOnline lastSeen"
+				"fullName userName profilePicture bio isOnline lastSeen"
 			)
 			.limit(10)
 			.sort({ createdAt: -1 });
 
-		res.status(200).json(suggestedUsers);
+		// Add listType for front-end logic
+		const users = suggestedUsers.map((user) => {
+			return {...user.toObject(), listType : "user"};
+		});
+
+		res.status(200).json(users);
 	} catch (error) {
 		console.error("Error fetching suggested users:", error);
 		res.status(500).json({ message: "Failed to fetch suggested users" });
