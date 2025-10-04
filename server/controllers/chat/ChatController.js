@@ -109,16 +109,42 @@ class ChatController {
 			const messages = await Message.find({ chat: req.params.id })
 				.populate("chat")
 				.populate("sender");
-			
-			if(messages.length === 0){
+
+			if (messages.length === 0) {
 				res.status(200).json({
-					message : "No messages found for this chat."
+					message: "No messages found for this chat.",
 				});
 			}
 
 			res.status(200).json(messages);
 		} catch (error) {
 			console.log(error);
+		}
+	};
+
+	addChatMessage = async (req, res) => {
+		try {
+			const chat = await Chat.findById(req.params.id);
+			if (!chat)
+				return res.status(404).json({ message: "Chat not found" });
+
+			const newMessage = await Message.create({
+				chat: chat._id,
+				sender: req.user.id,
+				text: req.body.message,
+			});
+
+			await Chat.findByIdAndUpdate(chat._id, {
+				lastMessage: newMessage._id,
+			});
+
+			res.status(200).json(newMessage);
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({
+				message: "Failed to add message",
+				error: error.message,
+			});
 		}
 	};
 }
