@@ -8,5 +8,6 @@ router.get('/', ChatController.getUserChats);
 
 // select chat
 router.post('/', ChatController.findOrCreateChat);
+router.get('/:id', ChatController.getChatMessages);
 
 export default router;
