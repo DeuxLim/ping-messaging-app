@@ -17,9 +17,9 @@ export default function ChatItem({ chatData }) {
             }
         } else {
             response = {
-                data : {
-                    participants : chatData.participants,
-                    chatData : chatData
+                data: {
+                    participants: chatData.participants,
+                    chatData: chatData
                 },
             };
         }
