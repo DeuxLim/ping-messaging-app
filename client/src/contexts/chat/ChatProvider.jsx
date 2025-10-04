@@ -8,6 +8,7 @@ export default function ChatProvider({ children }) {
     const [isDesktop, setIsDesktop] = useState(false);
     const [activeView, setActiveView] = useState(null);
     const [currentChatData, setCurrentChatData] = useState({});
+    const [currentChatMessages, setCurrentChatMessages] = useState([]);
 
     const selectChat = (data) => {
         if (!data || !data.participants) return;
@@ -48,7 +49,9 @@ export default function ChatProvider({ children }) {
         activeView,
         setActiveView,
         selectChat,
-        currentChatData
+        currentChatData,
+        currentChatMessages,
+        setCurrentChatMessages
     };
 
     return (
