@@ -23,11 +23,8 @@ export default function SidebarChats() {
                 // Fetch both in parallel
                 const [chatsResponse, usersResponse] = await Promise.all([
                     fetchAPI.get("/chats"),
-                    fetchAPI.get("/users/suggested") // Backend should filter users you don't chat with
+                    fetchAPI.get("/users/suggested")
                 ]);
-
-                console.log("chats : ", chatsResponse);
-                console.log("users : ", usersResponse);
 
                 setChatList(chatsResponse || []);
                 setSuggestedUsers(usersResponse || []);
