@@ -41,7 +41,7 @@ export default function ChatItem({ chatData }) {
         }
     }
 
-    const isoString = chatData.lastMessage.createdAt;
+    const isoString = chatData.lastMessage?.createdAt;
     const date = new Date(isoString);
     const now = new Date();
 
@@ -70,11 +70,11 @@ export default function ChatItem({ chatData }) {
                         <div>
                             {chatName}
                         </div>
-                        <div>{formattedLastMessageDate}</div>
+                        <div>{chatData.lastMessage && formattedLastMessageDate}</div>
                     </div>
 
                     <div className="flex justify-between">
-                        <div>{chatData.lastMessage.text}</div>
+                        <div>{chatData.lastMessage && chatData.lastMessage?.text}</div>
                         <div>{chatData.status}</div>
                     </div>
                 </div>
