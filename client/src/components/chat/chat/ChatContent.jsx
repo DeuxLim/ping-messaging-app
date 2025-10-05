@@ -14,7 +14,6 @@ export default function ChatContent() {
             setIsLoading(true);
             try {
                 fetchAPI.setAuth(token);
-                console.log(currentChatData);
                 const response = await fetchAPI.get(`/chats/${currentChatData.chat._id}`);
                 setCurrentChatMessages(response);
             } catch (err) {
@@ -30,6 +29,8 @@ export default function ChatContent() {
 
     const ChatMessage = ({ data }) => {
         const isSender = data.sender._id === currentUser._id;
+
+        const isLastMessage = data._id === currentChatData.chat.lastMessage._id;
 
         if (!isSender) {
             // Inbound message
@@ -55,12 +56,19 @@ export default function ChatContent() {
                         {data.text}
                     </div>
                 </div>
-                <div className="flex justify-end items-end w-full">
-                    <span className="flex justify-center items-end h-full">
-                        user
-                    </span>
-                    <span className="hidden">sent 1 min ago</span>
-                </div>
+
+                {
+                    isLastMessage && (
+                        <div className="flex justify-end items-end w-full">
+                            <span className="flex justify-center items-end h-full">
+                                sent
+                            </span>
+                            <span className="hidden">
+                                sent 1 min ago
+                            </span>
+                        </div>
+                    )
+                }
             </div>
         );
     };
@@ -71,7 +79,7 @@ export default function ChatContent() {
             {error && <div>Something went wrong...</div>}
 
             <section className="flex-1 overflow-scroll">
-                <div className="p-3 h-full flex flex-col gap-8">
+                <div className="p-3 h-full flex flex-col gap-0.5">
                     {currentChatMessages.length > 0 && currentChatMessages.map((chatMessage) => (
                         <ChatMessage key={chatMessage._id} data={chatMessage} />
                     ))}
