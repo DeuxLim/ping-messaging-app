@@ -41,6 +41,20 @@ export default function ChatItem({ chatData }) {
         }
     }
 
+    const isoString = chatData.lastMessage.createdAt;
+    const date = new Date(isoString);
+    const now = new Date();
+
+    // Check if it's the same local date
+    const isToday =
+        date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear();
+
+    const formattedLastMessageDate = isToday
+        ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) // e.g. "10:51 PM"
+        : date.toLocaleDateString([], { month: 'short', day: '2-digit', year: 'numeric' }); // e.g. "Oct 04, 2025"
+
     return (
         <>
             {/* Chat box */}
@@ -56,11 +70,11 @@ export default function ChatItem({ chatData }) {
                         <div>
                             {chatName}
                         </div>
-                        <div>{chatData.time}</div>
+                        <div>{formattedLastMessageDate}</div>
                     </div>
 
                     <div className="flex justify-between">
-                        <div>{chatData.messagePreview}</div>
+                        <div>{chatData.lastMessage.text}</div>
                         <div>{chatData.status}</div>
                     </div>
                 </div>
