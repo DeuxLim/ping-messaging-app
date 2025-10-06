@@ -6,6 +6,10 @@ import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
 import ChatProvider from "../contexts/chat/ChatProvider";
+import MainWindow from "../components/chat/MainWindow";
+import Start from "../components/chat/start/start";
+import ChatWindow from "../components/chat/chat/ChatWindow";
+import SearchUser from "../components/chat/friend/SearchUser";
 
 export const routes = createBrowserRouter([
     {
@@ -22,12 +26,32 @@ export const routes = createBrowserRouter([
         element : <ProtectedRoute/>,
         children : [
             { 
-                index : true, 
+                path : "/chats", 
                 element : (
                     <ChatProvider>
                         <ChatApp/>
                     </ChatProvider>
-                ) 
+                ),
+                children : [
+                    {
+                        path : "",
+                        element : <MainWindow/>,
+                        children : [
+                            {
+                                index : true,
+                                element : <Start/>
+                            },
+                            {
+                                path : ":chatId",
+                                element : <ChatWindow/>
+                            },
+                            {
+                                path : "search-user",
+                                element : <SearchUser/>
+                            }
+                        ]
+                    }
+                ] 
             }
         ]
     }
