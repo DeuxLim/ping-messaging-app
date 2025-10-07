@@ -1,4 +1,4 @@
-import MainWindow from "../components/chat/MainWindow";
+import { Outlet } from "react-router";
 import Sidebar from "../components/chat/Sidebar";
 import useChat from "../hooks/useChat";
 
@@ -11,17 +11,14 @@ export default function ChatApp() {
                 {isDesktop
                     ? (
                         <>
-                            {
-                                sidebarVisible && <Sidebar />
-                            }
-                            
-                            <MainWindow />
+                            {sidebarVisible && <Sidebar />}
+                            <Outlet />
                         </>
                     )
                     : (
                         !activeView
-                            ? sidebarVisible ? <Sidebar /> : ""
-                            : <MainWindow />
+                            ? sidebarVisible && <Sidebar />
+                            : <Outlet />
                     )
                 }
             </div>
