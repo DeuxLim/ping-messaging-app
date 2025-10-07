@@ -1,84 +1,91 @@
-import { fetchAPI } from "../../../api/fetchApi";
-import useAuth from "../../../hooks/useAuth"
-import useChat from "../../../hooks/useChat";
+import { useNavigate } from "react-router";
+import useAuth from "../../../hooks/useAuth";
 
 export default function ChatItem({ chatData }) {
-    const { token, currentUser } = useAuth();
-    const { selectChat } = useChat();
+    const { currentUser } = useAuth();
+    const navigate = useNavigate();
 
-    const handleSelectChat = async ({ chatData }) => {
-        fetchAPI.setAuth(token);
-
-        let response = null;
+    // Extract chat display info
+    const getChatDisplay = () => {
         if (chatData.listType === "user") {
-            response = await fetchAPI.post(`/chats`, chatData);
-            if (response?.error) {
-                console.log(response.error);
-            }
-        } else {
-            response = {
-                data: {
-                    participants: chatData.participants,
-                    chat: chatData
-                },
+            return {
+                photo: chatData.profilePicture,
+                name: chatData.fullName,
             };
         }
 
-        selectChat(response?.data);
-    }
-
-    let chatPhoto = null;
-    let chatName = "";
-    if (chatData.listType === "user") {
-        chatPhoto = chatData.profilePicture;
-        chatName = chatData.fullName;
-    } else {
         if (chatData.isGroup) {
-            chatPhoto = chatData.chatPhoto
-        } else {
-            let chatUser = chatData.participants.filter((participant) => participant._id !== currentUser._id);
-            chatName = chatUser[0].fullName;
+            return {
+                photo: chatData.chatPhoto,
+                name: chatData.groupName || "Group Chat",
+            };
         }
-    }
 
-    const isoString = chatData.lastMessage?.createdAt;
-    const date = new Date(isoString);
-    const now = new Date();
+        const otherUser = chatData.participants.find(
+            (p) => p._id !== currentUser._id
+        );
+        return {
+            photo: otherUser?.profilePicture,
+            name: otherUser?.fullName || "Unknown User",
+        };
+    };
 
-    // Check if it's the same local date
-    const isToday =
-        date.getDate() === now.getDate() &&
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear();
+    // Format timestamp
+    const formatMessageTime = (isoString) => {
+        if (!isoString) return "";
 
-    const formattedLastMessageDate = isToday
-        ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) // e.g. "10:51 PM"
-        : date.toLocaleDateString([], { month: 'short', day: '2-digit', year: 'numeric' }); // e.g. "Oct 04, 2025"
+        const date = new Date(isoString);
+        const now = new Date();
+
+        const isToday =
+            date.getDate() === now.getDate() &&
+            date.getMonth() === now.getMonth() &&
+            date.getFullYear() === now.getFullYear();
+
+        return isToday
+            ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            : date.toLocaleDateString([], {
+                month: "short",
+                day: "2-digit",
+                year: "numeric",
+            });
+    };
+
+    const { photo, name } = getChatDisplay();
+    const formattedTime = formatMessageTime(chatData.lastMessage?.createdAt);
 
     return (
-        <>
-            {/* Chat box */}
-            <div className="flex gap-4 items-center" onClick={() => handleSelectChat({ chatData })}>
-                {/* Profile Picture */}
-                <div className="border-1 border-gray-300 flex justify-center items-center rounded-full w-15 h-15">
-                    {chatPhoto}
+        <div
+            className="flex gap-4 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+            onClick={() => navigate(`/chats/${chatData._id}`, { replace: true })}
+        >
+            {/* Profile Picture */}
+            <div className="border border-gray-300 flex justify-center items-center rounded-full w-15 h-15 flex-shrink-0">
+                {photo}
+            </div>
+
+            {/* Chat Details */}
+            <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-center mb-1">
+                    <span className="font-semibold truncate">{name}</span>
+                    {formattedTime && (
+                        <span className="text-sm text-gray-500 ml-2 flex-shrink-0">
+                            {formattedTime}
+                        </span>
+                    )}
                 </div>
 
-                {/* Chat Details */}
-                <div className="flex-1">
-                    <div className="flex justify-between">
-                        <div>
-                            {chatName}
-                        </div>
-                        <div>{chatData.lastMessage && formattedLastMessageDate}</div>
-                    </div>
-
-                    <div className="flex justify-between">
-                        <div>{chatData.lastMessage && chatData.lastMessage?.text}</div>
-                        <div>{chatData.status}</div>
-                    </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 truncate">
+                        {chatData.lastMessage?.text || "No messages yet"}
+                    </span>
+                    {chatData.status && (
+                        <span className="text-sm text-gray-500 ml-2 flex-shrink-0">
+                            {chatData.status}
+                        </span>
+                    )}
                 </div>
             </div>
-        </>
-    )
+        </div>
+    );
 }
