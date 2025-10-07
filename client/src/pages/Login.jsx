@@ -60,7 +60,7 @@ export default function Login() {
             }
 
             login(responseJson.user, responseJson.accessToken);
-            navigate("/");
+            navigate("/chats");
         } catch (error) {
             console.log(error);
             setErrors({ general: "Login failed" });
