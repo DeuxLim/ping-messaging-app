@@ -7,14 +7,13 @@ export default function ChatBoxHeader() {
 	const { currentChatData } = useChat();
 	const { currentUser } = useAuth();
 
-	// handle chat name logic
 	let chatName = "";
 	if (!currentChatData.isGroup) {
 		if (currentChatData.isSelfChat) {
 			const self = currentChatData.participants[0];
 			chatName = `${self.firstName} ${self.lastName}`;
 		} else {
-			const otherUser = currentChatData.participants.find(participant => participant._id !== currentUser._id);
+			const otherUser = currentChatData?.participants?.find(participant => participant._id !== currentUser._id);
 			chatName = `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`;
 		}
 	} else {
