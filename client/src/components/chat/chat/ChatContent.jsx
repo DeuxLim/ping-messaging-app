@@ -2,19 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { fetchAPI } from '../../../api/fetchApi';
 import useAuth from '../../../hooks/useAuth';
 import useChat from '../../../hooks/useChat';
+import { useParams } from 'react-router';
 
 export default function ChatContent() {
     const { token, currentUser } = useAuth();
     const { currentChatData, setCurrentChatMessages, currentChatMessages } = useChat();
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const { chatId } = useParams();
 
     useEffect(() => {
         const fetchCurrentChatMessages = async () => {
-            setIsLoading(true);
             try {
                 fetchAPI.setAuth(token);
-                const response = await fetchAPI.get(`/chats/${currentChatData.chat._id}`);
+                const response = await fetchAPI.get(`/chats/${chatId}`);
                 setCurrentChatMessages(response);
             } catch (err) {
                 console.log(err);
@@ -25,12 +26,12 @@ export default function ChatContent() {
         };
 
         fetchCurrentChatMessages();
-    }, [currentChatData, token, setCurrentChatMessages]);
+
+    }, [token, setCurrentChatMessages, chatId, isLoading]);
 
     const ChatMessage = ({ data }) => {
         const isSender = data.sender._id === currentUser._id;
-
-        const isLastMessage = data._id === currentChatData.chat.lastMessage._id;
+        const isLastMessage = data._id === currentChatData.lastMessage._id;
 
         if (!isSender) {
             // Inbound message
