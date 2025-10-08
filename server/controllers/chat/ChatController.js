@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import User from "../../models/user.js";
 import Friendship from "../../models/friendship.js";
 import Chat from "../../models/chat.js";
@@ -24,58 +25,98 @@ import Message from "../../models/message.js";
 class ChatController {
 	findOrCreateChat = async (req, res) => {
 		try {
-			const selectionType = req.body.listType;
+			// Get request ID
+			const id = req.body.id;
+			if (!mongoose.Types.ObjectId.isValid(id)) {
+				return res.status(400).json({ message: "Invalid ID format" });
+			}
+
+			// Get current user
 			const currentUser = await User.findOne({ email: req.user.email });
 
-			if (selectionType === "user") {
-				const chatParticipantsIds = [req.body._id, currentUser._id];
-
-				const chatParticipantsCollection = await User.find({
-					_id: { $in: chatParticipantsIds },
-				});
-
-				let existingChat = await Chat.findOne({
-					isGroup: false,
-					participants: {
-						$all: chatParticipantsIds,
-						$size: 2,
+			/**
+			 * Handle when current user selects a Chat-List Item
+			 */
+			// Check first if chat exists
+			const existingChat = await Chat.findById(id).populate(
+				"participants",
+				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+			);
+			// Return existing chat
+			if (existingChat) {
+				return res.status(200).json({
+					message: "chat exists",
+					data: {
+						isNew: false,
+						chat: existingChat,
 					},
 				});
+			}
 
-				if (existingChat) {
-					return res.status(200).json({
-						success: true,
-						message: "Chat already exists",
-						data: {
-							chat: existingChat,
-							participants: chatParticipantsCollection,
-						},
-					});
-				}
-
-				// Create Chat
-				const newChat = await Chat.create({
-					isGroup: false,
-					participants: chatParticipantsIds,
-				});
-
-				let data = {
-					chat: newChat,
-					participants: chatParticipantsCollection,
-				};
-
-				console.log(data);
-
-				// Send response
-				res.status(201).json({
-					success: true,
-					message: "Chat created successfully",
-					data,
+			/**
+			 * Handle when current user selects a USER-List Item (NON Chat-List Item)
+			 * with existing chat
+			 */
+			// Check if chat exists with the selected user
+			let existingChatByUser = await Chat.findOne({
+				isGroup: false,
+				participants: {
+					$all: [id, currentUser._id],
+					$size: 2,
+				},
+			});
+			// Return existing chat
+			if (existingChatByUser) {
+				const populatedExistingChat = await existingChatByUser.populate(
+					"participants",
+					"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+				);
+				return res.status(200).json({
+					message: "chat exists",
+					data: {
+						isNew: false,
+						chat: populatedExistingChat,
+					},
 				});
 			}
+
+			/**
+			 * Handle when current user selects a chat/user without existing chat
+			 */
+			const selectedUser = await User.findById(id);
+			if (!selectedUser) {
+				return res.status(404).json({
+					error: {
+						message: "Chat not found",
+					},
+				});
+			}
+
+			const chatParticipantsIds = [id, currentUser._id];
+
+			// Create Chat
+			const newChat = await Chat.create({
+				isGroup: false,
+				participants: chatParticipantsIds,
+				chatName: null,
+				lastMessage: null,
+			});
+
+			const populatedChat = await newChat.populate(
+				"participants",
+				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+			);
+
+			return res.status(200).json({
+				message: "created new chat",
+				data: {
+					isNew: true,
+					chat: populatedChat,
+				},
+			});
 		} catch (error) {
-			console.error("Error fetching users:", error);
-			res.status(500).json({
+			console.error("Error fetching chat:", error);
+			return res.status(500).json({
 				success: false,
 				message: "Failed to create chat",
 				error,
@@ -101,22 +142,22 @@ class ChatController {
 		const chats = existingChats.map((chat) => {
 			return { ...chat, listType: "chat" };
 		});
-		res.status(200).json(chats);
+		return res.status(200).json(chats);
 	};
 
 	getChatMessages = async (req, res) => {
 		try {
 			const messages = await Message.find({ chat: req.params.id })
-				.populate("chat")
-				.populate("sender");
-
+			.populate("chat")
+			.populate("sender");
+			
 			if (messages.length === 0) {
-				res.status(200).json({
+				return res.status(200).json({
 					message: "No messages found for this chat.",
 				});
 			}
 
-			res.status(200).json(messages);
+			return res.status(200).json(messages);
 		} catch (error) {
 			console.log(error);
 		}
@@ -138,10 +179,10 @@ class ChatController {
 				lastMessage: newMessage._id,
 			});
 
-			res.status(200).json(newMessage);
+			return res.status(200).json(newMessage);
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({
+			return res.status(500).json({
 				message: "Failed to add message",
 				error: error.message,
 			});
