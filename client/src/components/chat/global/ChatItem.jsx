@@ -51,13 +51,17 @@ export default function ChatItem({ chatData }) {
             });
     };
 
+    const handleChatSelect = () => {
+        navigate(`/chats/${chatData._id}`, { replace: true })
+    }
+
     const { photo, name } = getChatDisplay();
     const formattedTime = formatMessageTime(chatData.lastMessage?.createdAt);
 
     return (
         <div
             className="flex gap-4 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-            onClick={() => navigate(`/chats/${chatData._id}`, { replace: true })}
+            onClick={() => handleChatSelect(chatData)}
         >
             {/* Profile Picture */}
             <div className="border border-gray-300 flex justify-center items-center rounded-full w-15 h-15 flex-shrink-0">
