@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ChatContext from "./ChatContext.js";
 import useAuth from "../../hooks/useAuth";
 
@@ -10,19 +10,21 @@ export default function ChatProvider({ children }) {
     const [currentChatData, setCurrentChatData] = useState({});
     const [currentChatMessages, setCurrentChatMessages] = useState([]);
 
-    const selectChat = (data) => {
+    const selectChat = useCallback((data) => {
         if (!data || !data.participants) return;
 
-        // Special condition if chat selected is own account
-        const isSelf = data.participants.length === 1 && 
-                   data.participants[0]._id === currentUser._id;
+        // If current user opens own account chat
+        const isSelf =
+            data.participants.length === 1 &&
+            data.participants[0]._id === currentUser._id;
 
+        // currentChatData - actual chat collection
         setCurrentChatData({
-            isSelfChat : isSelf,
-            ...data
+            isSelfChat: isSelf,
+            ...data,
         });
-        setActiveView("chat");
-    }
+
+    }, [currentUser._id]);
 
     useEffect(() => {
         // Returns boolean
