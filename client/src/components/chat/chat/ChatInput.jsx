@@ -16,8 +16,8 @@ export default function ChatInput() {
 		}
 
 		fetchAPI.setAuth(token);
-		const response = await fetchAPI.post(`/chats/${currentChatData._id}/messages`, { message: chatMessage, sender: currentUser });
-		console.log(response);
+		await fetchAPI.post(`/chats/${currentChatData._id}/messages`, { message: chatMessage, sender: currentUser });
+		setChatMessage("");
 	}
 
 	return (
