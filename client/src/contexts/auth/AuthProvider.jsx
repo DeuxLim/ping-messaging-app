@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import AuthContext from "./AuthContext.js";
 import { fetchAPI } from "../../api/fetchApi";
 
