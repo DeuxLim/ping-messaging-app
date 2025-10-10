@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router";
 import useAuth from "../../hooks/useAuth";
 import { fetchAPI } from "./../../api/fetchApi";
 import FormInput from "../../components/auth/FormInput";
+import { IoEyeOffOutline } from "react-icons/io5";
+import { IoEyeOutline } from "react-icons/io5";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -90,18 +92,32 @@ export default function Login() {
                         error={errors.email}
                     />
 
-                    <FormInput
-                        id={elementPasswordId}
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                            if (errors.password) setErrors(prev => ({ ...prev, password: null }));
-                        }}
-                        error={errors.password}
-                    />
+                    <div className="relative flex items-center justify-center w-full">
+                        <FormInput
+                            id={elementPasswordId}
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                if (errors.password) setErrors(prev => ({ ...prev, password: null }));
+                            }}
+                            error={errors.password}
+                            additionalContainerClasses="w-full"
+                        />
+
+                        {/* Show / Hide Password */}
+                        {password ? (
+                            <div
+                                className="absolute right-4"
+                                onClick={() => setShowPassword(prev => !prev)}
+                            >
+                                {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
+                            </div>
+                        ) : ""}
+
+                    </div>
 
                     {/* REMEMBER ME && FORGOT PASSWORD*/}
                     <div className="flex text-sm justify-between mt-2 px-1">
