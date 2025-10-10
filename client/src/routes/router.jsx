@@ -21,9 +21,8 @@ import ChatProvider from "../contexts/chat/ChatProvider";
 export const routes = createBrowserRouter([
     {
         path : "/auth",
-        element : <AuthLayout/>,
+        element : <StartAuth/>,
         children: [
-            { index : true, element : <StartAuth/> },
             { path : "login", element : <Login/> },
             { path : "register", element : <Register/> },
             { path : "forgot-password", element : <ForgotPassword/> },
