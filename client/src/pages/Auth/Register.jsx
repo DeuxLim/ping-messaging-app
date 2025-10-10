@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { fetchAPI } from "./../../api/fetchApi.js";
+import FormInput from "../../components/auth/FormInput.jsx";
 
 export default function Login() {
     const [firstName, setFirstName] = useState("");
@@ -92,146 +93,116 @@ export default function Login() {
     }
 
     return (
-        <div className="bg-white p-8 max-w-md w-full mx-auto rounded-md shadow-2xl border-2 border-gray-200 flex flex-col gap-6">
-            <div className="flex flex-col justify-center items-center text-2xl">
-                <h1>Login</h1>
-            </div>
-            <form onSubmit={handleSubmit} className="w-">
-                <div className="flex flex-col gap-8 text-lg">
-                    <div className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="w-">
+            <div className="flex flex-col gap-8 text-lg">
 
-                        {/* First Name */}
-                        <div className="flex flex-col">
-                            <label htmlFor={elementFirstNameId}>First Name</label>
-                            <input
-                                type="text"
-                                id={elementFirstNameId}
-                                name="user-first-name"
-                                className="p-2 border-2 border-gray-300 rounded-md"
-                                placeholder="Enter your first name..."
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                            />
-                            {errors.firstName ? <p className="text-sm text-right text-red-500">{errors.firstName}</p> : ""}
-                        </div>
+                <div className="flex flex-col gap-4">
+                    {/* First Name */}
+                    <FormInput
+                        id={elementFirstNameId}
+                        label="First Name"
+                        type="text"
+                        name="user-first-name"
+                        placeholder="Enter your first name..."
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        error={errors.firstName}
+                    />
 
-                        {/* Last Name */}
-                        <div className="flex flex-col">
-                            <label htmlFor={elementLastNameId}>Last Name</label>
-                            <input
-                                type="text"
-                                id={elementLastNameId}
-                                name="user-last-name"
-                                className="p-2 border-2 border-gray-300 rounded-md"
-                                placeholder="Enter your last name..."
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                            />
-                            {errors.lastName ? <p className="text-sm text-right text-red-500">{errors.lastName}</p> : ""}
-                        </div>
+                    {/* Last Name */}
+                    <FormInput
+                        id={elementLastNameId}
+                        label="Last Name"
+                        type="text"
+                        name="user-last-name"
+                        placeholder="Enter your last name..."
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        error={errors.lastName}
+                    />
 
-                        {/* User Name */}
-                        <div className="flex flex-col">
-                            <label htmlFor={elementUserNameId}>Username</label>
-                            <input
-                                type="text"
-                                id={elementUserNameId}
-                                name="user-last-name"
-                                className="p-2 border-2 border-gray-300 rounded-md"
-                                placeholder="Enter your username..."
-                                value={userName}
-                                onChange={(e) => setUserName(e.target.value)}
-                            />
-                            {errors.userName ? <p className="text-sm text-right text-red-500">{errors.userName}</p> : ""}
-                        </div>
+                    {/* User Name */}
+                    <FormInput
+                        id={elementUserNameId}
+                        label="Username"
+                        type="text"
+                        name="user-name"
+                        placeholder="Enter your username..."
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        error={errors.userName}
+                    />
 
-                        {/* EMAIL */}
-                        <div className="flex flex-col">
-                            <label htmlFor={elementEmailId}>Email</label>
-                            <input
-                                type="text"
-                                id={elementEmailId}
-                                name="user-email"
-                                className="p-2 border-2 border-gray-300 rounded-md"
-                                placeholder="Enter your email address..."
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            {errors.email ? <p className="text-sm text-right text-red-500">{errors.email}</p> : ""}
-                        </div>
+                    {/* EMAIL */}
+                    <FormInput
+                        id={elementEmailId}
+                        label="Email"
+                        type="email"
+                        name="user-email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        error={errors.email}
+                    />
 
-                        {/* PASSWORD */}
-                        <div className="flex flex-col">
-                            <label htmlFor={elementPasswordId}>password</label>
-                            <input
-                                type="password"
-                                id={elementPasswordId}
-                                name="password"
-                                className="p-2 border-2 border-gray-300 rounded-md"
-                                placeholder="Enter your password..."
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            {errors.password ? <p className="text-sm text-right text-red-500">{errors.password}</p> : ""}
-                        </div>
+                    {/* PASSWORD */}
+                    <FormInput
+                        id={elementPasswordId}
+                        label="Password"
+                        type="password"
+                        name="password"
+                        placeholder="Enter your password..."
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        error={errors.password}
+                    />
 
-                        {/* Confirm Password */}
-                        <div className="flex flex-col">
-                            <label htmlFor={elementConfirmPasswordId}>Confirm Password</label>
-                            <input
-                                type="password"
-                                id={elementConfirmPasswordId}
-                                name="password"
-                                className="p-2 border-2 border-gray-300 rounded-md"
-                                placeholder="Confirm your password..."
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                            {errors.confirmPassword ? <p className="text-sm text-right text-red-500">{errors.confirmPassword}</p> : ""}
-                        </div>
-
-
-                    </div>
-
-                    {errors.auth &&
-                        <div className="flex justify-center text-red-500">
-                            <p>{errors.auth}</p>
-                        </div>
-                    }
-
-                    {errors.general &&
-                        <div className="flex justify-center text-red-500">
-                            <p>{errors.general}</p>
-                        </div>
-                    }
-
-                    {/* SUBMIT */}
-                    <div className="flex flex-col justify-center items-center">
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={`bg-green-400 py-2 px-8 rounded-md 
-                                        ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
-                        >
-                            {loading ? "Creating Account..." : "Create Account"}
-                        </button>
-                    </div>
-
-                    <div className="flex justify-between gap-3">
-                        <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div>
-                        or
-                        <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div>
-                    </div>
-
-                    <button type="button" className="flex justify-center items-center">
-                        <Link to="/auth/login">
-                            Already have an account? Log in...
-                        </Link>
-                    </button>
-
-
+                    {/* Confirm Password */}
+                    <FormInput
+                        id={elementConfirmPasswordId}
+                        label="Confirm Password"
+                        type="password"
+                        name="confirm-password"
+                        placeholder="Confirm your password..."
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        error={errors.confirmPassword}
+                    />
                 </div>
-            </form>
-        </div>
+
+                {errors.auth &&
+                    <div className="flex justify-center text-red-500">
+                        <p>{errors.auth}</p>
+                    </div>
+                }
+
+                {errors.general &&
+                    <div className="flex justify-center text-red-500">
+                        <p>{errors.general}</p>
+                    </div>
+                }
+
+                {/* SUBMIT */}
+                <div className="flex flex-col justify-center items-center w-full">
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className={`bg-blue-500 py-2 px-8 rounded-lg w-full
+                                        ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                        <span className="text-white">
+                            {loading ? "Creating Account..." : "Create Account"}
+                        </span>
+                    </button>
+                </div>
+
+                {/* Back */}
+                <Link to="/auth/login">
+                    <div className="flex items-center justify-center">
+                        Already have an account? Log in...
+                    </div>
+                </Link>
+            </div>
+        </form>
     );
 }
