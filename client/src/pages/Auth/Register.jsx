@@ -2,6 +2,8 @@ import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { fetchAPI } from "./../../api/fetchApi.js";
 import FormInput from "../../components/auth/FormInput.jsx";
+import { IoEyeOffOutline } from "react-icons/io5";
+import { IoEyeOutline } from "react-icons/io5";
 
 export default function Login() {
     const [firstName, setFirstName] = useState("");
@@ -10,6 +12,8 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const elementFirstNameId = useId();
     const elementLastNameId = useId();
@@ -100,7 +104,6 @@ export default function Login() {
                     {/* First Name */}
                     <FormInput
                         id={elementFirstNameId}
-                        label="First Name"
                         type="text"
                         name="user-first-name"
                         placeholder="Enter your first name..."
@@ -112,7 +115,6 @@ export default function Login() {
                     {/* Last Name */}
                     <FormInput
                         id={elementLastNameId}
-                        label="Last Name"
                         type="text"
                         name="user-last-name"
                         placeholder="Enter your last name..."
@@ -124,7 +126,6 @@ export default function Login() {
                     {/* User Name */}
                     <FormInput
                         id={elementUserNameId}
-                        label="Username"
                         type="text"
                         name="user-name"
                         placeholder="Enter your username..."
@@ -136,7 +137,6 @@ export default function Login() {
                     {/* EMAIL */}
                     <FormInput
                         id={elementEmailId}
-                        label="Email"
                         type="email"
                         name="user-email"
                         placeholder="you@example.com"
@@ -146,28 +146,52 @@ export default function Login() {
                     />
 
                     {/* PASSWORD */}
-                    <FormInput
-                        id={elementPasswordId}
-                        label="Password"
-                        type="password"
-                        name="password"
-                        placeholder="Enter your password..."
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        error={errors.password}
-                    />
+                    <div className="relative flex items-center justify-center w-full">
+                        <FormInput
+                            id={elementPasswordId}
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="Enter your password..."
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            error={errors.password}
+                            additionalContainerClasses="w-full"
+                        />
+
+                        {/* Show / Hide Password */}
+                        {password ? (
+                            <div
+                                className="absolute right-4"
+                                onClick={() => setShowPassword(prev => !prev)}
+                            >
+                                {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
+                            </div>
+                        ) : ""}
+                    </div>
 
                     {/* Confirm Password */}
-                    <FormInput
-                        id={elementConfirmPasswordId}
-                        label="Confirm Password"
-                        type="password"
-                        name="confirm-password"
-                        placeholder="Confirm your password..."
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        error={errors.confirmPassword}
-                    />
+                    <div className="relative flex items-center justify-center w-full">
+                        <FormInput
+                            id={elementConfirmPasswordId}
+                            type={showConfirmPassword ? "text" : "password"}
+                            name="confirm-password"
+                            placeholder="Confirm your password..."
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            error={errors.confirmPassword}
+                            additionalContainerClasses="w-full"
+                        />
+
+                        {/* Show / Hide Password */}
+                        {confirmPassword ? (
+                            <div
+                                className="absolute right-4"
+                                onClick={() => setShowConfirmPassword(prev => !prev)}
+                            >
+                                {showConfirmPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
+                            </div>
+                        ) : ""}
+                    </div>
                 </div>
 
                 {errors.auth &&
