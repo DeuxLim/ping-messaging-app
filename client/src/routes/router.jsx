@@ -1,22 +1,29 @@
 import { createBrowserRouter } from "react-router";
 import ChatApp from "../pages/ChatApp";
+
+/* Auth */
 import AuthLayout from "../layouts/AuthLayout";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import ForgotPassword from "../pages/ForgotPassword";
+import StartAuth from "../pages/Auth/StartAuth";
+import Login from "../pages/Auth/Login";
+import Register from "../pages/Auth/Register";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
+
+/* Chat */
 import ProtectedRoute from "../components/ProtectedRoute";
-import ChatProvider from "../contexts/chat/ChatProvider";
-import MainWindow from "../components/chat/MainWindow";
 import Start from "../components/chat/start/start";
+import MainWindow from "../components/chat/MainWindow";
 import ChatWindow from "../components/chat/chat/ChatWindow";
 import SearchUser from "../components/chat/friend/SearchUser";
+
+/* Context */
+import ChatProvider from "../contexts/chat/ChatProvider";
 
 export const routes = createBrowserRouter([
     {
         path : "/auth",
         element : <AuthLayout/>,
         children: [
-            { index : true, element : <Login/> },
+            { index : true, element : <StartAuth/> },
             { path : "login", element : <Login/> },
             { path : "register", element : <Register/> },
             { path : "forgot-password", element : <ForgotPassword/> },
