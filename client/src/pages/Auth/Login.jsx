@@ -1,7 +1,8 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import useAuth from "../hooks/useAuth";
-import { fetchAPI } from "../api/fetchApi";
+import useAuth from "../../hooks/useAuth";
+import { fetchAPI } from "./../../api/fetchApi";
+import logo from "../../assets/images/ping-messenger-logo.png"
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -70,8 +71,11 @@ export default function Login() {
     }
 
     return (
-        <div className="bg-white p-8 max-w-md w-full mx-auto rounded-md shadow-2xl border-2 border-gray-200 flex flex-col gap-6">
-            <div className="flex flex-col justify-center items-center text-2xl">
+        <div className="bg-red-500 p-8 max-w-md w-full mx-auto rounded-md shadow-2xl border-2 border-gray-200 flex flex-col gap-6">
+            <div className="flex justify-between items-center text-2xl">
+                <div>
+                    <img src={logo} alt="logo" className="w-16 h-16"/>
+                </div>
                 <h1>Login</h1>
             </div>
             <form onSubmit={handleSubmit}>

@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { fetchAPI } from "../api/fetchApi";
+import { fetchAPI } from "./../../api/fetchApi.js";
 
 export default function Login() {
     const [firstName, setFirstName] = useState("");
