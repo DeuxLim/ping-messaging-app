@@ -60,7 +60,7 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        
+
         const validationErrors = validateForm();
         setErrors(validationErrors);
 
@@ -80,14 +80,14 @@ export default function Login() {
 
             if (response.error && Object.keys(response.error).length > 0) {
                 setErrors(response.error);
-            }   
-            
+            }
+
             setLoading(false);
-            navigate("/auth/login", {replace:true});
+            navigate("/auth/login", { replace: true });
         } catch (error) {
             console.log(error);
             setLoading(false);
-            setErrors({general : "Something Went Wrong..."});
+            setErrors({ general: "Something Went Wrong..." });
         }
     }
 
@@ -112,7 +112,7 @@ export default function Login() {
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
                             />
-                            { errors.firstName ? <p className="text-sm text-right text-red-500">{errors.firstName}</p> : "" }
+                            {errors.firstName ? <p className="text-sm text-right text-red-500">{errors.firstName}</p> : ""}
                         </div>
 
                         {/* Last Name */}
@@ -127,7 +127,7 @@ export default function Login() {
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
                             />
-                            { errors.lastName ? <p className="text-sm text-right text-red-500">{errors.lastName}</p> : "" }
+                            {errors.lastName ? <p className="text-sm text-right text-red-500">{errors.lastName}</p> : ""}
                         </div>
 
                         {/* User Name */}
@@ -142,7 +142,7 @@ export default function Login() {
                                 value={userName}
                                 onChange={(e) => setUserName(e.target.value)}
                             />
-                            { errors.userName ? <p className="text-sm text-right text-red-500">{errors.userName}</p> : "" }
+                            {errors.userName ? <p className="text-sm text-right text-red-500">{errors.userName}</p> : ""}
                         </div>
 
                         {/* EMAIL */}
@@ -157,7 +157,7 @@ export default function Login() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
-                            { errors.email ? <p className="text-sm text-right text-red-500">{errors.email}</p> : "" }
+                            {errors.email ? <p className="text-sm text-right text-red-500">{errors.email}</p> : ""}
                         </div>
 
                         {/* PASSWORD */}
@@ -172,7 +172,7 @@ export default function Login() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                            { errors.password ? <p className="text-sm text-right text-red-500">{errors.password}</p> : "" }
+                            {errors.password ? <p className="text-sm text-right text-red-500">{errors.password}</p> : ""}
                         </div>
 
                         {/* Confirm Password */}
@@ -187,19 +187,19 @@ export default function Login() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
-                            { errors.confirmPassword ? <p className="text-sm text-right text-red-500">{errors.confirmPassword}</p> : "" }
+                            {errors.confirmPassword ? <p className="text-sm text-right text-red-500">{errors.confirmPassword}</p> : ""}
                         </div>
 
-                        
+
                     </div>
 
-                    { errors.auth && 
+                    {errors.auth &&
                         <div className="flex justify-center text-red-500">
                             <p>{errors.auth}</p>
                         </div>
                     }
 
-                    { errors.general && 
+                    {errors.general &&
                         <div className="flex justify-center text-red-500">
                             <p>{errors.general}</p>
                         </div>
@@ -207,8 +207,8 @@ export default function Login() {
 
                     {/* SUBMIT */}
                     <div className="flex flex-col justify-center items-center">
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={loading}
                             className={`bg-green-400 py-2 px-8 rounded-md 
                                         ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -218,9 +218,9 @@ export default function Login() {
                     </div>
 
                     <div className="flex justify-between gap-3">
-                        <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div> 
-                            or 
-                        <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div> 
+                        <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div>
+                        or
+                        <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div>
                     </div>
 
                     <button type="button" className="flex justify-center items-center">
