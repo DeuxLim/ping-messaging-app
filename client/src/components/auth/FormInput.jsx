@@ -28,7 +28,7 @@ export default function FormInput({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className={`w-full px-4 py-4 bg-white border rounded-lg text-gray-900 text-sm placeholder:text-gray-400 transition-all duration-200 outline-none
+                className={`w-full px-4 py-4 border rounded-lg text-gray-900 text-sm placeholder:text-gray-400 transition-all duration-200 outline-none
                 ${error ? "border-red-500 focus:ring-red-100" : "border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-100"}`}
             />
             {error && (
