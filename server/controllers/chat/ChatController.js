@@ -191,7 +191,66 @@ const addChatMessage = async (req, res) => {
 
 const searchChat = async (req, res) => {
 	try {
-		res.status(200).json({});
+		const currentUserId = req.user.id; // assume from auth middleware
+		const search = req.query.q?.trim();
+
+		// validate search input
+		if (!search) {
+			return res
+				.status(400)
+				.json({ message: "Search query is required" });
+		}
+
+		// Get existing chats from the queried user
+		const chats = await Chat.find({
+			participants: currentUserId,
+			isGroup: false,
+		})
+			.populate({
+				path: "participants",
+				select: "-refreshToken -refreshTokenExpiresAt -password",
+				match: { fullName: { $regex: search, $options: "i" } }, // filter participant names
+			})
+			.populate({
+				path: "lastMessage",
+				select: "content sender",
+			});
+
+		const filteredChats = chats.filter(
+			(chat) => chat.participants.length > 0 && chat.lastMessage !== null
+		);
+
+		const existingChatUserIds = filteredChats.flatMap((chat) =>
+			chat.participants.map((participant) => participant._id.toString())
+		);
+
+		// Get all users with no existing chat
+		const users = (
+			await User.find({
+				_id: {
+					$ne: currentUserId,
+					$nin: existingChatUserIds,
+				},
+				fullName: {
+					$regex: search,
+					$options: "i",
+				},
+			}).select("fullName userName profilePicture bio isOnline lastSeen")
+		).map((user) => {
+			return { ...user.toObject(), listType: "user" };
+		});
+
+		// Get all group chats
+		const groups = await Chat.find({
+			isGroup: true,
+			chatName: { $regex: search, $options: "i" },
+		});
+
+		return res.status(200).json({
+			existingChats: filteredChats,
+			newUsers: users,
+			groupChats: groups,
+		});
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json({
