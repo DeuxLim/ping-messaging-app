@@ -1,6 +1,32 @@
 import { TbSearch } from "react-icons/tb";
+import { fetchAPI } from "../../../api/fetchApi";
+import useChat from "../../../hooks/useChat"
 
 export default function SidebarSearch() {
+    const { setChatItems, setUserChatItems, setIsSearch } = useChat();
+
+    const handleChatSearch = async (e) => {
+        const searchQuery = e.target.value.trim();
+
+        // If no input, reset search state
+        if (!searchQuery) {
+            setIsSearch(false);
+            setChatItems([]);
+            setUserChatItems([]);
+            return;
+        }
+
+        try {
+            const response = await fetchAPI.get(`/chats/search?q=${encodeURIComponent(searchQuery)}`);
+
+            setChatItems([...response.existingChats, ...response.groupChats]);
+            setUserChatItems(response.newUsers);
+            setIsSearch(true);
+        } catch (error) {
+            console.error("Error searching chats:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-row p-3">
@@ -15,6 +41,7 @@ export default function SidebarSearch() {
                         type="text"
                         placeholder="Search chat..."
                         className="w-full border border-gray-400 py-1 pl-10 rounded-full focus:outline-none"
+                        onChange={handleChatSearch}
                     />
                 </div>
             </div>
