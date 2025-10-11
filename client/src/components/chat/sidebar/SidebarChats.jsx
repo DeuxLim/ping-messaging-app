@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { BiMessageRounded } from "react-icons/bi";
-import { IoPersonAddOutline } from "react-icons/io5"; import useAuth from "../../../hooks/useAuth";
+import { IoPersonAddOutline } from "react-icons/io5";
 import { fetchAPI } from "../../../api/fetchApi";
 import ChatItem from "../global/ChatItem";
-
+import useAuth from "../../../hooks/useAuth";
+import useChat from "../../../hooks/useChat"
+    ;
 export default function SidebarChats() {
+    const { chatItems, setChatItems, userChatItems, setUserChatItems, isSearch } = useChat();
     const { token } = useAuth();
-    const [chatList, setChatList] = useState([]);
-    const [suggestedUsers, setSuggestedUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -26,8 +27,8 @@ export default function SidebarChats() {
                     fetchAPI.get("/users/suggested")
                 ]);
 
-                setChatList(chatsResponse || []);
-                setSuggestedUsers(usersResponse || []);
+                setChatItems(chatsResponse || []);
+                setUserChatItems(usersResponse || []);
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError("Failed to load chats. Please try again.");
@@ -36,8 +37,11 @@ export default function SidebarChats() {
             }
         };
 
-        fetchData();
-    }, [token]);
+        if (!isSearch) {
+            console.log("Fetching all chats again...");
+            fetchData();
+        }
+    }, [token, setChatItems, setUserChatItems, isSearch]);
 
     if (isLoading) {
         return (
@@ -58,35 +62,47 @@ export default function SidebarChats() {
     return (
         <section className="flex-1 p-3">
             {/* Messages Section */}
-            <div className="mb-6">
-                <div className="flex justify-between mb-2">
-                    <div>Messages</div>
-                    <BiMessageRounded />
-                </div>
+            <div className="">
+                {!isSearch ? (
+                    <div className="flex justify-between mb-2">
+                        <div>Messages</div>
+                        <BiMessageRounded />
+                    </div>
+                ) : (
+                    <div className="flex justify-between">
+                        <div>Search</div>
+                        <BiMessageRounded />
+                    </div>
+                )}
+
 
                 <div className="text-sm flex flex-col gap-3">
-                    {chatList.length > 0 ? (
-                        chatList.map((chat) => (
-                            <ChatItem key={chat._id} chatData={chat}/>
+                    {chatItems.length > 0 ? (
+                        chatItems.map((chat) => (
+                            <ChatItem key={chat._id} chatData={chat} />
                         ))
                     ) : (
-                        <div className="p-4 flex justify-center items-center text-lg text-gray-400 h-60">
-                            Looks a little quiet here 👋
-                        </div>
+                        !isSearch && (
+                            <div className="p-4 flex justify-center items-center text-lg text-gray-400 h-60">
+                                Looks a little quiet here 👋
+                            </div>
+                        )
                     )}
                 </div>
             </div>
 
             {/* Suggested Users Section */}
-            {suggestedUsers.length > 0 && (
+            {userChatItems.length > 0 && (
                 <div>
-                    <div className="flex justify-between mb-2">
-                        <div>Suggested</div>
-                        <IoPersonAddOutline />
-                    </div>
+                    {!isSearch ? (
+                        <div className="flex justify-between mb-2">
+                            <div>Suggested</div>
+                            <IoPersonAddOutline />
+                        </div>
+                    ) : ""}
 
                     <div className="text-sm flex flex-col gap-3">
-                        {suggestedUsers.map((user) => (
+                        {userChatItems.map((user) => (
                             <ChatItem key={user._id} chatData={user} />
                         ))}
                     </div>
