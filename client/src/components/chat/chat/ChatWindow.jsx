@@ -23,6 +23,8 @@ export default function ChatWindow() {
             const response = await fetchAPI.post(`/chats`, { id: chatId });
             if (response?.error) {
                 console.log(response.error);
+                navigate("/chats");
+                return;
             }
 
             if (response?.data?.isNew) {

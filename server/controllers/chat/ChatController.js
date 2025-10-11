@@ -83,7 +83,7 @@ const findOrCreateChat = async (req, res) => {
 		 */
 		const selectedUser = await User.findById(id);
 		if (!selectedUser) {
-			return res.status(404).json({
+			return res.status(200).json({
 				error: {
 					message: "Chat not found",
 				},
@@ -167,7 +167,7 @@ const getChatMessages = async (req, res) => {
 const addChatMessage = async (req, res) => {
 	try {
 		const chat = await Chat.findById(req.params.id);
-		if (!chat) return res.status(404).json({ message: "Chat not found" });
+		if (!chat) return res.status(200).json({ message: "Chat not found" });
 
 		const newMessage = await Message.create({
 			chat: chat._id,
