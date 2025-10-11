@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import User from "../../models/user.js";
-import Friendship from "../../models/friendship.js";
 import Chat from "../../models/chat.js";
 import Message from "../../models/message.js";
 
@@ -22,175 +21,190 @@ import Message from "../../models/message.js";
 // 1. Chat collection
 // 2. Chat participants
 
-class ChatController {
-	findOrCreateChat = async (req, res) => {
-		try {
-			// Get request ID
-			const id = req.body.id;
-			if (!mongoose.Types.ObjectId.isValid(id)) {
-				return res.status(400).json({ message: "Invalid ID format" });
-			}
-
-			// Get current user
-			const currentUser = await User.findOne({ email: req.user.email });
-
-			/**
-			 * Handle when current user selects a Chat-List Item
-			 */
-			// Check first if chat exists
-			const existingChat = await Chat.findById(id).populate(
-				"participants",
-				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
-			);
-			// Return existing chat
-			if (existingChat) {
-				return res.status(200).json({
-					message: "chat exists",
-					data: {
-						isNew: false,
-						chat: existingChat,
-					},
-				});
-			}
-
-			/**
-			 * Handle when current user selects a USER-List Item (NON Chat-List Item)
-			 * with existing chat
-			 */
-			// Check if chat exists with the selected user
-			let existingChatByUser = await Chat.findOne({
-				isGroup: false,
-				participants: {
-					$all: [id, currentUser._id],
-					$size: 2,
-				},
-			});
-			// Return existing chat
-			if (existingChatByUser) {
-				const populatedExistingChat = await existingChatByUser.populate(
-					"participants",
-					"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
-				);
-				return res.status(200).json({
-					message: "chat exists",
-					data: {
-						isNew: false,
-						chat: populatedExistingChat,
-					},
-				});
-			}
-
-			/**
-			 * Handle when current user selects a chat/user without existing chat
-			 */
-			const selectedUser = await User.findById(id);
-			if (!selectedUser) {
-				return res.status(404).json({
-					error: {
-						message: "Chat not found",
-					},
-				});
-			}
-
-			const chatParticipantsIds = [id, currentUser._id];
-
-			// Create Chat
-			const newChat = await Chat.create({
-				isGroup: false,
-				participants: chatParticipantsIds,
-				chatName: null,
-				lastMessage: null,
-			});
-
-			const populatedChat = await newChat.populate(
-				"participants",
-				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
-			);
-
-			return res.status(200).json({
-				message: "created new chat",
-				data: {
-					isNew: true,
-					chat: populatedChat,
-				},
-			});
-		} catch (error) {
-			console.error("Error fetching chat:", error);
-			return res.status(500).json({
-				success: false,
-				message: "Failed to create chat",
-				error,
-			});
+const findOrCreateChat = async (req, res) => {
+	try {
+		// Get request ID
+		const id = req.body.id;
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Invalid ID format" });
 		}
-	};
 
-	getUserChats = async (req, res) => {
+		// Get current user
 		const currentUser = await User.findOne({ email: req.user.email });
 
-		const existingChats = await Chat.find({
-			participants: currentUser._id,
-		})
-			.populate(
+		/**
+		 * Handle when current user selects a Chat-List Item
+		 */
+		// Check first if chat exists
+		const existingChat = await Chat.findById(id).populate(
+			"participants",
+			"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+		);
+		// Return existing chat
+		if (existingChat) {
+			return res.status(200).json({
+				message: "chat exists",
+				data: {
+					isNew: false,
+					chat: existingChat,
+				},
+			});
+		}
+
+		/**
+		 * Handle when current user selects a USER-List Item (NON Chat-List Item)
+		 * with existing chat
+		 */
+		// Check if chat exists with the selected user
+		let existingChatByUser = await Chat.findOne({
+			isGroup: false,
+			participants: {
+				$all: [id, currentUser._id],
+				$size: 2,
+			},
+		});
+		// Return existing chat
+		if (existingChatByUser) {
+			const populatedExistingChat = await existingChatByUser.populate(
 				"participants",
-				"-refreshToken -refreshTokenExpiresAt -password"
-			)
-			.populate("lastMessage")
-			.sort({ updatedAt: -1 })
-			.lean();
-
-		// Filter out chats without lastMessage
-		const chats = existingChats
-			.filter((chat) => chat.lastMessage != null)
-			.map((chat) => {
-				return { ...chat, listType: "chat" };
-			});
-
-		return res.status(200).json(chats);
-	};
-
-	getChatMessages = async (req, res) => {
-		try {
-			const messages = await Message.find({ chat: req.params.id })
-				.populate("chat")
-				.populate("sender");
-
-			if (messages.length === 0) {
-				return res.status(200).json({
-					message: "No messages found for this chat.",
-				});
-			}
-
-			return res.status(200).json(messages);
-		} catch (error) {
-			console.log(error);
-		}
-	};
-
-	addChatMessage = async (req, res) => {
-		try {
-			const chat = await Chat.findById(req.params.id);
-			if (!chat)
-				return res.status(404).json({ message: "Chat not found" });
-
-			const newMessage = await Message.create({
-				chat: chat._id,
-				sender: req.user.id,
-				text: req.body.message,
-			});
-
-			await Chat.findByIdAndUpdate(chat._id, {
-				lastMessage: newMessage._id,
-			});
-
-			return res.status(200).json(newMessage);
-		} catch (error) {
-			console.error(error);
-			return res.status(500).json({
-				message: "Failed to add message",
-				error: error.message,
+				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+			);
+			return res.status(200).json({
+				message: "chat exists",
+				data: {
+					isNew: false,
+					chat: populatedExistingChat,
+				},
 			});
 		}
-	};
-}
 
-export default new ChatController();
+		/**
+		 * Handle when current user selects a chat/user without existing chat
+		 */
+		const selectedUser = await User.findById(id);
+		if (!selectedUser) {
+			return res.status(404).json({
+				error: {
+					message: "Chat not found",
+				},
+			});
+		}
+
+		const chatParticipantsIds = [id, currentUser._id];
+
+		// Create Chat
+		const newChat = await Chat.create({
+			isGroup: false,
+			participants: chatParticipantsIds,
+			chatName: null,
+			lastMessage: null,
+		});
+
+		const populatedChat = await newChat.populate(
+			"participants",
+			"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+		);
+
+		return res.status(200).json({
+			message: "created new chat",
+			data: {
+				isNew: true,
+				chat: populatedChat,
+			},
+		});
+	} catch (error) {
+		console.error("Error fetching chat:", error);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to create chat",
+			error,
+		});
+	}
+};
+
+const getUserChats = async (req, res) => {
+	const currentUser = await User.findOne({ email: req.user.email });
+
+	const existingChats = await Chat.find({
+		participants: currentUser._id,
+	})
+		.populate(
+			"participants",
+			"-refreshToken -refreshTokenExpiresAt -password"
+		)
+		.populate("lastMessage")
+		.sort({ updatedAt: -1 })
+		.lean();
+
+	// Filter out chats without lastMessage
+	const chats = existingChats
+		.filter((chat) => chat.lastMessage != null)
+		.map((chat) => {
+			return { ...chat, listType: "chat" };
+		});
+
+	return res.status(200).json(chats);
+};
+
+const getChatMessages = async (req, res) => {
+	try {
+		const messages = await Message.find({ chat: req.params.id })
+			.populate("chat")
+			.populate("sender");
+
+		if (messages.length === 0) {
+			return res.status(200).json({
+				message: "No messages found for this chat.",
+			});
+		}
+
+		return res.status(200).json(messages);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const addChatMessage = async (req, res) => {
+	try {
+		const chat = await Chat.findById(req.params.id);
+		if (!chat) return res.status(404).json({ message: "Chat not found" });
+
+		const newMessage = await Message.create({
+			chat: chat._id,
+			sender: req.user.id,
+			text: req.body.message,
+		});
+
+		await Chat.findByIdAndUpdate(chat._id, {
+			lastMessage: newMessage._id,
+		});
+
+		return res.status(200).json(newMessage);
+	} catch (error) {
+		console.error(error);
+		return res.status(500).json({
+			message: "Failed to add message",
+			error: error.message,
+		});
+	}
+};
+
+const searchChat = async (req, res) => {
+	try {
+		res.status(200).json({});
+	} catch (error) {
+		console.error(error);
+		return res.status(500).json({
+			message: "Failed to search chat",
+			error: error.message,
+		});
+	}
+};
+
+export default {
+	findOrCreateChat,
+	getUserChats,
+	getChatMessages,
+	addChatMessage,
+	searchChat,
+};
