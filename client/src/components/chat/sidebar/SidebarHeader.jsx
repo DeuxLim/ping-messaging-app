@@ -4,6 +4,7 @@ import { TbMessagePlus } from "react-icons/tb";
 import { LuMessageCirclePlus } from "react-icons/lu";
 import { IoPersonAddSharp } from "react-icons/io5";
 import useChat from "../../../hooks/useChat.js";
+import { useNavigate } from "react-router"
 
 export default function SidebarHeader() {
 	const { currentUser } = useAuth();
@@ -11,6 +12,7 @@ export default function SidebarHeader() {
 	const [isToggled, setIsToggled] = useState(false);
 	const settingsMenuRef = useRef(null);
 	const settingsButtonRef = useRef(null);
+	const navigate = useNavigate();
 
 	const handleAddFriend = () => {
 		setActiveView("SearchUser");
@@ -35,9 +37,13 @@ export default function SidebarHeader() {
 
 	return (
 		<>
-			<header className="flex p-3">
-				<div className="flex gap-4 justify-between w-full">
-					<div className="flex gap-4 justify-start">
+			<header className="flex">
+				<div
+					className="flex justify-between w-full"
+					onClick={() => navigate("/profile")}
+				>
+					<div
+						className="flex gap-4 justify-start p-3 rounded-md hover:bg-gray-100">
 						{/* Profile pic */}
 						<div className="border-1 border-gray-300 flex justify-center items-center rounded-full w-15 h-15">
 							IMG
@@ -52,7 +58,7 @@ export default function SidebarHeader() {
 
 					{/* New message icon */}
 
-					<div className="flex relative">
+					<div className="flex relative p-3">
 						<button
 							type="button"
 							className="text-3xl text-gray-500"
