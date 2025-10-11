@@ -7,10 +7,11 @@ export default function ChatProvider({ children }) {
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [isDesktop, setIsDesktop] = useState(false);
     const [activeView, setActiveView] = useState(null);
-    const [currentChatData, setCurrentChatData] = useState({
-
-    });
+    const [currentChatData, setCurrentChatData] = useState({});
     const [currentChatMessages, setCurrentChatMessages] = useState([]);
+    const [chatItems, setChatItems] = useState([]);
+    const [userChatItems, setUserChatItems] = useState([]);
+    const [isSearch, setIsSearch] = useState(false);
 
     const selectChat = useCallback((data) => {
         if (!data || !data.participants) return;
@@ -53,6 +54,12 @@ export default function ChatProvider({ children }) {
         currentChatData,
         isDesktop,
         selectChat,
+        chatItems,
+        setChatItems,
+        userChatItems,
+        setUserChatItems,
+        isSearch,
+        setIsSearch
     };
 
     return (
