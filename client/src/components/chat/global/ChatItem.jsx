@@ -21,7 +21,7 @@ export default function ChatItem({ chatData }) {
             };
         }
 
-        const otherUser = chatData.participants.find(
+        const otherUser = chatData.participants?.find(
             (p) => p._id !== currentUser._id
         );
         return {
