@@ -15,6 +15,9 @@ import MainWindow from "../components/chat/MainWindow";
 import ChatWindow from "../components/chat/chat/ChatWindow";
 import SearchUser from "../components/chat/friend/SearchUser";
 
+/* Settings */
+import Profile from "../pages/Profile";
+
 /* Context */
 import ChatProvider from "../contexts/chat/ChatProvider";
 
@@ -60,5 +63,9 @@ export const routes = createBrowserRouter([
                 ] 
             }
         ]
+    },
+    {
+        path : "/profile",
+        element : <Profile/>
     }
 ]);
