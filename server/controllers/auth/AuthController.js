@@ -91,8 +91,13 @@ const login = async (req, res) => {
 		_id: user._id,
 		firstName: user.firstName,
 		lastName: user.lastName,
+		fullName: user.fullName,
 		userName: user.userName,
 		email: user.email,
+		profilePicture: user.profilePicture,
+		bio: user.bio,
+		isOnline: user.isOnline,
+		lastSeen: user.lastSeen,
 	};
 
 	// Send back response
@@ -170,8 +175,13 @@ const refreshTokens = async (req, res) => {
 		_id: user._id,
 		firstName: user.firstName,
 		lastName: user.lastName,
+		fullName: user.fullName,
 		userName: user.userName,
 		email: user.email,
+		profilePicture: user.profilePicture,
+		bio: user.bio,
+		isOnline: user.isOnline,
+		lastSeen: user.lastSeen,
 	};
 
 	return res.status(200).json({
