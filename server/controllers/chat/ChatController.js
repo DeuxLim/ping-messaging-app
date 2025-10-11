@@ -129,7 +129,6 @@ class ChatController {
 
 		const existingChats = await Chat.find({
 			participants: currentUser._id,
-			lastMessage: { $ne: null },
 		})
 			.populate(
 				"participants",
@@ -139,18 +138,22 @@ class ChatController {
 			.sort({ updatedAt: -1 })
 			.lean();
 
-		const chats = existingChats.map((chat) => {
-			return { ...chat, listType: "chat" };
-		});
+		// Filter out chats without lastMessage
+		const chats = existingChats
+			.filter((chat) => chat.lastMessage != null)
+			.map((chat) => {
+				return { ...chat, listType: "chat" };
+			});
+
 		return res.status(200).json(chats);
 	};
 
 	getChatMessages = async (req, res) => {
 		try {
 			const messages = await Message.find({ chat: req.params.id })
-			.populate("chat")
-			.populate("sender");
-			
+				.populate("chat")
+				.populate("sender");
+
 			if (messages.length === 0) {
 				return res.status(200).json({
 					message: "No messages found for this chat.",

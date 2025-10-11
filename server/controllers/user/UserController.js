@@ -5,7 +5,9 @@ import Chat from "../../models/chat.js";
 const index = async (req, res) => {
 	try {
 		const currentUserId = req.user.id; // From auth middleware
-        res.status(200).json({message : "This endpoint is currently under development"});
+		res.status(200).json({
+			message: "This endpoint is currently under development",
+		});
 	} catch (error) {
 		console.error("Error fetching users:", error);
 		res.status(500).json({ message: "Failed to fetch users" });
@@ -17,11 +19,15 @@ const suggested = async (req, res) => {
 	try {
 		const currentUserId = req.user.id;
 
-        // Find all chats where current user is participant
-		const existingChats = await Chat.find({
-			participants: currentUserId,
-			lastMessage: { $ne: null }
-		}).select("participants");
+		// Find all chats where current user is participant
+		const existingChats = (
+			await Chat.find({
+				participants: currentUserId,
+			})
+				.select("participants")
+				.populate("lastMessage")
+				.lean()
+		).filter((chat) => chat.lastMessage != null);
 
 		// Extract user IDs from those chats
 		const chattedUserIds = existingChats.flatMap((chat) =>
@@ -36,15 +42,13 @@ const suggested = async (req, res) => {
 				$nin: [...chattedUserIds, currentUserId],
 			},
 		})
-			.select(
-				"fullName userName profilePicture bio isOnline lastSeen"
-			)
+			.select("fullName userName profilePicture bio isOnline lastSeen")
 			.limit(10)
 			.sort({ createdAt: -1 });
 
 		// Add listType for front-end logic
 		const users = suggestedUsers.map((user) => {
-			return {...user.toObject(), listType : "user"};
+			return { ...user.toObject(), listType: "user" };
 		});
 
 		res.status(200).json(users);
