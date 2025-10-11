@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router";
 import useAuth from "../../../hooks/useAuth";
+import useChat from "../../../hooks/useChat";
 
 export default function ChatItem({ chatData }) {
+    const { setIsSearch } = useChat(); 
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -52,6 +54,7 @@ export default function ChatItem({ chatData }) {
     };
 
     const handleChatSelect = () => {
+        setIsSearch(false);
         navigate(`/chats/${chatData._id}`, { replace: true })
     }
 
@@ -81,7 +84,7 @@ export default function ChatItem({ chatData }) {
 
                 <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600 truncate">
-                        {chatData.lastMessage?.text || "No messages yet"}
+                        {chatData.lastMessage?.text}
                     </span>
                     {chatData.status && (
                         <span className="text-sm text-gray-500 ml-2 flex-shrink-0">

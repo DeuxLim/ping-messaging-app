@@ -60,9 +60,9 @@ export default function SidebarChats() {
     }
 
     return (
-        <section className="flex-1 p-3">
+        <section className="flex-1 p-3 flex flex-col gap-3">
             {/* Messages Section */}
-            <div className="">
+            <div>
                 {!isSearch ? (
                     <div className="flex justify-between mb-2">
                         <div>Messages</div>
