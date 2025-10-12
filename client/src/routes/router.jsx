@@ -23,49 +23,49 @@ import ChatProvider from "../contexts/chat/ChatProvider";
 
 export const routes = createBrowserRouter([
     {
-        path : "/auth",
-        element : <StartAuth/>,
+        path: "/auth",
+        element: <StartAuth />,
         children: [
-            { path : "login", element : <Login/> },
-            { path : "register", element : <Register/> },
-            { path : "forgot-password", element : <ForgotPassword/> },
+            { path: "login", element: <Login /> },
+            { path: "register", element: <Register /> },
+            { path: "forgot-password", element: <ForgotPassword /> },
         ]
     },
     {
-        element : <ProtectedRoute/>,
-        children : [
-            { 
-                path : "/chats", 
-                element : (
+        element: <ProtectedRoute />,
+        children: [
+            {
+                path: "/chats",
+                element: (
                     <ChatProvider>
-                        <ChatApp/>
+                        <ChatApp />
                     </ChatProvider>
                 ),
-                children : [
+                children: [
                     {
-                        path : "",
-                        element : <MainWindow/>,
-                        children : [
+                        path: "",
+                        element: <MainWindow />,
+                        children: [
                             {
-                                index : true,
-                                element : <Start/>
+                                index: true,
+                                element: <Start />
                             },
                             {
-                                path : ":chatId",
-                                element : <ChatWindow/>
+                                path: ":chatId",
+                                element: <ChatWindow />
                             },
                             {
-                                path : "search-user",
-                                element : <SearchUser/>
+                                path: "search-user",
+                                element: <SearchUser />
                             }
                         ]
                     }
-                ] 
+                ]
+            },
+            {
+                path: "/profile",
+                element: <Profile />
             }
         ]
     },
-    {
-        path : "/profile",
-        element : <Profile/>
-    }
 ]);
