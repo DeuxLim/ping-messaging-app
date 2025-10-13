@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import ChatContext from "./ChatContext.js";
 import useAuth from "../../hooks/useAuth";
+import { io } from "socket.io-client";
 
 export default function ChatProvider({ children }) {
     const { currentUser } = useAuth();
@@ -12,6 +13,7 @@ export default function ChatProvider({ children }) {
     const [chatItems, setChatItems] = useState([]);
     const [userChatItems, setUserChatItems] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
+    const [socket, setSocket] = useState(null);
 
     const selectChat = useCallback((data) => {
         if (!data || !data.participants) return;
@@ -47,6 +49,14 @@ export default function ChatProvider({ children }) {
         return () => desktopQuery.removeEventListener("change", handler);
     }, []);
 
+    useEffect(() => {
+        const socket = io("http://localhost:5001", {
+            withCredentials: true,
+        });
+
+        setSocket(socket);
+    }, []);
+
     const values = {
         activeView, setActiveView,
         sidebarVisible, setSidebarVisible,
@@ -59,7 +69,8 @@ export default function ChatProvider({ children }) {
         userChatItems,
         setUserChatItems,
         isSearch,
-        setIsSearch
+        setIsSearch,
+        socket,
     };
 
     return (
