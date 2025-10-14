@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import { Server } from "socket.io";
 import app from "./app.js";
+import { socketHandler } from "./socket.js";
 
 /* Initialize express */
 const httpServer = createServer(app);
@@ -13,9 +14,7 @@ const io = new Server(httpServer, {
 });
 
 /* Socket connection */
-io.on("connection", (socket) => {
-	console.log("🟢 Socket connected:", socket.id);
-});
+socketHandler(io);
 
 /* Listen for requests */
 httpServer.listen(5001);
