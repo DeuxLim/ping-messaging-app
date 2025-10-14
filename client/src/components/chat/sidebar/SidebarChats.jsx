@@ -38,7 +38,6 @@ export default function SidebarChats() {
         };
 
         if (!isSearch) {
-            console.log("Fetching all chats again...");
             fetchData();
         }
     }, [token, setChatItems, setUserChatItems, isSearch]);
