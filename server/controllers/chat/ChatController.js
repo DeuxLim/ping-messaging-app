@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import User from "../../models/user.js";
 import Chat from "../../models/chat.js";
 import Message from "../../models/message.js";
+import { addMessageToChat } from "./../../services/messageService.js";
 
 // this should expect to receive the following :
 // 1. type of chat : private or group
@@ -164,28 +165,19 @@ const getChatMessages = async (req, res) => {
 	}
 };
 
-const addChatMessage = async (req, res) => {
+export const addChatMessage = async (req, res) => {
 	try {
-		const chat = await Chat.findById(req.params.id);
-		if (!chat) return res.status(200).json({ message: "Chat not found" });
-
-		const newMessage = await Message.create({
-			chat: chat._id,
-			sender: req.user.id,
+		const newMessage = await addMessageToChat({
+			chatId: req.params.id,
+			senderId: req.user.id,
 			text: req.body.message,
 		});
-
-		await Chat.findByIdAndUpdate(chat._id, {
-			lastMessage: newMessage._id,
-		});
-
 		return res.status(200).json(newMessage);
 	} catch (error) {
 		console.error(error);
-		return res.status(500).json({
-			message: "Failed to add message",
-			error: error.message,
-		});
+		return res
+			.status(500)
+			.json({ message: "Failed to add message", error: error.message });
 	}
 };
 
