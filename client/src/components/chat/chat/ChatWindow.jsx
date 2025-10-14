@@ -12,7 +12,7 @@ import { useNavigate, useParams } from "react-router";
 
 export default function ChatWindow() {
     const { token } = useAuth();
-    const { selectChat, currentChatData} = useChat();
+    const { selectChat, currentChatData } = useChat();
     const { chatId } = useParams();
     const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ export default function ChatWindow() {
 
         getChat();
     }, [selectChat, token, chatId, navigate]);
-
+    
     // Guard clause AFTER all hooks
     if (Object.keys(currentChatData).length === 0) {
         return <div>Loading chat data...</div>;
