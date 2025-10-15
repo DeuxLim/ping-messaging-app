@@ -26,7 +26,7 @@ export const routes = createBrowserRouter([
         path: "/auth",
         element: <StartAuth />,
         children: [
-            { path: "login", element: <Login /> },
+            { path: "", element: <Login /> },
             { path: "register", element: <Register /> },
             { path: "forgot-password", element: <ForgotPassword /> },
         ]
