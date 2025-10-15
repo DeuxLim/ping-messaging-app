@@ -1,46 +1,16 @@
-import { useEffect, useState } from "react";
 import { BiMessageRounded } from "react-icons/bi";
 import { IoPersonAddOutline } from "react-icons/io5";
-import { fetchAPI } from "../../../api/fetchApi";
 import ChatItem from "../global/ChatItem";
-import useAuth from "../../../hooks/useAuth";
-import useChat from "../../../hooks/useChat"
-    ;
+import useChat from "../../../hooks/useChat";
+
 export default function SidebarChats() {
-    const { chatItems, setChatItems, userChatItems, setUserChatItems, isSearch } = useChat();
-    const { token } = useAuth();
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        if (!token) return;
-        fetchAPI.setAuth(token);
-
-        const fetchData = async () => {
-            setIsLoading(true);
-            setError(null);
-
-            try {
-                // Fetch both in parallel
-                const [chatsResponse, usersResponse] = await Promise.all([
-                    fetchAPI.get("/chats"),
-                    fetchAPI.get("/users/suggested")
-                ]);
-
-                setChatItems(chatsResponse || []);
-                setUserChatItems(usersResponse || []);
-            } catch (err) {
-                console.error("Error fetching data:", err);
-                setError("Failed to load chats. Please try again.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (!isSearch) {
-            fetchData();
-        }
-    }, [token, setChatItems, setUserChatItems, isSearch]);
+    const {
+        chatItems,
+        userChatItems,
+        isSearch,
+        isLoading,
+        error,
+    } = useChat();
 
     if (isLoading) {
         return (
@@ -74,7 +44,6 @@ export default function SidebarChats() {
                     </div>
                 )}
 
-
                 <div className="text-sm flex flex-col gap-3">
                     {chatItems.length > 0 ? (
                         chatItems.map((chat) => (
@@ -93,12 +62,12 @@ export default function SidebarChats() {
             {/* Suggested Users Section */}
             {userChatItems.length > 0 && (
                 <div>
-                    {!isSearch ? (
+                    {!isSearch && (
                         <div className="flex justify-between mb-2">
                             <div>Suggested</div>
                             <IoPersonAddOutline />
                         </div>
-                    ) : ""}
+                    )}
 
                     <div className="text-sm flex flex-col gap-3">
                         {userChatItems.map((user) => (
