@@ -1,56 +1,71 @@
-import { useCallback, useState } from "react";
-import AuthContext from "./AuthContext.js";
+import { useCallback, useEffect, useState } from "react";
+import AuthContext from "./AuthContext";
 import { fetchAPI } from "../../api/fetchApi";
 
 export default function AuthProvider({ children }) {
-    const [currentUser, setCurrentUser] = useState({});
-    const [token, setToken] = useState("");
-    const [ready, setReady] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [token, setToken] = useState(null);
+    const [isUserReady, setIsUserReady] = useState(false);
 
-    const login = (user, token) => {
-        if (!user || !token) {
-            console.error('Login failed: Invalid user data or token');
+    const login = (user, accessToken) => {
+        if (!user || !accessToken) {
+            console.error("Login failed: invalid user or token");
             return;
         }
-
         setCurrentUser(user);
-        setToken(token);
-        setReady(true);
-    }
+        setToken(accessToken);
+    };
 
     const logout = async () => {
         try {
-            await fetchAPI.post('/auth/logout', null, { credentials: 'include' });
-
-            setCurrentUser({});
-            setToken("");
-            setReady(true);
-        } catch (error) {
-            console.log(error);
-            setReady(true);
+            await fetchAPI.post("/auth/logout", null, { credentials: "include" });
+        } catch (err) {
+            console.error("Logout error:", err);
+        } finally {
+            setCurrentUser(null);
+            setToken(null);
         }
-    }
+    };
 
     const refreshToken = useCallback(async () => {
         try {
-            const response = await fetchAPI.post('/auth/refresh', null, { credentials: 'include' });
+            const res = await fetchAPI.post("/auth/refresh", null, { credentials: "include" });
+            if (!res?.user || !res?.accessToken) throw new Error("Invalid refresh data");
 
-            if (!response.user || !response.accessToken) {
-                throw new Error('Invalid response data');
-            }
-
-            setCurrentUser(response.user);
-            setToken(response.accessToken);
-        } catch (error) {
-            console.error('Token refresh failed:', error);
+            setCurrentUser(res.user);
+            setToken(res.accessToken);
+        } catch (err) {
+            console.error("Token refresh failed:", err);
+            setCurrentUser(null);
+            setToken(null);
         } finally {
-            setReady(true);
+            setIsUserReady(true);
         }
     }, []);
 
-    return (
-        <AuthContext.Provider value={{ currentUser, token, login, logout, refreshToken, ready, isAuthenticated: Boolean(currentUser && token) }} >
-            {children}
-        </AuthContext.Provider>
-    );
+    useEffect(() => {
+        const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password"];
+        const path = window.location.pathname;
+
+        if (publicRoutes.includes(path)) {
+            setIsUserReady(true); // mark ready so public pages load
+            return;
+        }
+
+        refreshToken();
+    }, [refreshToken]);
+
+    const value = {
+        currentUser,
+        token,
+        isUserReady,
+        login,
+        logout,
+        refreshToken,
+        isAuthenticated: Boolean(currentUser && token),
+    };
+
+    if (!isUserReady) return <div>Loading...</div>;
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
