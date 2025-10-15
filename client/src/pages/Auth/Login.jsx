@@ -21,13 +21,11 @@ export default function Login() {
 
     function validateForm() {
         const newErrors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!email.trim()) {
             newErrors.email = "Email cannot be empty";
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email.trim())) {
+        } else if (!emailRegex.test(email.trim())) {
             newErrors.email = "Enter a valid email address";
         }
 
@@ -53,8 +51,9 @@ export default function Login() {
                 { credentials: 'include' }
             );
 
-            if (responseJson.error?.general) {
-                setErrors(responseJson.error);
+            if (responseJson.error) {
+                const message = responseJson.error.general || responseJson.error.message || "Login failed";
+                setErrors({ general: message });
                 return;
             }
 
