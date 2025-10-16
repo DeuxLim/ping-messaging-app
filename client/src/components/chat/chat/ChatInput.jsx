@@ -4,14 +4,14 @@ import useAuth from "../../../hooks/useAuth";
 import useSocket from "../../../hooks/useSocket"
 
 export default function ChatInput() {
-	const [chatMessage, setChatMessage] = useState("");
+	const [message, setMessage] = useState("");
 	const { currentChatData } = useChat();
 	const { currentUser } = useAuth();
 	const { socket } = useSocket();
 
 	const handleSendMessage = (e) => {
 		e.preventDefault();
-		if (!chatMessage.trim()) return;
+		if (!message.trim()) return;
 
 		if (!currentUser?._id || !currentChatData?._id) {
 			return;
@@ -20,10 +20,10 @@ export default function ChatInput() {
 		socket.emit("sendMessage", {
 			chatId: currentChatData._id,
 			senderId: currentUser._id,
-			text: chatMessage,
+			text: message,
 		});
 
-		setChatMessage("");
+		setMessage("");
 	};
 
 	return (
@@ -35,13 +35,13 @@ export default function ChatInput() {
 						placeholder="Aa"
 						name="chatInput"
 						className="flex-1 p-4 rounded-xl border-1 border-gray-400"
-						value={chatMessage}
-						onChange={(e) => setChatMessage(e.target.value)}
+						value={message}
+						onChange={(e) => setMessage(e.target.value)}
 					/>
 					<button
 						type="submit"
 						className="w-16 flex items-center justify-center rounded-xl border-1 border-gray-400"
-						disabled={!chatMessage.trim()}
+						disabled={!message.trim()}
 					>
 						Send
 					</button>
