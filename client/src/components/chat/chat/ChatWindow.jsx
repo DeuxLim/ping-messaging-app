@@ -9,6 +9,7 @@ import ChatBoxHeader from "./ChatBoxHeader";
 import ChatContent from "./ChatContent";
 import ChatInput from "./ChatInput";
 import { useNavigate, useParams } from "react-router";
+import ActiveChatDisplayProvider from "../../../contexts/chat/active-chat-display/ActiveChatDisplayProvider";
 
 export default function ChatWindow() {
     const { token } = useAuth();
@@ -36,7 +37,7 @@ export default function ChatWindow() {
 
         getChat();
     }, [selectChat, token, chatId, navigate]);
-    
+
     // Guard clause AFTER all hooks
     if (Object.keys(currentChatData).length === 0) {
         return <div>Loading chat data...</div>;
@@ -45,15 +46,17 @@ export default function ChatWindow() {
     return (
         <>
             <div className="flex flex-col h-full">
+                
+                <ActiveChatDisplayProvider>
+                    {/* CHAT BOX HEADER */}
+                    <ChatBoxHeader />
 
-                {/* CHAT BOX HEADER */}
-                <ChatBoxHeader />
+                    {/* CHAT CONTENT */}
+                    <ChatContent />
 
-                {/* CHAT CONTENT */}
-                <ChatContent />
-
-                {/* CHAT INPUTS */}
-                <ChatInput />
+                    {/* CHAT INPUTS */}
+                    <ChatInput />
+                </ActiveChatDisplayProvider>
 
             </div>
         </>
