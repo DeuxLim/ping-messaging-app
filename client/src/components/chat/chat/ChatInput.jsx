@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 import useSocket from "../../../hooks/useSocket"
@@ -25,6 +25,33 @@ export default function ChatInput() {
 
 		setMessage("");
 	};
+
+	useEffect(() => {
+		if (!socket || !currentChatData || !currentUser) return;
+
+		if (message.trim()) {
+			socket.emit("typing:start", {
+				chatId: currentChatData._id,
+				userId: currentUser._id,
+			});
+
+			// Start 3-second timer for "stop typing"
+			const timeout = setTimeout(() => {
+				socket.emit("typing:stop", {
+					chatId: currentChatData._id,
+					userId: currentUser._id,
+				});
+			}, 1500);
+
+			return () => clearTimeout(timeout);
+		} else {
+			socket.emit("typing:stop", {
+				chatId: currentChatData._id,
+				userId: currentUser._id,
+			});
+		}
+
+	}, [message, socket, currentChatData, currentUser]);
 
 	return (
 		<>

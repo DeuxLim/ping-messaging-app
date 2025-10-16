@@ -8,12 +8,13 @@ import useSocket from '../../../hooks/useSocket';
 
 export default function ChatContent() {
     const { token } = useAuth();
-    const { setCurrentChatMessages, currentChatMessages } = useChat();
+    const { setCurrentChatMessages, currentChatMessages, typingChats, currentChatData } = useChat();
     const { socket } = useSocket();
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const { chatId } = useParams();
     const messagesEndRef = useRef();
+    const isTyping = !!typingChats[currentChatData._id];
 
     useEffect(() => {
         const fetchCurrentChatMessages = async () => {
@@ -63,6 +64,12 @@ export default function ChatContent() {
                     {currentChatMessages.length > 0 && currentChatMessages.map((chatMessage) => (
                         <ChatMessage key={chatMessage._id} data={chatMessage} />
                     ))}
+                    {
+                        isTyping &&
+                        <div className=''>
+                            user is typing...
+                        </div>
+                    }
                 </div>
                 <div ref={messagesEndRef} />
             </section>

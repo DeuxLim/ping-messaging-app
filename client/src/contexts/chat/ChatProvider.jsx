@@ -22,6 +22,7 @@ export default function ChatProvider({ children }) {
     const [onlineUsers, setOnlineUsers] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [typingChats, setTypingChats] = useState({});
 
     // ---- Select Chat ----
     const selectChat = useCallback(
@@ -75,6 +76,21 @@ export default function ChatProvider({ children }) {
             }));
         });
 
+        socket.on("typing:update", ({ chatId, userId, status }) => {
+            setTypingChats(prev => {
+                const typingUsers = new Set(prev[chatId] || []);
+
+                status === "typing"
+                    ? typingUsers.add(userId)
+                    : typingUsers.delete(userId);
+
+                return {
+                    ...prev,
+                    [chatId]: typingUsers.size ? [...typingUsers] : undefined,
+                };
+            });
+        });
+
         return () => {
             socket.off("onlineUsers:list");
             socket.off("presence:update");
@@ -123,6 +139,7 @@ export default function ChatProvider({ children }) {
         currentChatMessages,
         setCurrentChatMessages,
         selectChat,
+        typingChats,
 
         // fetched lists
         chatItems,
