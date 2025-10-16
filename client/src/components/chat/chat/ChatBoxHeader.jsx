@@ -4,16 +4,17 @@ import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 
 export default function ChatBoxHeader() {
-	const { currentChatData } = useChat();
+	const { currentChatData, onlineUsers } = useChat();
 	const { currentUser } = useAuth();
 
 	let chatName = "";
+	let otherUser = {};
 	if (!currentChatData.isGroup) {
 		if (currentChatData.isSelfChat) {
 			const self = currentChatData.participants[0];
 			chatName = `${self.firstName} ${self.lastName}`;
 		} else {
-			const otherUser = currentChatData?.participants?.find(participant => participant._id !== currentUser._id);
+			otherUser = currentChatData?.participants?.find(participant => participant._id !== currentUser._id);
 			chatName = `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`;
 		}
 	} else {
@@ -21,7 +22,10 @@ export default function ChatBoxHeader() {
 	}
 
 	// handle chat active status logic
-	let activeStatus = "Offline";
+	let activeStatus = "offline";
+	if (Object.hasOwn(onlineUsers, otherUser._id)) {
+		activeStatus = onlineUsers[otherUser._id];
+	}
 
 	return (
 		<>
