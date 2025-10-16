@@ -21,6 +21,12 @@ export default function ChatContent() {
             try {
                 fetchAPI.setAuth(token);
                 const response = await fetchAPI.get(`/chats/${chatId}`);
+
+                if(response.error){
+                    setCurrentChatMessages([]);
+                    return;
+                }
+
                 setCurrentChatMessages(response);
             } catch (err) {
                 console.log(err);

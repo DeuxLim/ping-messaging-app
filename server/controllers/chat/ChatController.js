@@ -155,7 +155,7 @@ const getChatMessages = async (req, res) => {
 
 		if (messages.length === 0) {
 			return res.status(200).json({
-				message: "No messages found for this chat.",
+				error: "No messages found for this chat.",
 			});
 		}
 
