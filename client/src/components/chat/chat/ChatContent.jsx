@@ -30,17 +30,23 @@ export default function ChatContent() {
 
     }, [token, chatId, setCurrentChatMessages]);
 
+    // Scroll to bottom on initial render and when messages change
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }, [currentChatMessages]);
+
     return (
         <>
             {isLoading && <div>Loading...</div>}
             {error && <div>Something went wrong...</div>}
 
-            <section className="flex-1 overflow-scroll">
+            <section className="flex-1 overflow-y-auto">
                 <div className="p-3 h-full flex flex-col gap-0.5">
                     {currentChatMessages.length > 0 && currentChatMessages.map((chatMessage) => (
                         <ChatMessage key={chatMessage._id} data={chatMessage} />
                     ))}
                 </div>
+                <div ref={messagesEndRef} />
             </section>
         </>
     );
