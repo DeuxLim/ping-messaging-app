@@ -1,24 +1,30 @@
 import { useState } from "react";
 import useChat from "../../../hooks/useChat";
-import { fetchAPI } from "../../../api/fetchApi";
 import useAuth from "../../../hooks/useAuth";
+import useSocket from "../../../hooks/useSocket"
 
 export default function ChatInput() {
 	const [chatMessage, setChatMessage] = useState("");
 	const { currentChatData } = useChat();
-	const { token, currentUser} = useAuth();
+	const { currentUser } = useAuth();
+	const { socket } = useSocket();
 
-	const handleSendMessage = async (e) => {
+	const handleSendMessage = (e) => {
 		e.preventDefault();
+		if (!chatMessage.trim()) return;
 
-		if (!chatMessage.trim()) {
-			console.log("can't send empty message...");
+		if (!currentUser?._id || !currentChatData?._id) {
+			return;
 		}
 
-		fetchAPI.setAuth(token);
-		await fetchAPI.post(`/chats/${currentChatData._id}/messages`, { message: chatMessage, sender: currentUser });
+		socket.emit("sendMessage", {
+			chatId: currentChatData._id,
+			senderId: currentUser._id,
+			text: chatMessage,
+		});
+
 		setChatMessage("");
-	}
+	};
 
 	return (
 		<>
