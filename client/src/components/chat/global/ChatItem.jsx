@@ -4,7 +4,7 @@ import useChat from "../../../hooks/useChat";
 import { useCallback, useEffect, useState } from "react";
 
 export default function ChatItem({ chatData }) {
-    const { setIsSearch, onlineUsers } = useChat();
+    const { setIsSearch, onlineUsers, typingChats } = useChat();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -136,7 +136,7 @@ export default function ChatItem({ chatData }) {
 
                 <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600 truncate">
-                        {chatData.lastMessage?.text || ""}
+                        {typingChats[chatData._id] ? "typing..." : chatData.lastMessage?.text || ""}
                     </span>
                 </div>
             </div>
