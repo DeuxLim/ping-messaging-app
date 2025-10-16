@@ -46,7 +46,7 @@ export default function ChatWindow() {
     return (
         <>
             <div className="flex flex-col h-full">
-                
+
                 <ActiveChatDisplayProvider>
                     {/* CHAT BOX HEADER */}
                     <ChatBoxHeader />
