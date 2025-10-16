@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { fetchAPI } from '../../../api/fetchApi';
 import useAuth from '../../../hooks/useAuth';
 import useChat from '../../../hooks/useChat';
 import { useParams } from 'react-router';
 import ChatMessage from './ChatMessage';
+import useSocket from '../../../hooks/useSocket';
 
 export default function ChatContent() {
     const { token } = useAuth();
     const { setCurrentChatMessages, currentChatMessages } = useChat();
+    const { socket } = useSocket();
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const { chatId } = useParams();
+    const messagesEndRef = useRef();
 
     useEffect(() => {
         const fetchCurrentChatMessages = async () => {
@@ -29,6 +32,21 @@ export default function ChatContent() {
         fetchCurrentChatMessages();
 
     }, [token, chatId, setCurrentChatMessages]);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleReceiveMessage = (msg) => {
+            setCurrentChatMessages((prev) => [...prev, msg]);
+        };
+
+        socket.on("receiveMessage", handleReceiveMessage);
+
+        // Cleanup on unmount or when socket changes
+        return () => {
+            socket.off("receiveMessage", handleReceiveMessage);
+        };
+    }, [socket, setCurrentChatMessages]);
 
     // Scroll to bottom on initial render and when messages change
     useEffect(() => {
