@@ -8,7 +8,7 @@ import useSocket from '../../../hooks/useSocket';
 
 export default function ChatContent() {
     const { token } = useAuth();
-    const { setCurrentChatMessages, currentChatMessages, typingChats, currentChatData } = useChat();
+    const { setCurrentChatMessages, currentChatMessages, typingChats, currentChatData, setChatItems, chatItems } = useChat();
     const { socket } = useSocket();
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -22,7 +22,7 @@ export default function ChatContent() {
                 fetchAPI.setAuth(token);
                 const response = await fetchAPI.get(`/chats/${chatId}`);
 
-                if(response.error){
+                if (response.error) {
                     setCurrentChatMessages([]);
                     return;
                 }
@@ -45,6 +45,13 @@ export default function ChatContent() {
 
         const handleReceiveMessage = (msg) => {
             setCurrentChatMessages((prev) => [...prev, msg]);
+            setChatItems(prev =>
+                prev.map(chat =>
+                    chat._id === msg.chat
+                        ? { ...chat, lastMessage: msg } // update the matching chat
+                        : chat
+                )
+            );
         };
 
         socket.on("receiveMessage", handleReceiveMessage);
@@ -53,7 +60,7 @@ export default function ChatContent() {
         return () => {
             socket.off("receiveMessage", handleReceiveMessage);
         };
-    }, [socket, setCurrentChatMessages]);
+    }, [socket, setCurrentChatMessages, setChatItems]);
 
     // Scroll to bottom on initial render and when messages change
     useEffect(() => {
