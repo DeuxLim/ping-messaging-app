@@ -25,11 +25,6 @@ export function handlePresence(io, socket) {
 		}
 	});
 
-	// join all user chats on login
-	socket.on("user:joinAll", (chatIds) => {
-		chatIds.forEach((chatId) => socket.join(chatId));
-	});
-
 	socket.on("disconnect", async () => {
 		const userId = socket.userId;
 		if (!userId) return;

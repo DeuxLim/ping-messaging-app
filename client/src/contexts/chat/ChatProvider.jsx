@@ -37,10 +37,8 @@ export default function ChatProvider({ children }) {
                 isSelfChat: isSelf,
                 ...data,
             });
-
-            socket?.emit("joinChat", data._id);
         },
-        [currentUser._id, socket]
+        [currentUser._id]
     );
 
     // ---- Responsive Layout ----

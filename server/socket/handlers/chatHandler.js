@@ -1,6 +1,6 @@
 export function handleChat(io, socket) {
-  socket.on("joinChat", (chatId) => {
-    if (!chatId) return;
-    socket.join(chatId);
-  });
+	// join all user chats on login
+	socket.on("user:joinAll", (chatIds) => {
+		chatIds.forEach((chatId) => socket.join(chatId));
+	});
 }
