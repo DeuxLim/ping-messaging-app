@@ -113,6 +113,11 @@ export default function ChatProvider({ children }) {
                 ]);
 
                 setChatItems(chatsResponse || []);
+                const chatIds = chatsResponse.map((chat) => {
+                    return chat._id;
+                });
+                socket.emit("user:joinAll", chatIds);
+
                 setUserChatItems(usersResponse || []);
             } catch (err) {
                 console.error("Error fetching chats:", err);
@@ -123,7 +128,7 @@ export default function ChatProvider({ children }) {
         };
 
         fetchChatData();
-    }, [token, isSearch]);
+    }, [token, isSearch, socket]);
 
     // ---- Context Value ----
     const values = {
