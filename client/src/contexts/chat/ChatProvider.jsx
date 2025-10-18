@@ -89,9 +89,22 @@ export default function ChatProvider({ children }) {
             });
         });
 
+        socket.on("receiveMessage", (msg) => {
+            setCurrentChatMessages((prev) => [...prev, msg]);
+            setChatItems(prev =>
+                prev.map(chat =>
+                    chat._id === msg.chat
+                        ? { ...chat, lastMessage: msg } // update the matching chat
+                        : chat
+                )
+            );
+        });
+
         return () => {
             socket.off("onlineUsers:list");
             socket.off("presence:update");
+            socket.off("receiveMessage");
+            socket.off("typing:update");
         };
     }, [socket]);
 
