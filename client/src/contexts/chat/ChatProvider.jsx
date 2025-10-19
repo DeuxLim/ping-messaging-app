@@ -90,7 +90,8 @@ export default function ChatProvider({ children }) {
         });
 
         socket.on("receiveMessage", (msg) => {
-            console.log("[receiveMessage] New message:", msg);
+            // --- Update chat messages on the chat window
+            setCurrentChatMessages((prev) => [...prev, msg]);
 
             // --- Update chat list and move the latest chat to top ---
             setChatItems(prev => {
