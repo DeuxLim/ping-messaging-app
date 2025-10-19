@@ -38,12 +38,7 @@ export const socketHandler = (io) => {
 				const room = `chat:${chatId}`;
 				socket.join(room);
 			});
-		});
 
-		socket.on("user:joinChat", (chatId) => {
-			if (!chatId) return;
-			const room = `chat:${chatId}`;
-			socket.join(room);
 		});
 
 		/** ─────────────── MESSAGES ─────────────── **/
@@ -57,6 +52,7 @@ export const socketHandler = (io) => {
 			});
 
 			const room = `chat:${chatId}`;
+			socket.join(room);
 			io.to(room).emit("receiveMessage", newMessage);
 		});
 

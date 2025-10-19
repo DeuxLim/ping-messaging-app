@@ -90,14 +90,49 @@ export default function ChatProvider({ children }) {
         });
 
         socket.on("receiveMessage", (msg) => {
-            setCurrentChatMessages((prev) => [...prev, msg]);
-            setChatItems(prev =>
-                prev.map(chat =>
-                    chat._id === msg.chat
-                        ? { ...chat, lastMessage: msg } // update the matching chat
-                        : chat
-                )
-            );
+            console.log("[receiveMessage] New message:", msg);
+
+            // --- Update chat list and move the latest chat to top ---
+            setChatItems(prev => {
+                const exists = prev.some(chat => chat._id === msg.chat._id);
+                let updatedChats;
+
+                if (exists) {
+                    // update existing chat and move it to top
+                    const updated = prev.map(chat =>
+                        chat._id === msg.chat._id ? { ...msg.chat } : chat
+                    );
+                    const movedChat = updated.find(chat => chat._id === msg.chat._id);
+                    updatedChats = [
+                        movedChat,
+                        ...updated.filter(chat => chat._id !== msg.chat._id),
+                    ];
+                } else {
+                    // new chat, add to top
+                    updatedChats = [msg.chat, ...prev];
+                }
+
+                console.log("[receiveMessage] Updated chat list:", updatedChats);
+                return updatedChats;
+            });
+
+            // --- Remove messaged user (the other participant) from suggested users ---
+            setUserChatItems(prev => {
+                if (!msg.chat || !Array.isArray(msg.chat.participants)) return prev;
+
+                // Identify the other user (not the sender)
+                const otherUser = msg.chat.participants.find(
+                    p => String(p._id) !== String(msg.sender._id)
+                );
+
+                if (!otherUser) return prev;
+
+                const filtered = prev.filter(
+                    user => String(user._id) !== String(otherUser._id)
+                );
+
+                return filtered;
+            });
         });
 
         return () => {
