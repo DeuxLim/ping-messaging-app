@@ -1,8 +1,7 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import ChatApp from "../pages/ChatApp";
 
 /* Auth */
-import AuthLayout from "../layouts/AuthLayout";
 import StartAuth from "../pages/Auth/StartAuth";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
@@ -26,7 +25,7 @@ export const routes = createBrowserRouter([
         path: "/auth",
         element: <StartAuth />,
         children: [
-            { path: "", element: <Login /> },
+            { path: "login", element: <Login /> },
             { path: "register", element: <Register /> },
             { path: "forgot-password", element: <ForgotPassword /> },
         ]
@@ -67,5 +66,9 @@ export const routes = createBrowserRouter([
                 element: <Profile />
             }
         ]
+    },
+    {
+        path: "/",
+        element: <Navigate to="/auth/login" replace />,
     },
 ]);
