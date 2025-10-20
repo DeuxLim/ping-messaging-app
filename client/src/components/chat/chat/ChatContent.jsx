@@ -4,10 +4,12 @@ import useAuth from '../../../hooks/useAuth';
 import useChat from '../../../hooks/useChat';
 import { useParams } from 'react-router';
 import ChatMessage from './ChatMessage';
+import useChatDisplay from '../../../hooks/useChatDisplay';
 
 export default function ChatContent() {
     const { token } = useAuth();
-    const { setCurrentChatMessages, currentChatMessages, typingChats, currentChatData } = useChat();
+    const { setCurrentChatMessages, currentChatMessages, currentChatData } = useChat();
+    const { typingChats } = useChatDisplay();
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const { chatId } = useParams();

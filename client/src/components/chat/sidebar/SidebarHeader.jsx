@@ -3,12 +3,12 @@ import useAuth from "../../../hooks/useAuth.js";
 import { TbMessagePlus } from "react-icons/tb";
 import { LuMessageCirclePlus } from "react-icons/lu";
 import { IoPersonAddSharp } from "react-icons/io5";
-import useChat from "../../../hooks/useChat.js";
 import { useNavigate } from "react-router"
+import useChatDisplay from "../../../hooks/useChatDisplay.js";
 
 export default function SidebarHeader() {
 	const { currentUser } = useAuth();
-	const { setActiveView } = useChat();
+	const { setActiveView } = useChatDisplay();
 	const [isToggled, setIsToggled] = useState(false);
 	const settingsMenuRef = useRef(null);
 	const settingsButtonRef = useRef(null);

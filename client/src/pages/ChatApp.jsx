@@ -1,9 +1,10 @@
 import { Outlet } from "react-router";
 import Sidebar from "../components/chat/Sidebar";
-import useChat from "../hooks/useChat";
+import useChatDisplay from "../hooks/useChatDisplay";
 
 export default function ChatApp() {
-    const { sidebarVisible, activeView, isDesktop } = useChat();
+    const { sidebarVisible, isDesktop } = useChatDisplay();
+    const { activeView } = useChatDisplay();
 
     return (
         <>

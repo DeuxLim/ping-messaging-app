@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import useChat from "../../../hooks/useChat";
+import useChatDisplay from "../../../hooks/useChatDisplay";
 import { useCallback, useEffect, useState } from "react";
 
 export default function ChatItem({ chatData }) {
-    const { setIsSearch, onlineUsers, typingChats } = useChat();
+    const { setIsSearch, onlineUsers } = useChat();
+    const { typingChats } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 

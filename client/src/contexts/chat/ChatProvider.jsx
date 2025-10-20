@@ -8,11 +8,6 @@ export default function ChatProvider({ children }) {
     const { currentUser, token } = useAuth();
     const { socket } = useSocket();
 
-    // ---- UI & Layout ----
-    const [sidebarVisible, setSidebarVisible] = useState(true);
-    const [isDesktop, setIsDesktop] = useState(false);
-    const [activeView, setActiveView] = useState(null);
-
     // ---- Chat States ----
     const [currentChatData, setCurrentChatData] = useState({});
     const [currentChatMessages, setCurrentChatMessages] = useState([]);
@@ -22,7 +17,6 @@ export default function ChatProvider({ children }) {
     const [onlineUsers, setOnlineUsers] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [typingChats, setTypingChats] = useState({});
 
     // ---- Select Chat ----
     const selectChat = useCallback(
@@ -41,20 +35,6 @@ export default function ChatProvider({ children }) {
         [currentUser._id]
     );
 
-    // ---- Responsive Layout ----
-    useEffect(() => {
-        const desktopQuery = window.matchMedia("(min-width: 768px)");
-
-        const updateLayout = (e) => {
-            setIsDesktop(e.matches);
-            setActiveView(e.matches ? "start" : null);
-        };
-
-        updateLayout(desktopQuery);
-        desktopQuery.addEventListener("change", updateLayout);
-        return () => desktopQuery.removeEventListener("change", updateLayout);
-    }, []);
-
     // ---- Socket Presence ----
     useEffect(() => {
         if (!socket) return;
@@ -72,21 +52,6 @@ export default function ChatProvider({ children }) {
                 ...prev,
                 [userId]: status,
             }));
-        });
-
-        socket.on("typing:update", ({ chatId, userId, status }) => {
-            setTypingChats(prev => {
-                const typingUsers = new Set(prev[chatId] || []);
-
-                status === "typing"
-                    ? typingUsers.add(userId)
-                    : typingUsers.delete(userId);
-
-                return {
-                    ...prev,
-                    [chatId]: typingUsers.size ? [...typingUsers] : undefined,
-                };
-            });
         });
 
         socket.on("receiveMessage", (msg) => {
@@ -179,19 +144,11 @@ export default function ChatProvider({ children }) {
 
     // ---- Context Value ----
     const values = {
-        // layout
-        activeView,
-        setActiveView,
-        sidebarVisible,
-        setSidebarVisible,
-        isDesktop,
-
         // chat states
         currentChatData,
         currentChatMessages,
         setCurrentChatMessages,
         selectChat,
-        typingChats,
 
         // fetched lists
         chatItems,

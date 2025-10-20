@@ -9,7 +9,6 @@ import ChatBoxHeader from "./ChatBoxHeader";
 import ChatContent from "./ChatContent";
 import ChatInput from "./ChatInput";
 import { useNavigate, useParams } from "react-router";
-import ActiveChatDisplayProvider from "../../../contexts/chat/active-chat-display/ActiveChatDisplayProvider";
 
 export default function ChatWindow() {
     const { token } = useAuth();
@@ -46,18 +45,14 @@ export default function ChatWindow() {
     return (
         <>
             <div className="flex flex-col h-full">
+                {/* CHAT BOX HEADER */}
+                <ChatBoxHeader />
 
-                <ActiveChatDisplayProvider>
-                    {/* CHAT BOX HEADER */}
-                    <ChatBoxHeader />
+                {/* CHAT CONTENT */}
+                <ChatContent />
 
-                    {/* CHAT CONTENT */}
-                    <ChatContent />
-
-                    {/* CHAT INPUTS */}
-                    <ChatInput />
-                </ActiveChatDisplayProvider>
-
+                {/* CHAT INPUTS */}
+                <ChatInput />
             </div>
         </>
     )
