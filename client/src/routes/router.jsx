@@ -19,12 +19,14 @@ import Profile from "../pages/Profile";
 
 /* Context */
 import ChatProvider from "../contexts/chat/ChatProvider";
+import ChatDisplayProvider from "../contexts/chat/chatDisplay/ChatDisplayProvider";
 
 export const routes = createBrowserRouter([
     {
         path: "/auth",
         element: <StartAuth />,
         children: [
+            { index: true, element: <Login /> },
             { path: "login", element: <Login /> },
             { path: "register", element: <Register /> },
             { path: "forgot-password", element: <ForgotPassword /> },
@@ -37,7 +39,9 @@ export const routes = createBrowserRouter([
                 path: "/chats",
                 element: (
                     <ChatProvider>
-                        <ChatApp />
+                        <ChatDisplayProvider>
+                            <ChatApp />
+                        </ChatDisplayProvider>
                     </ChatProvider>
                 ),
                 children: [
