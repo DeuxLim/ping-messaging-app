@@ -56,8 +56,14 @@ export default function ChatProvider({ children }) {
 
         socket.on("receiveMessage", (msg) => {
             // --- Update chat messages on the chat window
-            setCurrentChatMessages((prev) => [...prev, msg]);
-
+            setCurrentChatMessages(prev => {
+                // only update if current chat matches
+                if (!currentChatData?._id || msg.chat._id !== currentChatData._id) {
+                    return prev; // ignore message from other chat
+                }
+                return [...prev, msg];
+            });
+            
             // --- Update chat list and move the latest chat to top ---
             setChatItems(prev => {
                 const exists = prev.some(chat => chat._id === msg.chat._id);
