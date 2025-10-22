@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ChatContext from "./ChatContext.js";
 import useAuth from "../../hooks/useAuth";
 import useSocket from "../../hooks/useSocket.js";
@@ -17,7 +17,6 @@ export default function ChatProvider({ children }) {
     const [onlineUsers, setOnlineUsers] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const currentChatRef = useRef(currentChatData);
 
     // ---- Select Chat ----
     const selectChat = useCallback(
@@ -35,10 +34,6 @@ export default function ChatProvider({ children }) {
         },
         [currentUser._id]
     );
-
-    useEffect(() => {
-        currentChatRef.current = currentChatData;
-    }, [currentChatData]);
 
     // ---- Socket Presence ----
     useEffect(() => {
@@ -60,14 +55,15 @@ export default function ChatProvider({ children }) {
         });
 
         socket.on("receiveMessage", (msg) => {
-            const current = currentChatRef.current;
-
             // --- Update chat messages on the chat window
             setCurrentChatMessages(prev => {
-                if (!current?._id || msg.chat._id !== current._id) return prev;
+                // only update if current chat matches
+                if (!currentChatData?._id || msg.chat._id !== currentChatData._id) {
+                    return prev; // ignore message from other chat
+                }
                 return [...prev, msg];
             });
-
+            
             // --- Update chat list and move the latest chat to top ---
             setChatItems(prev => {
                 const exists = prev.some(chat => chat._id === msg.chat._id);
@@ -116,7 +112,7 @@ export default function ChatProvider({ children }) {
             socket.off("receiveMessage");
             socket.off("typing:update");
         };
-    }, [socket]);
+    }, [socket, currentChatData]);
 
     // ---- Fetch Chats + Suggested Users ----
     useEffect(() => {
