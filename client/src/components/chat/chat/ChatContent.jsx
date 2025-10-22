@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { fetchAPI } from '../../../api/fetchApi';
 import useAuth from '../../../hooks/useAuth';
 import useChat from '../../../hooks/useChat';
@@ -41,8 +41,11 @@ export default function ChatContent() {
     }, [token, chatId, setCurrentChatMessages]);
 
     // Scroll to bottom on initial render and when messages change
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    useLayoutEffect(() => {
+        // Ensures scroll runs after DOM paint
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'auto' });
+        }
     }, [currentChatMessages]);
 
     return (
@@ -50,7 +53,7 @@ export default function ChatContent() {
             {isLoading && <div>Loading...</div>}
             {error && <div>Something went wrong...</div>}
 
-            <section className="flex-1 overflow-y-auto">
+            <section className="flex-1 overflow-y-auto hide-scrollbar">
                 <div className="p-3 h-full flex flex-col gap-0.5">
                     {currentChatMessages.length > 0 && currentChatMessages.map((chatMessage) => (
                         <ChatMessage key={chatMessage._id} data={chatMessage} />
@@ -61,8 +64,8 @@ export default function ChatContent() {
                             user is typing...
                         </div>
                     }
+                    <div ref={messagesEndRef} />
                 </div>
-                <div ref={messagesEndRef} />
             </section>
         </>
     );
