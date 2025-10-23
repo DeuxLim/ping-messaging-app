@@ -111,7 +111,7 @@ const refreshTokens = async (req, res) => {
 	// Get refreshToken from request httpCookie
 	const currentRefreshToken = req.cookies.refreshToken;
 	if (!currentRefreshToken) {
-		return res.status(401).json({ error: "No refresh token provided" });
+		return res.status(200).json({ error: "No refresh token provided" });
 	}
 
 	// Verify refresh token

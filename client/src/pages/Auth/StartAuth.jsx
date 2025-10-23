@@ -1,8 +1,19 @@
 import ping from './../../assets/images/ping-messenger-logo.png';
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import bgImage from './../../assets/images/ping-messenger-background.jpg';
+import useAuth from '../../hooks/useAuth';
+import { useEffect } from 'react';
 
 export default function StartAuth() {
+	const { token, currentUser } = useAuth();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if(token || currentUser){
+			navigate("/chats");
+		}
+	}, [token, currentUser, navigate]);
+
 	return (
 		<div className="min-h-screen m-0 bg-white flex justify-center items-center 
 			bg-cover 

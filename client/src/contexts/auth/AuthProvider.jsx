@@ -44,14 +44,6 @@ export default function AuthProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password"];
-        const path = window.location.pathname;
-
-        if (publicRoutes.includes(path)) {
-            setIsUserReady(true); // mark ready so public pages load
-            return;
-        }
-
         refreshToken();
     }, [refreshToken]);
 
