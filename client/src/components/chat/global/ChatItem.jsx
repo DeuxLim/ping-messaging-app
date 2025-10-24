@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export default function ChatItem({ chatData }) {
     const { setIsSearch, onlineUsers } = useChat();
-    const { typingChats } = useChatDisplay();
+    const { typingChats, setActiveView } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -94,6 +94,7 @@ export default function ChatItem({ chatData }) {
     // --- Handlers ---
     const handleChatSelect = () => {
         setIsSearch(false);
+        setActiveView("chat");
         navigate(`/chats/${chatData._id}`, { replace: true });
     };
 

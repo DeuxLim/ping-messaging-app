@@ -2,10 +2,12 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { IoVideocamOutline } from "react-icons/io5";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
+import useChatDisplay from "../../../hooks/useChatDisplay";
 
 export default function ChatBoxHeader() {
 	const { currentChatData, onlineUsers } = useChat();
 	const { currentUser } = useAuth();
+	const { setActiveView } = useChatDisplay();
 
 	let chatName = "";
 	let otherUser = {};
@@ -27,11 +29,15 @@ export default function ChatBoxHeader() {
 		activeStatus = onlineUsers[otherUser._id];
 	}
 
+	const unsetActiveView = () => {
+		setActiveView(null);
+	}
+
 	return (
 		<>
 			<header className="h-21 border-b-1 border-gray-300">
 				<div className="flex items-center h-full md:px-4">
-					<div className="text-2xl px-3 md:hidden">
+					<div className="text-2xl px-3 md:hidden" onClick={() => unsetActiveView()}>
 						<IoChevronBackOutline />
 					</div>
 					<div className="flex flex-1 items-center h-full gap-2">
