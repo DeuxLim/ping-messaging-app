@@ -1,4 +1,6 @@
+import { configDotenv } from "dotenv";
 import { v2 as cloudinary } from 'cloudinary';
+configDotenv();
 
 cloudinary.config({
     cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
