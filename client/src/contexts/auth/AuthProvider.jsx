@@ -43,6 +43,20 @@ export default function AuthProvider({ children }) {
         }
     }, []);
 
+    const updateUserProfilePicture = async (data) => {
+        try {
+            fetchAPI.setAuth(token);
+            const response = await fetchAPI.put('/users/update-profile', data);
+            if (!response.updateSuccess) {
+                console.log("failed to updated profile picture...");
+            }
+
+            setCurrentUser(response.user);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         refreshToken();
     }, [refreshToken]);
@@ -55,6 +69,7 @@ export default function AuthProvider({ children }) {
         logout,
         refreshToken,
         isAuthenticated: Boolean(currentUser && token),
+        updateUserProfilePicture,
     };
 
     if (!isUserReady) return <div>Loading...</div>;
