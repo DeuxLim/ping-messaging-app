@@ -4,5 +4,6 @@ import UserController from "../controllers/user/UserController.js";
 const router = Router();
 router.get('/', UserController.index);
 router.get('/suggested', UserController.suggested);
+router.put('/update-profile', UserController.updateProfile);
 
 export default router;
