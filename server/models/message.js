@@ -24,6 +24,10 @@ const messageSchema = new mongoose.Schema(
             enum: ["image", "video", "file"],
             default: null,
         },
+        isSeen : {
+            type : Boolean,
+            default : false
+        }
     }, 
     { timestamps: true }
 );
