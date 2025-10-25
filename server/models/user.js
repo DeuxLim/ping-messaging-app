@@ -30,8 +30,8 @@ const userSchema = new mongoose.Schema(
 			required: true,
 		},
 		profilePicture: {
-			type: String,
-			default: null,
+			public_id: String,
+			url: String,
 		},
 		bio: {
 			type: String,
