@@ -8,11 +8,11 @@ import AuthProvider from "./contexts/auth/AuthProvider"
 import SocketProvider from "./contexts/socket/SocketProvider"
 
 createRoot(document.getElementById('root')).render(
-	<StrictMode>
+	//<StrictMode>
 		<AuthProvider>
 			<SocketProvider>
 				<RouterProvider router={routes} />
 			</SocketProvider>
 		</AuthProvider>
-	</StrictMode>,
+	//</StrictMode>,
 )
