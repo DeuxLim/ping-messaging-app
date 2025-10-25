@@ -7,7 +7,7 @@ import { socketHandler } from "./socket/socket.js";
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
 	cors: {
-		origin: "http://localhost:5173", // frontend URL
+		origin: process.env.CLIENT_URL, // frontend URL
 		methods: ["GET", "POST"],
 		credentials: true,
 	},

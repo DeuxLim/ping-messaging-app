@@ -13,7 +13,7 @@ export default function SocketProvider({ children }) {
 		try {
 			if (!currentUser || !currentUser._id) return;
 
-			newSocket = io("http://localhost:5001", { withCredentials: true });
+			newSocket = io(import.meta.env.VITE_API_URL, { withCredentials: true });
 			setSocket(newSocket);
 
 			newSocket.emit("user:online", currentUser._id);
