@@ -1,4 +1,4 @@
-// A singleton store for tracking online users
+// A singleton store for tracking Active users
 const onlineUsers = {};
 
 export function addUser(userId, socketId) {

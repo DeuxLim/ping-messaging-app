@@ -16,7 +16,7 @@ export default function SocketProvider({ children }) {
 			newSocket = io(import.meta.env.VITE_API_URL, { withCredentials: true });
 			setSocket(newSocket);
 
-			newSocket.emit("user:online", currentUser._id);
+			newSocket.emit("user:Active", currentUser._id);
 		} catch (error) {
 			console.log(error);
 		} finally {
