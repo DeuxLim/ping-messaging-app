@@ -5,6 +5,8 @@ import { LuMessageCirclePlus } from "react-icons/lu";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { useNavigate } from "react-router"
 import useChatDisplay from "../../../hooks/useChatDisplay.js";
+import AvatarWithStatus from "../global/AvatarWithStatus.jsx";
+import useChat from "../../../hooks/useChat.js";
 
 export default function SidebarHeader() {
 	const { currentUser } = useAuth();
@@ -13,6 +15,7 @@ export default function SidebarHeader() {
 	const settingsMenuRef = useRef(null);
 	const settingsButtonRef = useRef(null);
 	const navigate = useNavigate();
+	const { onlineUsers } = useChat();
 
 	const handleAddFriend = () => {
 		setActiveView("SearchUser");
@@ -40,14 +43,17 @@ export default function SidebarHeader() {
 			<header className="flex">
 				<div
 					className="flex justify-between w-full"
-					onClick={() => navigate("/profile")}
 				>
 					<div
-						className="flex gap-4 justify-start p-3 rounded-md hover:bg-gray-100">
+						className="flex gap-4 justify-start p-3 rounded-md hover:bg-gray-100 cursor-pointer"
+						onClick={() => navigate("/profile")}
+					>
+
 						{/* Profile pic */}
-						<div className="border-1 border-gray-300 flex justify-center items-center rounded-full w-15 h-15">
-							IMG
-						</div>
+						<AvatarWithStatus 
+							chatPhotoUrl={currentUser.profilePicture?.url} 
+							userStatus={ onlineUsers[currentUser._id] === "Active" ? "Active" : "Offline"} 
+						/>
 
 						{/* User Info */}
 						<div className="flex justify-center items-center text-sm">
@@ -57,11 +63,10 @@ export default function SidebarHeader() {
 					</div>
 
 					{/* New message icon */}
-
 					<div className="flex relative p-3">
 						<button
 							type="button"
-							className="text-3xl text-gray-500"
+							className="text-3xl text-gray-500 cursor-pointer"
 							onClick={() => setIsToggled((prev) => !prev)}
 							ref={settingsButtonRef}
 						>
