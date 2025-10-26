@@ -3,6 +3,7 @@ import useAuth from "../../../hooks/useAuth";
 import useChat from "../../../hooks/useChat";
 import useChatDisplay from "../../../hooks/useChatDisplay";
 import { useCallback, useEffect, useState } from "react";
+import AvatarWithStatus from "./AvatarWithStatus";
 
 export default function ChatItem({ chatData }) {
     const { setIsSearch, onlineUsers } = useChat();
@@ -47,11 +48,11 @@ export default function ChatItem({ chatData }) {
             setChatPhoto(chatData.chatPhoto);
             setChatName(chatData.groupName);
         } else if (chatData.listType === "user") {
-            setChatPhoto(chatData.profilePicture);
+            setChatPhoto(chatData.profilePicture?.url);
             setChatName(chatData.fullName);
         } else if (chatParticipants?.length) {
             const p = chatParticipants[0];
-            setChatPhoto(p.profilePicture);
+            setChatPhoto(p.profilePicture?.url);
             setChatName(p.fullName || "Unknown User");
         } else {
             setChatPhoto(null);
@@ -73,7 +74,7 @@ export default function ChatItem({ chatData }) {
                 targetId = null;
         }
 
-        const status = targetId && onlineUsers[targetId] === "online" ? "Active" : "Offline";
+        const status = targetId && onlineUsers[targetId] === "Active" ? "Active" : "Offline";
         setUserStatus(status);
     }, [chatData, currentUser._id, onlineUsers]);
 
@@ -105,26 +106,7 @@ export default function ChatItem({ chatData }) {
             onClick={handleChatSelect}
         >
             {/* Profile Picture */}
-            <div className="relative">
-                <div className="border border-gray-300 flex justify-center items-center rounded-full w-15 h-15 flex-shrink-0 overflow-hidden bg-gray-100 ">
-                    {chatPhoto ? (
-                        <img
-                            src={chatPhoto}
-                            alt="Chat avatar"
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <span className="text-gray-400 text-sm">?</span>
-                    )}
-                </div>
-                {
-                    userStatus === "Active" && (
-                        <div className="absolute right-0 bottom-1">
-                            <div className="h-4 w-4 rounded-full bg-green-500"></div>
-                        </div>
-                    )
-                }
-            </div>
+            <AvatarWithStatus chatPhotoUrl={chatPhoto} userStatus={userStatus}/>
 
             {/* Chat Details */}
             <div className="flex-1 min-w-0">
