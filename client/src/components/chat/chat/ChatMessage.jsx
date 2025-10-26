@@ -1,12 +1,13 @@
 import useAuth from "../../../hooks/useAuth";
 import useChat from "../../../hooks/useChat";
+import AvatarImage from "../global/AvatarImage";
 
 export default function ChatMessage({ data }) {
     const { currentUser } = useAuth();
     const { currentChatData } = useChat();
 
     const isSender = data.sender._id === currentUser._id;
-    const isLastMessage = data._id === currentChatData.lastMessage?._id;
+    const isLastMessage = data._id === currentChatData.lastMessage;
 
     if (!isSender) {
         // Inbound message
@@ -14,7 +15,9 @@ export default function ChatMessage({ data }) {
             <div className="flex text-sm">
                 <div className="flex gap-2 justify-center items-center max-w-[75%]">
                     <span className="flex justify-center items-end h-full">
-                        {data.sender.profilePicture}
+                        <div className="size-5 rounded-full overflow-hidden">
+                            <AvatarImage chatPhotoUrl={data.sender.profilePicture?.url} />
+                        </div>
                     </span>
                     <div className="border-1 border-gray-400 rounded-lg px-5 py-1">
                         {data.text}
