@@ -3,6 +3,7 @@ import { IoVideocamOutline } from "react-icons/io5";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 import useChatDisplay from "../../../hooks/useChatDisplay";
+import AvatarWithStatus from "../global/AvatarWithStatus";
 
 export default function ChatBoxHeader() {
 	const { currentChatData, onlineUsers } = useChat();
@@ -41,9 +42,7 @@ export default function ChatBoxHeader() {
 						<IoChevronBackOutline />
 					</div>
 					<div className="flex flex-1 items-center h-full gap-2">
-						<div className="border-1 border-gray-300 flex justify-center items-center rounded-full w-12 h-12 md:p">
-							<div>IMG</div>
-						</div>
+						<AvatarWithStatus chatPhotoUrl={otherUser.profilePicture?.url} userStatus={activeStatus}/>
 						<div className="">
 							<div>
 								{chatName}
