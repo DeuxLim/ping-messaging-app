@@ -7,7 +7,7 @@ export default function ChatMessage({ data }) {
     const { currentChatData } = useChat();
 
     const isSender = data.sender._id === currentUser._id;
-    const isLastMessage = data._id === currentChatData.lastMessage;
+    const isLastMessage = data._id === currentChatData.lastMessage._id || data._id === currentChatData.lastMessage;
 
     if (!isSender) {
         // Inbound message

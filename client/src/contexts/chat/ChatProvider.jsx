@@ -63,6 +63,10 @@ export default function ChatProvider({ children }) {
                 }
                 return [...prev, msg];
             });
+
+            setCurrentChatData(prev => {
+                return {...prev, lastMessage : msg};
+            });
             
             // --- Update chat list and move the latest chat to top ---
             setChatItems(prev => {
