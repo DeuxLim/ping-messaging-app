@@ -18,6 +18,10 @@ export default function ChatProvider({ children }) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    /* Utilities */
+    const isUserOnline = (userId) => onlineUsers[userId] === "Active";
+    
+
     // ---- Select Chat ----
     const selectChat = useCallback(
         (data) => {
@@ -65,9 +69,9 @@ export default function ChatProvider({ children }) {
             });
 
             setCurrentChatData(prev => {
-                return {...prev, lastMessage : msg};
+                return { ...prev, lastMessage: msg };
             });
-            
+
             // --- Update chat list and move the latest chat to top ---
             setChatItems(prev => {
                 const exists = prev.some(chat => chat._id === msg.chat._id);
@@ -170,6 +174,7 @@ export default function ChatProvider({ children }) {
         setOnlineUsers,
         isSearch,
         setIsSearch,
+        isUserOnline,
 
         // fetching status
         isLoading,
