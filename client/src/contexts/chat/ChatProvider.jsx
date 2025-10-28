@@ -20,7 +20,15 @@ export default function ChatProvider({ children }) {
 
     /* Utilities */
     const isUserOnline = (userId) => onlineUsers[userId] === "Active";
-    
+    const updateChatSearchResults = useCallback(
+        ({ chats = [], users = [], isSearch = false }) => {
+            setChatItems(chats);
+            setUserChatItems(users);
+            setIsSearch(isSearch);
+        },
+        []
+    );
+
 
     // ---- Select Chat ----
     const selectChat = useCallback(
@@ -175,6 +183,7 @@ export default function ChatProvider({ children }) {
         isSearch,
         setIsSearch,
         isUserOnline,
+        updateChatSearchResults,
 
         // fetching status
         isLoading,
