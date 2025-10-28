@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import ChatContext from "./ChatContext.js";
 import useAuth from "../../hooks/useAuth";
 import useSocket from "../../hooks/useSocket.js";
@@ -12,7 +12,7 @@ export default function ChatProvider({ children }) {
     const [currentChatData, setCurrentChatData] = useState({});
     const [currentChatMessages, setCurrentChatMessages] = useState([]);
     const [chatItems, setChatItems] = useState([]);
-    const [userChatItems, setUserChatItems] = useState([]);
+    const [userItems, setUserItems] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
     const [onlineUsers, setOnlineUsers] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -23,11 +23,18 @@ export default function ChatProvider({ children }) {
     const updateChatSearchResults = useCallback(
         ({ chats = [], users = [], isSearch = false }) => {
             setChatItems(chats);
-            setUserChatItems(users);
+            setUserItems(users);
             setIsSearch(isSearch);
         },
         []
     );
+
+    // Consolidated user and chats list for sidebar
+    const chatList = useMemo(() => {
+        const chats = (chatItems || []).map(c => ({ ...c, type: "chat" }));
+        const users = (userItems || []).map(u => ({ ...u, type: "user" }));
+        return [...chats, ...users];
+    }, [chatItems, userItems]);
 
 
     // ---- Select Chat ----
@@ -104,7 +111,7 @@ export default function ChatProvider({ children }) {
             });
 
             // --- Remove messaged user (the other participant) from suggested users ---
-            setUserChatItems(prev => {
+            setUserItems(prev => {
                 if (!msg.chat || !Array.isArray(msg.chat.participants)) return prev;
 
                 // Identify the other user (not the sender)
@@ -151,7 +158,7 @@ export default function ChatProvider({ children }) {
                 });
                 socket.emit("user:joinAll", chatIds);
 
-                setUserChatItems(usersResponse || []);
+                setUserItems(usersResponse || []);
             } catch (err) {
                 console.error("Error fetching chats:", err);
                 setError("Failed to load chats. Please try again.");
@@ -174,8 +181,9 @@ export default function ChatProvider({ children }) {
         // fetched lists
         chatItems,
         setChatItems,
-        userChatItems,
-        setUserChatItems,
+        userItems,
+        setUserItems,
+        chatList,
 
         // presence + search
         onlineUsers,

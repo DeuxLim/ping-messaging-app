@@ -2,80 +2,39 @@ import { BiMessageRounded } from "react-icons/bi";
 import { IoPersonAddOutline } from "react-icons/io5";
 import ChatItem from "../global/ChatItem";
 import useChat from "../../../hooks/useChat";
+import CenteredMessage from "../../common/CenteredMessage";
+import { useMemo } from "react";
 
 export default function SidebarChats() {
-    const {
-        chatItems,
-        userChatItems,
-        isSearch,
-        isLoading,
-        error,
-    } = useChat();
+    const { chatList, isSearch = false, isLoading = false, error = null } = useChat();
 
-    if (isLoading) {
-        return (
-            <section className="flex-1 p-3 flex items-center justify-center">
-                <div className="text-gray-400">Loading...</div>
-            </section>
-        );
-    }
+    const title = isSearch ? "Search" : "Messages";
+    const chatNodes = useMemo(() => {
+        const filtered = isSearch
+            ? chatList // show all types when searching
+            : chatList.filter(item => item.type === "chat"); // hide users otherwise
 
-    if (error) {
-        return (
-            <section className="flex-1 p-3 flex items-center justify-center">
-                <div className="text-red-400">{error}</div>
-            </section>
-        );
-    }
+        return filtered.map(item => (
+            <ChatItem key={`${item.type}-${item._id}`} chatData={item} />
+        ));
+    }, [chatList, isSearch]);
+    
+    const renderList = chatList.length === 0 ? <div className="text-gray-500">No results</div> : chatNodes;
+
+    if (isLoading) return <CenteredMessage>Loading...</CenteredMessage>;
+    if (error) return <CenteredMessage color="red">{error}</CenteredMessage>;
 
     return (
         <section className="flex-1 p-3 flex flex-col gap-3 overflow-auto">
-            {/* Messages Section */}
             <div>
-                {!isSearch ? (
-                    <div className="flex justify-between mb-2">
-                        <div>Messages</div>
-                        <BiMessageRounded />
-                    </div>
-                ) : (
-                    <div className="flex justify-between">
-                        <div>Search</div>
-                        <BiMessageRounded />
-                    </div>
-                )}
+                <div className="flex justify-between pb-3">
+                    <div>{title}</div>
+                </div>
 
                 <div className="text-sm flex flex-col gap-3">
-                    {chatItems.length > 0 ? (
-                        chatItems.map((chat) => (
-                            <ChatItem key={chat._id} chatData={chat} />
-                        ))
-                    ) : (
-                        !isSearch && (
-                            <div className="p-4 flex justify-center items-center text-lg text-gray-400 h-60">
-                                Looks a little quiet here 👋
-                            </div>
-                        )
-                    )}
+                    {renderList}
                 </div>
             </div>
-
-            {/* Suggested Users Section */}
-            {userChatItems.length > 0 && (
-                <div>
-                    {!isSearch && (
-                        <div className="flex justify-between mb-2">
-                            <div>Suggested</div>
-                            <IoPersonAddOutline />
-                        </div>
-                    )}
-
-                    <div className="text-sm flex flex-col gap-3">
-                        {userChatItems.map((user) => (
-                            <ChatItem key={user._id} chatData={user} />
-                        ))}
-                    </div>
-                </div>
-            )}
         </section>
     );
 }
