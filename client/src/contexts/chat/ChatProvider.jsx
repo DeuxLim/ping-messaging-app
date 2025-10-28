@@ -19,7 +19,7 @@ export default function ChatProvider({ children }) {
     const [error, setError] = useState(null);
 
     /* Utilities */
-    const isUserOnline = (userId) => onlineUsers[userId] === "Active";
+    const isUserOnline = useCallback((userId) => onlineUsers[userId] === "Active", [ onlineUsers ]);
     const updateChatSearchResults = useCallback(
         ({ chats = [], users = [], isSearch = false }) => {
             setChatItems(chats);
@@ -133,7 +133,6 @@ export default function ChatProvider({ children }) {
             socket.off("onlineUsers:list");
             socket.off("presence:update");
             socket.off("receiveMessage");
-            socket.off("typing:update");
         };
     }, [socket, currentChatData]);
 
