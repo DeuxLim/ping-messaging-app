@@ -1,75 +1,58 @@
-import { useEffect, useRef, useState } from 'react';
-import useAuth from '../../../hooks/useAuth';
-import { TbSettings } from "react-icons/tb";
-import { TbLogout2 } from "react-icons/tb";
-import { MdDarkMode } from "react-icons/md";
+import { TbSettings, TbLogout2 } from "react-icons/tb";
+import useAuth from "../../../hooks/useAuth";
+import useDropdownMenu from "../../../hooks/common/useDropdownMenu";
 
 export default function SidebarFooter() {
     const { logout } = useAuth();
-    const [isToggled, setIsToggled] = useState(false);
-    const settingsMenuRef = useRef(null);
-    const settingsButtonRef = useRef(null);
+    const { isOpen, toggle, close, buttonRef, menuRef } = useDropdownMenu();
 
     const handleLogout = () => {
         logout();
-    }
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (
-                settingsMenuRef.current &&
-                !settingsMenuRef.current.contains(event.target) &&
-                !settingsButtonRef.current.contains(event.target)
-            ) {
-                setIsToggled(prev => !prev);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+        close();
+    };
 
     return (
-        <>
-            <div className="flex justify-between items-center p-3">
-                <div className="relative w-full">
+        <div className="flex justify-between items-center p-3">
+            <div className="relative w-full">
+                {/* Settings button */}
+                <button
+                    id="sidebar-settings-button"
+                    type="button"
+                    ref={buttonRef}
+                    onClick={toggle}
+                    className="text-3xl flex items-center"
+                    aria-haspopup="menu"
+                    aria-expanded={isOpen}
+                    aria-controls="sidebar-settings-menu"
+                >
+                    <TbSettings />
+                </button>
 
-                    {/* Settings button */}
-                    <button
-                        type="button"
-                        className="text-3xl flex items-center"
-                        onClick={() => setIsToggled(prev => !prev)}
-                        ref={settingsButtonRef}
+                {/* Dropdown menu */}
+                {isOpen && (
+                    <div
+                        id="sidebar-settings-menu"
+                        ref={menuRef}
+                        role="menu"
+                        aria-labelledby="sidebar-settings-button"
+                        className="absolute bottom-4 left-4 rounded-lg shadow-lg border border-gray-200 z-50 bg-white"
                     >
-                        <TbSettings />
-                    </button>
-
-                    {/*  Settings popover */}
-                    {isToggled && (
-                        <div className='absolute bottom-4 left-4 rounded-lg shadow-lg border-gray-200 border-1 z-50 bg-white' ref={settingsMenuRef}>
-
-                            {/* Button 1 */}
+                        <div className="py-1">
                             <button
                                 type="button"
-                                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                                role="menuitem"
                                 onClick={handleLogout}
+                                className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             >
-                                <div className='flex justify-start items-center gap-2'>
-                                    <div className='text-2xl'>
-                                        <TbLogout2 />
-                                    </div>
-                                    <div>
-                                        Log out
-                                    </div>
-                                </div>
+                                <span className="text-2xl">
+                                    <TbLogout2 />
+                                </span>
+                                <span>Log out</span>
                             </button>
-
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
-        </>
-    )
+        </div>
+    );
 }
