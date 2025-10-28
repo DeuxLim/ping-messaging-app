@@ -9,20 +9,20 @@ export default function ChatDisplayProvider({ children }) {
 	const [activeView, setActiveView] = useState(null);
 	const { socket } = useSocket();
 
-	socket.on("typing:update", ({ chatId, userId, status }) => {
-		setTypingChats(prev => {
-			const typingUsers = new Set(prev[chatId] || []);
-
-			status === "typing"
-				? typingUsers.add(userId)
-				: typingUsers.delete(userId);
-
-			return {
-				...prev,
-				[chatId]: typingUsers.size ? [...typingUsers] : undefined,
-			};
+	useEffect(() => {
+		socket.on("typing:update", ({ chatId, userId, status }) => {
+			setTypingChats(prev => {
+				const typingUsers = new Set(prev[chatId] || []);
+				status === "typing" ? typingUsers.add(userId) : typingUsers.delete(userId);
+				return {
+					...prev,
+					[chatId]: typingUsers.size ? [...typingUsers] : undefined,
+				};
+			});
 		});
-	});
+
+		return () => socket.off("typing:update");
+	}, [socket]);
 
 	// ---- Responsive Layout ----
 	useEffect(() => {
