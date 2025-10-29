@@ -8,13 +8,13 @@ import useChatDisplay from '../../../hooks/useChatDisplay';
 
 export default function ChatContent() {
     const { token } = useAuth();
-    const { setCurrentChatMessages, currentChatMessages, currentChatData } = useChat();
+    const { setActiveChatMessages, activeChatMessages, activeChatData } = useChat();
     const { typingChats } = useChatDisplay();
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const { chatId } = useParams();
     const messagesEndRef = useRef();
-    const isTyping = !!typingChats[currentChatData._id];
+    const isTyping = !!typingChats[activeChatData._id];
 
     useEffect(() => {
         const fetchCurrentChatMessages = async () => {
@@ -23,11 +23,11 @@ export default function ChatContent() {
                 const response = await fetchAPI.get(`/chats/${chatId}`);
 
                 if (response.error) {
-                    setCurrentChatMessages([]);
+                    setActiveChatMessages([]);
                     return;
                 }
 
-                setCurrentChatMessages(response);
+                setActiveChatMessages(response);
             } catch (err) {
                 console.log(err);
                 setError(err);
@@ -38,7 +38,7 @@ export default function ChatContent() {
 
         fetchCurrentChatMessages();
 
-    }, [token, chatId, setCurrentChatMessages]);
+    }, [token, chatId, setActiveChatMessages]);
 
     // Scroll to bottom on initial render and when messages change
     useLayoutEffect(() => {
@@ -46,7 +46,7 @@ export default function ChatContent() {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'auto' });
         }
-    }, [currentChatMessages]);
+    }, [activeChatMessages]);
 
     return (
         <>
@@ -55,7 +55,7 @@ export default function ChatContent() {
 
             <section className="flex-1 overflow-y-auto hide-scrollbar">
                 <div className="p-3 h-full flex flex-col gap-0.5">
-                    {currentChatMessages.length > 0 && currentChatMessages.map((chatMessage) => (
+                    {activeChatMessages.length > 0 && activeChatMessages.map((chatMessage) => (
                         <ChatMessage key={chatMessage._id} data={chatMessage} />
                     ))}
                     {

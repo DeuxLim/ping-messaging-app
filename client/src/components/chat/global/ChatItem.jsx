@@ -8,7 +8,7 @@ import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
 
 function ChatItem({ chatData }) {
-    const { setIsSearch, isUserOnline } = useChat();
+    const { setIsSearch, isUserOnline, setActiveChat } = useChat();
     const { typingChats } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();

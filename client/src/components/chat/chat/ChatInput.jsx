@@ -5,7 +5,7 @@ import useSocket from "../../../hooks/useSocket"
 
 export default function ChatInput() {
 	const [message, setMessage] = useState("");
-	const { currentChatData } = useChat();
+	const { activeChatData } = useChat();
 	const { currentUser } = useAuth();
 	const { socket } = useSocket();
 
@@ -13,12 +13,12 @@ export default function ChatInput() {
 		e.preventDefault();
 		if (!message.trim()) return;
 
-		if (!currentUser?._id || !currentChatData?._id) {
+		if (!currentUser?._id || !activeChatData?._id) {
 			return;
 		}
 
 		socket.emit("sendMessage", {
-			chatId: currentChatData._id,
+			chatId: activeChatData._id,
 			senderId: currentUser._id,
 			text: message,
 		});
@@ -27,18 +27,18 @@ export default function ChatInput() {
 	};
 
 	useEffect(() => {
-		if (!socket || !currentChatData || !currentUser) return;
+		if (!socket || !activeChatData || !currentUser) return;
 
 		if (message.trim()) {
 			socket.emit("typing:start", {
-				chatId: currentChatData._id,
+				chatId: activeChatData._id,
 				userId: currentUser._id,
 			});
 
 			// Start 3-second timer for "stop typing"
 			const timeout = setTimeout(() => {
 				socket.emit("typing:stop", {
-					chatId: currentChatData._id,
+					chatId: activeChatData._id,
 					userId: currentUser._id,
 				});
 			}, 1500);
@@ -46,12 +46,12 @@ export default function ChatInput() {
 			return () => clearTimeout(timeout);
 		} else {
 			socket.emit("typing:stop", {
-				chatId: currentChatData._id,
+				chatId: activeChatData._id,
 				userId: currentUser._id,
 			});
 		}
 
-	}, [message, socket, currentChatData, currentUser]);
+	}, [message, socket, activeChatData, currentUser]);
 
 	return (
 		<>

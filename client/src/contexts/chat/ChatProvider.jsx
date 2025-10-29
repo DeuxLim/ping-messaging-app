@@ -9,8 +9,8 @@ export default function ChatProvider({ children }) {
     const { socket } = useSocket();
 
     // ---- Chat States ----
-    const [currentChatData, setCurrentChatData] = useState({});
-    const [currentChatMessages, setCurrentChatMessages] = useState([]);
+    const [activeChatData, setActiveChatData] = useState({});
+    const [activeChatMessages, setActiveChatMessages] = useState([]);
     const [chatItems, setChatItems] = useState([]);
     const [userItems, setUserItems] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
@@ -19,7 +19,7 @@ export default function ChatProvider({ children }) {
     const [error, setError] = useState(null);
 
     /* Utilities */
-    const isUserOnline = useCallback((userId) => onlineUsers[userId] === "Active", [ onlineUsers ]);
+    const isUserOnline = useCallback((userId) => onlineUsers[userId] === "Active", [onlineUsers]);
     const updateChatSearchResults = useCallback(
         ({ chats = [], users = [], isSearch = false }) => {
             setChatItems(chats);
@@ -38,7 +38,7 @@ export default function ChatProvider({ children }) {
 
 
     // ---- Select Chat ----
-    const selectChat = useCallback(
+    const setActiveChat = useCallback(
         (data) => {
             if (!data || !data.participants) return;
 
@@ -46,7 +46,7 @@ export default function ChatProvider({ children }) {
                 data.participants.length === 1 &&
                 data.participants[0]._id === currentUser._id;
 
-            setCurrentChatData({
+            setActiveChatData({
                 isSelfChat: isSelf,
                 ...data,
             });
@@ -75,15 +75,15 @@ export default function ChatProvider({ children }) {
 
         socket.on("receiveMessage", (msg) => {
             // --- Update chat messages on the chat window
-            setCurrentChatMessages(prev => {
+            setActiveChatMessages(prev => {
                 // only update if current chat matches
-                if (!currentChatData?._id || msg.chat._id !== currentChatData._id) {
+                if (!activeChatData?._id || msg.chat._id !== activeChatData._id) {
                     return prev; // ignore message from other chat
                 }
                 return [...prev, msg];
             });
 
-            setCurrentChatData(prev => {
+            setActiveChatData(prev => {
                 return { ...prev, lastMessage: msg };
             });
 
@@ -134,7 +134,7 @@ export default function ChatProvider({ children }) {
             socket.off("presence:update");
             socket.off("receiveMessage");
         };
-    }, [socket, currentChatData]);
+    }, [socket, activeChatData]);
 
     // ---- Fetch Chats + Suggested Users ----
     useEffect(() => {
@@ -172,10 +172,10 @@ export default function ChatProvider({ children }) {
     // ---- Context Value ----
     const values = {
         // chat states
-        currentChatData,
-        currentChatMessages,
-        setCurrentChatMessages,
-        selectChat,
+        activeChatData,
+        activeChatMessages,
+        setActiveChatMessages,
+        setActiveChat,
 
         // fetched lists
         chatItems,

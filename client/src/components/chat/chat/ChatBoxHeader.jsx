@@ -6,18 +6,18 @@ import useChatDisplay from "../../../hooks/useChatDisplay";
 import AvatarWithStatus from "../global/AvatarWithStatus";
 
 export default function ChatBoxHeader() {
-	const { currentChatData, onlineUsers } = useChat();
+	const { activeChatData, onlineUsers } = useChat();
 	const { currentUser } = useAuth();
 	const { setActiveView } = useChatDisplay();
 
 	let chatName = "";
 	let otherUser = {};
-	if (!currentChatData.isGroup) {
-		if (currentChatData.isSelfChat) {
-			const self = currentChatData.participants[0];
+	if (!activeChatData.isGroup) {
+		if (activeChatData.isSelfChat) {
+			const self = activeChatData.participants[0];
 			chatName = `${self.firstName} ${self.lastName}`;
 		} else {
-			otherUser = currentChatData?.participants?.find(participant => participant._id !== currentUser._id);
+			otherUser = activeChatData?.participants?.find(participant => participant._id !== currentUser._id);
 			chatName = `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`;
 		}
 	} else {
