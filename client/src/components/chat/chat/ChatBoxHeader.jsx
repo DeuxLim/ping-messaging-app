@@ -4,6 +4,7 @@ import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 import useChatDisplay from "../../../hooks/useChatDisplay";
 import AvatarWithStatus from "../global/AvatarWithStatus";
+import { getOtherParticipant } from "../../../utilities/utils";
 
 export default function ChatBoxHeader() {
 	const { activeChatData, onlineUsers } = useChat();
@@ -17,7 +18,7 @@ export default function ChatBoxHeader() {
 			const self = activeChatData.participants[0];
 			chatName = `${self.firstName} ${self.lastName}`;
 		} else {
-			otherUser = activeChatData?.participants?.find(participant => participant._id !== currentUser._id);
+			otherUser = getOtherParticipant(activeChatData.participants, currentUser._id);
 			chatName = `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`;
 		}
 	} else {
@@ -42,7 +43,7 @@ export default function ChatBoxHeader() {
 						<IoChevronBackOutline />
 					</div>
 					<div className="flex flex-1 items-center h-full gap-2">
-						<AvatarWithStatus chatPhotoUrl={otherUser.profilePicture?.url} userStatus={activeStatus}/>
+						<AvatarWithStatus chatPhotoUrl={otherUser.profilePicture?.url} userStatus={activeStatus} />
 						<div className="">
 							<div>
 								{chatName}
