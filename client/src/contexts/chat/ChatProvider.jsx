@@ -30,7 +30,7 @@ export default function ChatProvider({ children }) {
     );
 
     // Consolidated user and chats list for sidebar
-    const chatList = useMemo(() => {
+    const usersAndChatsList = useMemo(() => {
         const chats = (chatItems || []).map(c => ({ ...c, type: "chat" }));
         const users = (userItems || []).map(u => ({ ...u, type: "user" }));
         return [...chats, ...users];
@@ -182,7 +182,7 @@ export default function ChatProvider({ children }) {
         setChatItems,
         userItems,
         setUserItems,
-        chatList,
+        usersAndChatsList,
 
         // presence + search
         onlineUsers,

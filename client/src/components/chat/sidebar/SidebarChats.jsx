@@ -6,20 +6,20 @@ import CenteredMessage from "../../common/CenteredMessage";
 import { useMemo } from "react";
 
 export default function SidebarChats() {
-    const { chatList, isSearch = false, isLoading = false, error = null } = useChat();
+    const { usersAndChatsList, isSearch = false, isLoading = false, error = null } = useChat();
 
     const title = isSearch ? "Search" : "Messages";
     const chatNodes = useMemo(() => {
         const filtered = isSearch
-            ? chatList // show all types when searching
-            : chatList.filter(item => item.type === "chat"); // hide users otherwise
+            ? usersAndChatsList // show all types when searching
+            : usersAndChatsList.filter(item => item.type === "chat"); // hide users otherwise
 
         return filtered.map(item => (
             <ChatItem key={`${item.type}-${item._id}`} chatData={item} />
         ));
-    }, [chatList, isSearch]);
+    }, [usersAndChatsList, isSearch]);
     
-    const renderList = chatList.length === 0 ? <div className="text-gray-500">No results</div> : chatNodes;
+    const renderList = usersAndChatsList.length === 0 ? <div className="text-gray-500">No results</div> : chatNodes;
 
     if (isLoading) return <CenteredMessage>Loading...</CenteredMessage>;
     if (error) return <CenteredMessage color="red">{error}</CenteredMessage>;
