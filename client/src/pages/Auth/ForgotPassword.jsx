@@ -1,5 +1,6 @@
 import { useId, useState } from "react";
 import { useNavigate } from "react-router";
+import { isEmpty } from "../../utilities/utils";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -24,7 +25,7 @@ export default function ForgotPassword() {
         const validationErrors = validateForm();
         setErrors(validationErrors);
 
-        if (Object.keys(validationErrors).length > 0) return;
+        if (!isEmpty(validationErrors)) return;
 
         setLoading(true);
 

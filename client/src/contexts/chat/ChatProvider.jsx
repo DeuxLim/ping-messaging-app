@@ -3,6 +3,7 @@ import ChatContext from "./ChatContext.js";
 import useAuth from "../../hooks/useAuth";
 import useSocket from "../../hooks/useSocket.js";
 import { fetchAPI } from "../../api/fetchApi.js";
+import { isEmpty } from "../../utilities/utils.js";
 
 export default function ChatProvider({ children }) {
     const { currentUser, token } = useAuth();

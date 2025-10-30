@@ -8,7 +8,7 @@ import useChat from "../../../hooks/useChat";
 import ChatBoxHeader from "./ChatBoxHeader";
 import ChatContent from "./ChatContent";
 import ChatInput from "./ChatInput";
-import { useNavigate, useParams } from "react-router";
+import { isEmpty } from "../../../utilities/utils";
 
 export default function ChatWindow() {
     const { token } = useAuth();
@@ -38,7 +38,7 @@ export default function ChatWindow() {
     }, [selectChat, token, chatId, navigate]);
 
     // Guard clause AFTER all hooks
-    if (Object.keys(currentChatData).length === 0) {
+    if (loading || isEmpty(activeChatData)) {
         return <div>Loading chat data...</div>;
     }
 

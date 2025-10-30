@@ -1,6 +1,7 @@
 import User from "../../models/user.js";
 import Chat from "../../models/chat.js";
 import cloudinary from "../../library/cloudinary.js";
+import { isEmpty } from "../../../client/src/utilities/utils.js";
 
 // GET /users - Get all users with pagination and search
 const index = async (req, res) => {
@@ -76,7 +77,7 @@ const updateProfile = async (req, res) => {
 		}
 
 		// Return early if no valid updates
-		if (Object.keys(updatedFields).length === 0) {
+		if (isEmpty(updatedFields)) {
 			return res.status(200).json({ updateSuccess : false, message: "no data updated." });
 		}
 

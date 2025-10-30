@@ -1,3 +1,4 @@
+import { isEmpty } from "../../../client/src/utilities/utils.js";
 import {
 	hashToken,
 	signAccessToken,
@@ -10,7 +11,7 @@ import jwt from "jsonwebtoken";
 const register = async (req, res) => {
 	// Validate register request
 	const errors = authValidation.validateRegistration(req.body);
-	if (Object.keys(errors).length > 0) {
+	if (!isEmpty(errors)) {
 		return res.status(400).json({ status: 400, errors });
 	}
 
@@ -30,7 +31,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
 	// Validate login request
 	const errors = authValidation.validateLogin(req.body);
-	if (Object.keys(errors).length > 0) {
+	if (!isEmpty(errors)) {
 		return res.status(400).json({ status: 400, errors });
 	}
 

@@ -5,6 +5,7 @@ import { fetchAPI } from "./../../api/fetchApi";
 import FormInput from "../../components/auth/FormInput";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
+import { isEmpty } from "../../utilities/utils";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ export default function Login() {
 
         const validationErrors = validateForm();
         setErrors(validationErrors);
-        if (Object.keys(validationErrors).length > 0) return;
+        if (!isEmpty(validationErrors)) return;
 
         setLoading(true);
 
