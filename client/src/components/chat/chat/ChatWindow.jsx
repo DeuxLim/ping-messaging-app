@@ -1,59 +1,61 @@
-// dependencies
-import { useEffect } from "react";
-import { fetchAPI } from "../../../api/fetchApi";
-import useAuth from "../../../hooks/useAuth"
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import useAuth from "../../../hooks/useAuth";
 import useChat from "../../../hooks/useChat";
+import { isEmpty } from "../../../utilities/utils";
 
-// components
 import ChatBoxHeader from "./ChatBoxHeader";
 import ChatContent from "./ChatContent";
 import ChatInput from "./ChatInput";
-import { isEmpty } from "../../../utilities/utils";
 
 export default function ChatWindow() {
     const { token } = useAuth();
-    const { selectChat, currentChatData } = useChat();
+    const { setActiveChat, activeChatData, usersAndChatsList } = useChat();
     const { chatId } = useParams();
     const navigate = useNavigate();
 
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        const getChat = async () => {
-            fetchAPI.setAuth(token);
+        if (!chatId || !usersAndChatsList?.length) return;
 
-            const response = await fetchAPI.post(`/chats`, { id: chatId });
-            if (response?.error) {
-                console.log(response.error);
-                navigate("/chats");
-                return;
+        let isMounted = true;
+
+        const loadChat = async () => {
+            try {
+                setLoading(true);
+                // find chat or user entry by ID
+                const chatData = usersAndChatsList.find((item) => item._id === chatId);
+
+                if (isMounted) setActiveChat(chatData);
+            } catch (err) {
+                console.error("ChatWindow error:", err);
+                if (isMounted) navigate("/chats", { replace: true });
+            } finally {
+                if (isMounted) setLoading(false);
             }
+        };
 
-            if (response?.data?.isNew) {
-                navigate(`/chats/${response.data.chat._id}`);
-                return;
-            }
-            selectChat(response?.data?.chat);
-        }
+        loadChat();
 
-        getChat();
-    }, [selectChat, token, chatId, navigate]);
+        return () => {
+            isMounted = false;
+        };
+    }, [chatId, navigate, setActiveChat, token, usersAndChatsList]);
 
-    // Guard clause AFTER all hooks
     if (loading || isEmpty(activeChatData)) {
-        return <div>Loading chat data...</div>;
+        return (
+            <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+                Loading chat data...
+            </div>
+        );
     }
 
     return (
-        <>
-            <div className="flex flex-col h-full">
-                {/* CHAT BOX HEADER */}
-                <ChatBoxHeader />
-
-                {/* CHAT CONTENT */}
-                <ChatContent />
-
-                {/* CHAT INPUTS */}
-                <ChatInput />
-            </div>
-        </>
-    )
+        <div className="flex flex-col h-full">
+            <ChatBoxHeader />
+            <ChatContent />
+            <ChatInput />
+        </div>
+    );
 }
