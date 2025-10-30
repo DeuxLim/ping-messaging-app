@@ -8,7 +8,7 @@ import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
 
 function ChatItem({ chatData }) {
-    const { isUserOnline, setActiveChat } = useChat();
+    const { isUserOnline } = useChat();
     const { typingChats } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
@@ -38,7 +38,7 @@ function ChatItem({ chatData }) {
                     ? chatParticipants[0]?._id
                     : null;
 
-        return isUserOnline(targetId) ? "Active" : "Offline";
+        return isUserOnline(targetId) ? "online" : "offline";
     }, [chatData, chatParticipants, isUserOnline]);
 
     useEffect(() => {
@@ -47,7 +47,6 @@ function ChatItem({ chatData }) {
 
     // --- Handlers ---
     const handleChatSelect = () => {
-        setActiveChat(chatData);
         navigate(`/chats/${chatData._id}`);
     };
 

@@ -14,7 +14,7 @@ function AvatarWithStatus({chatPhotoUrl, userStatus}) {
 
             {/* Status Icon */}
             {
-                userStatus === "Active" && (
+                userStatus === "online" && (
                     <div className="absolute right-0 bottom-1">
                         <div className="h-4 w-4 rounded-full bg-green-500"></div>
                     </div>

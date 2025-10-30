@@ -10,7 +10,7 @@ import User from "./../models/user.js";
 export const socketHandler = (io) => {
 	io.on("connection", (socket) => {
 		/** ─────────────── USER PRESENCE ─────────────── **/
-		socket.on("user:Active", async (userId) => {
+		socket.on("user:online", async (userId) => {
 			if (!userId) return;
 
 			socket.userId = userId;
@@ -22,12 +22,12 @@ export const socketHandler = (io) => {
 			const wasOffline = !isUserOnline(userId);
 			addUser(userId, socket.id);
 
-			// Send the initial Active users list
+			// Send the initial online users list
 			socket.emit("onlineUsers:list", getOnlineUserIds());
 
 			if (wasOffline) {
 				await User.findByIdAndUpdate(userId, { isOnline: true });
-				io.emit("presence:update", { userId, status: "Active" });
+				io.emit("presence:update", { userId, status: "online" });
 			}
 		});
 

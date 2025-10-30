@@ -44,7 +44,7 @@ const suggested = async (req, res) => {
 				$nin: [...chattedUserIds, currentUserId],
 			},
 		})
-			.select("fullName userName profilePicture bio isOnline lastSeen")
+			.select("fullName firstName lastName userName profilePicture bio isOnline lastSeen")
 			.limit(10)
 			.sort({ createdAt: -1 });
 

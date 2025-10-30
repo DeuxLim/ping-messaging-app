@@ -8,7 +8,7 @@ export default function SidebarHeader() {
 	const { isUserOnline } = useChat();
 
 	const photoUrl = currentUser.profilePicture?.url || "";
-	const userStatus = isUserOnline(currentUser._id) ? "Active" : "Offline";
+	const userStatus = isUserOnline(currentUser._id) ? "online" : "offline";
 
 	return (
 		<>

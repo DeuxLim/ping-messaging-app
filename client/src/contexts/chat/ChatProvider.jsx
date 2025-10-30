@@ -62,7 +62,7 @@ export default function ChatProvider({ children }) {
         socket.on("onlineUsers:list", (userIds) => {
             setOnlineUsers((prev) => {
                 const updated = { ...prev };
-                userIds.forEach((id) => (updated[id] = "Active"));
+                userIds.forEach((id) => (updated[id] = "online"));
                 return updated;
             });
         });
