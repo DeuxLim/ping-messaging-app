@@ -37,10 +37,13 @@ const findOrCreateChat = async (req, res) => {
 		 * Handle when current user selects a Chat-List Item
 		 */
 		// Check first if chat exists
-		const existingChat = await Chat.findById(id).populate(
-			"participants",
-			"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
-		);
+		const existingChat = await Chat.findById(id)
+			.populate(
+				"participants",
+				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+			)
+			.populate("lastMessage");
+
 		// Return existing chat
 		if (existingChat) {
 			return res.status(200).json({
@@ -59,22 +62,21 @@ const findOrCreateChat = async (req, res) => {
 		// Check if chat exists with the selected user
 		let existingChatByUser = await Chat.findOne({
 			isGroup: false,
-			participants: {
-				$all: [id, currentUser._id],
-				$size: 2,
-			},
-		});
-		// Return existing chat
-		if (existingChatByUser) {
-			const populatedExistingChat = await existingChatByUser.populate(
+			participants: { $all: [id, currentUser._id], $size: 2 },
+		})
+			.populate(
 				"participants",
 				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
-			);
+			)
+			.populate("lastMessage");
+
+		// Return existing chat
+		if (existingChatByUser) {
 			return res.status(200).json({
 				message: "chat exists",
 				data: {
 					isNew: false,
-					chat: populatedExistingChat,
+					chat: existingChatByUser,
 				},
 			});
 		}
@@ -101,10 +103,12 @@ const findOrCreateChat = async (req, res) => {
 			lastMessage: null,
 		});
 
-		const populatedChat = await newChat.populate(
-			"participants",
-			"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
-		);
+		const populatedChat = await Chat.findById(newChat._id)
+			.populate(
+				"participants",
+				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+			)
+			.populate("lastMessage");
 
 		return res.status(200).json({
 			message: "created new chat",
