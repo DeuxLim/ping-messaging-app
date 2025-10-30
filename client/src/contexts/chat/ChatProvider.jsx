@@ -6,11 +6,11 @@ import { fetchAPI } from "../../api/fetchApi.js";
 import { isEmpty } from "../../utilities/utils.js";
 
 export default function ChatProvider({ children }) {
-    const { currentUser, token } = useAuth();
+    const { token, currentUser } = useAuth();
     const { socket } = useSocket();
 
     // ---- Chat States ----
-    const [activeChatData, setActiveChatData] = useState({});
+    const [activeChatData, setActiveChatData] = useState(null);
     const [activeChatMessages, setActiveChatMessages] = useState([]);
     const [chatItems, setChatItems] = useState([]);
     const [userItems, setUserItems] = useState([]);
@@ -20,7 +20,7 @@ export default function ChatProvider({ children }) {
     const [error, setError] = useState(null);
 
     /* Utilities */
-    const isUserOnline = useCallback((userId) => onlineUsers[userId] === "Active", [onlineUsers]);
+    const isUserOnline = useCallback((userId) => onlineUsers[userId] === "online", [onlineUsers]);
     const updateChatSearchResults = useCallback(
         ({ chats = [], users = [], isSearch = false }) => {
             setChatItems(chats);
@@ -41,18 +41,29 @@ export default function ChatProvider({ children }) {
     // ---- Select Chat ----
     const setActiveChat = useCallback(
         (data) => {
-            if (!data || !data.participants) return;
+            if (isEmpty(data)) return;
 
-            const isSelf =
-                data.participants.length === 1 &&
-                data.participants[0]._id === currentUser._id;
+            setIsSearch(false);
 
-            setActiveChatData({
-                isSelfChat: isSelf,
-                ...data,
-            });
+            const chatData = Array.isArray(data?.participants) && data.participants.length > 0
+                ? {
+                    _id: data._id,
+                    isGroup: !!data.isGroup,
+                    participants: data.participants,
+                    chatName: data.chatName || null,
+                    lastMessage: data.lastMessage || null,
+                }
+                : {
+                    _id: null,
+                    isGroup: false,
+                    participants: [data, currentUser],
+                    chatName: null,
+                    lastMessage: null,
+                };
+
+            setActiveChatData(chatData);
         },
-        [currentUser._id]
+        [currentUser]
     );
 
     // ---- Socket Presence ----
