@@ -47,12 +47,7 @@ const suggested = async (req, res) => {
 			.limit(10)
 			.sort({ createdAt: -1 });
 
-		// Add listType for front-end logic
-		const users = suggestedUsers.map((user) => {
-			return { ...user.toObject(), listType: "user" };
-		});
-
-		res.status(200).json(users);
+		res.status(200).json(suggestedUsers);
 	} catch (error) {
 		console.error("Error fetching suggested users:", error);
 		res.status(500).json({ error: "Failed to fetch suggested users" });

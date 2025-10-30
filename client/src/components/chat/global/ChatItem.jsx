@@ -8,7 +8,7 @@ import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
 
 function ChatItem({ chatData }) {
-    const { setIsSearch, isUserOnline, setActiveChat } = useChat();
+    const { isUserOnline, setActiveChat } = useChat();
     const { typingChats } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
@@ -18,23 +18,23 @@ function ChatItem({ chatData }) {
 
     const chatPhoto = useMemo(() => {
         if (chatData.isGroup) return chatData.chatPhoto;
-        if (chatData.listType === "user") return chatData.profilePicture?.url;
+        if (chatData.type === "user") return chatData.profilePicture?.url;
         if (chatParticipants?.length) return chatParticipants[0]?.profilePicture?.url;
         return null;
     }, [chatData, chatParticipants]);
 
     const chatName = useMemo(() => {
         if (chatData.isGroup) return chatData.groupName;
-        if (chatData.listType === "user") return chatData.fullName;
+        if (chatData.type === "user") return chatData.fullName;
         if (chatParticipants?.length) return chatParticipants[0]?.fullName || "Unknown User";
         return "Unknown User";
     }, [chatData, chatParticipants]);
 
     const userStatus = useMemo(() => {
         const targetId =
-            chatData.listType === "user"
+            chatData.type === "user"
                 ? chatData._id
-                : chatData.listType === "chat"
+                : chatData.type === "chat"
                     ? chatParticipants[0]?._id
                     : null;
 
@@ -47,7 +47,7 @@ function ChatItem({ chatData }) {
 
     // --- Handlers ---
     const handleChatSelect = () => {
-        setIsSearch(false);
+        setActiveChat(chatData);
         navigate(`/chats/${chatData._id}`);
     };
 

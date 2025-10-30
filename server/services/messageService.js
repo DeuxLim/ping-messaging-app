@@ -40,10 +40,5 @@ export const addMessageToChat = async ({ chatId, senderId, text }) => {
 	// Convert to plain object
 	const messageObject = newMessage.toObject();
 
-	// Add listType inside the chat
-	if (messageObject.chat) {
-		messageObject.chat.listType = "chat";
-	}
-
 	return messageObject;
 };

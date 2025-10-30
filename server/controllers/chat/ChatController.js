@@ -142,11 +142,7 @@ const getUserChats = async (req, res) => {
 		.lean();
 
 	// Filter out chats without lastMessage
-	const chats = existingChats
-		.filter((chat) => chat.lastMessage != null)
-		.map((chat) => {
-			return { ...chat, listType: "chat" };
-		});
+	const chats = existingChats.filter((chat) => chat.lastMessage != null);
 
 	return res.status(200).json(chats);
 };
@@ -232,9 +228,7 @@ const searchChat = async (req, res) => {
 					$options: "i",
 				},
 			}).select("fullName userName profilePicture bio isOnline lastSeen")
-		).map((user) => {
-			return { ...user.toObject(), listType: "user" };
-		});
+		);
 
 		// Get all group chats
 		const groups = await Chat.find({
