@@ -188,6 +188,7 @@ export default function ChatProvider({ children }) {
         activeChatMessages,
         setActiveChatMessages,
         setActiveChat,
+        setActiveChatData,
 
         // fetched lists
         chatItems,
