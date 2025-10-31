@@ -1,13 +1,17 @@
 import ChatDisplayContext from "./ChatDisplayContext";
+import useChat from "../../../hooks/useChat";
 import useSocket from "../../../hooks/useSocket";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function ChatDisplayProvider({ children }) {
 	const [typingChats, setTypingChats] = useState({});
 	const [sidebarVisible, setSidebarVisible] = useState(true);
 	const [isDesktop, setIsDesktop] = useState(false);
 	const [activeView, setActiveView] = useState(null);
+	const { setActiveChatData } = useChat();
 	const { socket } = useSocket();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		socket.on("typing:update", ({ chatId, userId, status }) => {
@@ -30,13 +34,15 @@ export default function ChatDisplayProvider({ children }) {
 
 		const updateLayout = (e) => {
 			setIsDesktop(e.matches);
+			setActiveChatData(null);
 			setActiveView(e.matches ? "start" : null);
+			navigate("/chats");
 		};
 
 		updateLayout(desktopQuery);
 		desktopQuery.addEventListener("change", updateLayout);
 		return () => desktopQuery.removeEventListener("change", updateLayout);
-	}, []);
+	}, [setActiveChatData, navigate]);
 
 	const data = {
 		typingChats, setTypingChats,
