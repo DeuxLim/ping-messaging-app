@@ -9,7 +9,7 @@ import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
 
 function ChatItem({ chatData }) {
     const { isUserOnline } = useChat();
-    const { typingChats } = useChatDisplay();
+    const { typingChats, setActiveView} = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -47,6 +47,7 @@ function ChatItem({ chatData }) {
 
     // --- Handlers ---
     const handleChatSelect = () => {
+        setActiveView("chat");
         navigate(`/chats/${chatData._id}`);
     };
 
