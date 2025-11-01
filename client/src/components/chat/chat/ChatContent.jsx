@@ -62,7 +62,7 @@ export default function ChatContent() {
             {isLoading && <div>Loading...</div>}
             {error && <div>Something went wrong...</div>}
 
-            <div className="p-3 h-full flex flex-col gap-0.5">
+            <div className="p-3 h-full flex flex-col gap-[2.5px]">
                 {activeChatMessages?.map((m) => (
                     <ChatMessage key={m._id} data={m} />
                 ))}
