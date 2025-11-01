@@ -5,6 +5,7 @@ import useChat from "../../../hooks/useChat";
 import { useParams } from "react-router";
 import ChatMessage from "./ChatMessage";
 import useChatDisplay from "../../../hooks/useChatDisplay";
+import AvatarImage from "../global/AvatarImage";
 
 export default function ChatContent() {
     const { token } = useAuth();
@@ -17,6 +18,9 @@ export default function ChatContent() {
 
     const messagesEndRef = useRef(null);
     const isTyping = !!typingChats?.[activeChatData?._id];
+    const typingUserIds = typingChats?.[activeChatData?._id] || [];
+    const typingUsers = activeChatData?.participants?.filter((p) => typingUserIds.includes(p._id)) || [];
+
 
     // Fetch chat messages
     useEffect(() => {
@@ -55,10 +59,10 @@ export default function ChatContent() {
     useLayoutEffect(() => {
         if (!messagesEndRef.current) return;
         messagesEndRef.current.scrollIntoView({ behavior: "auto" });
-    }, [activeChatMessages]);
+    }, [activeChatMessages, isTyping]);
 
     return (
-        <section className="flex-1 overflow-y-auto hide-scrollbar">
+        <section className="flex-1 overflow-y-auto hide-scrollbar mb-4">
             {isLoading && <div>Loading...</div>}
             {error && <div>Something went wrong...</div>}
 
@@ -66,7 +70,25 @@ export default function ChatContent() {
                 {activeChatMessages?.map((m) => (
                     <ChatMessage key={m._id} data={m} />
                 ))}
-                {isTyping && <div className="text-sm text-gray-400">user is typing...</div>}
+                {
+                    typingUsers.map((user) => (
+                        <div className="">
+                            <div className="flex text-sm mt-0.5">
+                                <div className="flex gap-2 items-center max-w-[75%]">
+                                    <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
+                                        <div className="w-7 h-7 rounded-full overflow-hidden">
+                                            <AvatarImage chatPhotoUrl={user?.profilePicture?.url} />
+                                        </div>
+                                    </div>
+
+                                    <div className="px-3 py-1.5 bg-white text-sm text-gray-400">
+                                        typing...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                }
                 <div ref={messagesEndRef} />
             </div>
         </section>
