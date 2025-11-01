@@ -36,7 +36,6 @@ export default function ChatDisplayProvider({ children }) {
 			setIsDesktop(e.matches);
 			setActiveChatData(null);
 			setActiveView(e.matches ? "start" : null);
-			navigate("/chats");
 		};
 
 		updateLayout(desktopQuery);
