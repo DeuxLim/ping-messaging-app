@@ -56,6 +56,20 @@ export const socketHandler = (io) => {
 			io.to(room).emit("receiveMessage", newMessage);
 		});
 
+		socket.on("message:seen", async ({ chatId, seenBy, seenMessages }) => {
+			if (!chatId || !seenBy || seenMessages.length === 0) return;
+
+			await Message.updateMany(
+				{ _id: { $in: seenMessages } },
+				{ $set: { isSeen: true } }
+			);
+
+			io.to(`chat:${chatId}`).emit("messages:seenUpdate", {
+				chatId,
+				seenMessages,
+			});
+		});
+
 		/** ─────────────── TYPING EVENTS ─────────────── **/
 		socket.on("typing:start", ({ chatId, userId }) => {
 			if (!chatId || !userId) return;
