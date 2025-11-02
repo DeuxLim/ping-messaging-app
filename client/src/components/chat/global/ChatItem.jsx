@@ -6,10 +6,11 @@ import { useEffect, useState, useMemo, memo } from "react";
 import AvatarWithStatus from "./AvatarWithStatus";
 import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
+import { FaCircle } from "react-icons/fa";
 
 function ChatItem({ chatData }) {
     const { isUserOnline } = useChat();
-    const { typingChats, setActiveView} = useChatDisplay();
+    const { typingChats, setActiveView } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -30,6 +31,9 @@ function ChatItem({ chatData }) {
         return "Unknown User";
     }, [chatData, chatParticipants]);
 
+
+    const lastMessageSender = (chatParticipants.find(p => p._id === chatData.lastMessage?.sender))?.firstName;
+
     const userStatus = useMemo(() => {
         const targetId =
             chatData.type === "user"
@@ -40,6 +44,8 @@ function ChatItem({ chatData }) {
 
         return isUserOnline(targetId) ? "online" : "offline";
     }, [chatData, chatParticipants, isUserOnline]);
+
+    const msgSeen = chatData.lastMessage?.isSeen;
 
     useEffect(() => {
         setLastMessageDateTime(formatLastMessageDateTime(chatData?.lastMessage?.createdAt));
@@ -65,16 +71,32 @@ function ChatItem({ chatData }) {
             {/* Chat Details */}
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center mb-1">
-                    <span className="font-semibold truncate">{chatName}</span>
-                    <span className="text-sm text-gray-500 ml-2 flex-shrink-0">
+                    <span className={`${!msgSeen && chatData.lastMessage?.sender !== currentUser._id && "font-semibold"} truncate`}>{chatName}</span>
+                    <span className={`text-sm text-gray-500 ml-2 flex-shrink-0 ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id && "font-bold"}`}>
                         {lastMessageDateTime}
                     </span>
                 </div>
 
-                <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600 truncate">
-                        {typingChats[chatData._id] ? "typing..." : chatData.lastMessage?.text || ""}
+                <div className={`flex justify-between items-center ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id && "font-bold"}`}>
+                    <span className="text-sm text-gray-600 flex gap-1 w-4/5">
+                        {chatData.lastMessage?.sender === currentUser._id ? (
+                            <div>you: </div>
+                        ) : (
+                            <div>
+                                {lastMessageSender}:
+                            </div>
+                        )}
+                        <div className="truncate">
+                            {typingChats[chatData._id] ? "typing..." : chatData.lastMessage?.text || ""}
+                        </div>
                     </span>
+                    <div>
+                        {!msgSeen && chatData.lastMessage?.sender !== currentUser._id && (
+                            <div className="text-xs text-blue-500">
+                                <FaCircle />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
