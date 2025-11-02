@@ -1,4 +1,4 @@
-import { IoChevronBackOutline, IoVideocamOutline } from "react-icons/io5";
+import { IoChevronBackOutline, IoVideocam, IoCall } from "react-icons/io5";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 import useChatDisplay from "../../../hooks/useChatDisplay";
@@ -48,6 +48,10 @@ export default function ChatBoxHeader() {
 		console.log("Start video call");
 		// Placeholder for future video call logic
 	};
+	const handleVoiceCall = () => {
+		console.log("Start video call");
+		// Placeholder for future video call logic
+	};
 
 	return (
 		<header className="h-21 border-b border-gray-300 bg-white">
@@ -78,14 +82,23 @@ export default function ChatBoxHeader() {
 					</div>
 				</div>
 
+				<button
+					onClick={handleVoiceCall}
+					className="text-3xl p-2 hover:text-blue-500 transition-colors text-blue-500"
+					aria-label="Start video call"
+				>
+					<IoCall />
+				</button>
+				
 				{/* Video call button */}
 				<button
 					onClick={handleVideoCall}
-					className="text-3xl p-2 hover:text-blue-500 transition-colors"
+					className="text-3xl p-2 hover:text-blue-500 transition-colors text-blue-500"
 					aria-label="Start video call"
 				>
-					<IoVideocamOutline />
+					<IoVideocam />
 				</button>
+
 			</div>
 		</header>
 	);
