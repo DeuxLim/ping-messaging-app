@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import ChatContext from "./ChatContext.js";
 import useAuth from "../../hooks/useAuth";
 import useSocket from "../../hooks/useSocket.js";
