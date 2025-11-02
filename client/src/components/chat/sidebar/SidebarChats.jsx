@@ -8,7 +8,6 @@ import { useMemo } from "react";
 export default function SidebarChats() {
     const { usersAndChatsList, isSearch = false, isLoading = false, error = null } = useChat();
 
-    const title = isSearch ? "Search" : "Messages";
     const chatNodes = useMemo(() => {
         const filtered = isSearch
             ? usersAndChatsList // show all types when searching
@@ -27,10 +26,6 @@ export default function SidebarChats() {
     return (
         <section className="flex-1 p-3 flex flex-col gap-3 overflow-auto">
             <div>
-                <div className="flex justify-between pb-3">
-                    <div>{title}</div>
-                </div>
-
                 <div className="text-sm flex flex-col gap-3">
                     {renderList}
                 </div>
