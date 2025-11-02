@@ -71,8 +71,8 @@ export default function ChatContent() {
                     <ChatMessage key={m._id} data={m} />
                 ))}
                 {
-                    typingUsers.map((user) => (
-                        <div className="">
+                    typingUsers.map((user, index) => (
+                        <div className="" key={index}>
                             <div className="flex text-sm mt-0.5">
                                 <div className="flex gap-2 items-center max-w-[75%]">
                                     <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
