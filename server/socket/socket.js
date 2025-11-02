@@ -6,6 +6,7 @@ import {
 	isUserOnline,
 } from "./onlineUsers.js";
 import User from "./../models/user.js";
+import Message from "../models/message.js";
 
 export const socketHandler = (io) => {
 	io.on("connection", (socket) => {
