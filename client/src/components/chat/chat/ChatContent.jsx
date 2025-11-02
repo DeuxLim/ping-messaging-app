@@ -6,12 +6,14 @@ import { useParams } from "react-router";
 import ChatMessage from "./ChatMessage";
 import useChatDisplay from "../../../hooks/useChatDisplay";
 import AvatarImage from "../global/AvatarImage";
+import useSocket from "../../../hooks/useSocket";
 
 export default function ChatContent() {
-    const { token } = useAuth();
+    const { token, currentUser } = useAuth();
     const { setActiveChatMessages, activeChatMessages, activeChatData } = useChat();
     const { typingChats } = useChatDisplay();
     const { chatId } = useParams();
+    const { socket } = useSocket();
 
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
