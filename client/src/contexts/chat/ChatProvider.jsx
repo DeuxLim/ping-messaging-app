@@ -148,6 +148,43 @@ export default function ChatProvider({ children }) {
         };
     }, [socket, activeChatData]);
 
+    /* ----- HANDLE MESSAGE SEEN STATUS ----  */
+    const activeChatDataRef = useRef(activeChatData);
+    useEffect(() => {
+        activeChatDataRef.current = activeChatData;
+    }, [activeChatData]);
+    
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleSeenUpdate = ({ chatId, seenMessages }) => {
+            // Update chatItems (sidebar) - this should ALWAYS run
+            setChatItems(prev =>
+                prev.map(chat => {
+                    if (chat._id === chatId && chat.lastMessage && seenMessages.includes(chat.lastMessage._id)) {
+                        return { ...chat, lastMessage: { ...chat.lastMessage, isSeen: true } };
+                    }
+                    return chat;
+                })
+            );
+
+            // Only update active chat messages if we're viewing this chat
+            if (activeChatDataRef.current?._id === chatId) {
+                setActiveChatMessages(prev =>
+                    prev.map(msg =>
+                        seenMessages.includes(msg._id)
+                            ? { ...msg, isSeen: true }
+                            : msg
+                    )
+                );
+            }
+        };
+
+        socket.on("messages:seenUpdate", handleSeenUpdate);
+        return () => socket.off("messages:seenUpdate", handleSeenUpdate);
+    }, [socket]);
+    /* ----- HANDLE MESSAGE SEEN STATUS ----  */
+
     // ---- Fetch Chats + Suggested Users ----
     useEffect(() => {
         if (!token || isSearch) return; // avoid refetch during search

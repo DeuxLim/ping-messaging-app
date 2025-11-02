@@ -63,6 +63,65 @@ export default function ChatContent() {
         messagesEndRef.current.scrollIntoView({ behavior: "auto" });
     }, [activeChatMessages, isTyping]);
 
+    /* ----- HANDLE MESSAGE SEEN STATUS ----  */
+    const activeChatMessagesRef = useRef(activeChatMessages);
+    const observerRef = useRef(null);
+    
+    // Keep ref updated
+    useEffect(() => {
+        activeChatMessagesRef.current = activeChatMessages;
+    }, [activeChatMessages]);
+
+    // Set up observer once
+    useEffect(() => {
+        if (!socket || !currentUser?._id || !chatId) return;
+
+        let seenTimeout;
+        const observer = new IntersectionObserver(entries => {
+            clearTimeout(seenTimeout);
+            seenTimeout = setTimeout(() => {
+                const visible = entries.filter(e => e.isIntersecting);
+                const seenMessages = visible
+                    .map(e => e.target.id.replace(/^msg-/, ""))
+                    .filter(msgId => {
+                        const msg = activeChatMessagesRef.current.find(m => m._id === msgId);
+                        return msg && !msg.isSeen && msg.sender._id !== currentUser._id;
+                    });
+
+                if (seenMessages.length) {
+                    socket.emit("message:seen", {
+                        chatId,
+                        seenBy: currentUser._id,
+                        seenMessages
+                    });
+                }
+            }, 500);
+        }, { threshold: 0.75 });
+
+        observerRef.current = observer;
+
+        // Observe existing messages
+        const messageElements = document.querySelectorAll('[id^="msg-"]');
+        messageElements.forEach(el => observer.observe(el));
+
+        return () => {
+            observer.disconnect();
+            observerRef.current = null;
+        };
+    }, [socket, currentUser?._id, chatId]);
+
+    // Observe new messages when activeChatMessages changes
+    useEffect(() => {
+        if (!observerRef.current) return;
+
+        const messageElements = document.querySelectorAll('[id^="msg-"]');
+        messageElements.forEach(el => {
+            // Check if already being observed (observer will ignore duplicates anyway)
+            observerRef.current.observe(el);
+        });
+    }, [activeChatMessages]);
+    /* ----- HANDLE MESSAGE SEEN STATUS ----  */
+
     return (
         <section className="flex-1 overflow-y-auto hide-scrollbar mb-4">
             {isLoading && <div>Loading...</div>}
