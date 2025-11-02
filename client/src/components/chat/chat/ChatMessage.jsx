@@ -60,7 +60,7 @@ export default function ChatMessage({ data }) {
                             )}
                         </div>
 
-                        <div id={`msg-${data._id}`} className="border border-gray-200 rounded-lg px-3 py-1.5 bg-gray-200 break-words max-w-2/3">
+                        <div id={`msg-${data._id}`} data-seen={data.isSeen} className="border border-gray-200 rounded-lg px-3 py-1.5 bg-gray-200 break-words max-w-2/3">
                             {data.text}
                         </div>
                     </div>
@@ -79,7 +79,7 @@ export default function ChatMessage({ data }) {
             )}
             <div className={`flex flex-col items-end text-sm ${isNewGroup ? "mt-3" : "mt-0.5"} pr-2.5`}>
                 <div className="flex flex-col gap-1 items-end w-full" onClick={setMessageClicked}>
-                    <div id={`msg-${data._id}`} className="border border-gray-300 bg-blue-500 text-white rounded-lg px-4 py-1.5 max-w-2/3 break-words">
+                    <div id={`msg-${data._id}`} data-seen={data.isSeen} className="border border-gray-300 bg-blue-500 text-white rounded-lg px-4 py-1.5 max-w-2/3 break-words">
                         {data.text}
                     </div>
                 </div>
