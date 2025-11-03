@@ -12,7 +12,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Start from "../components/chat/start/start";
 import MainWindow from "../components/chat/MainWindow";
 import ChatWindow from "../components/chat/chat/ChatWindow";
-import SearchUser from "../components/chat/friend/SearchUser";
+import CreateNewChat from "../components/chat/chat/CreateNewChat/CreateNewChat";
 
 /* Settings */
 import Profile from "../pages/Profile";
@@ -58,8 +58,8 @@ export const routes = createBrowserRouter([
                                 element: <ChatWindow />
                             },
                             {
-                                path: "search-user",
-                                element: <SearchUser />
+                                path: "create-new-chat",
+                                element: <CreateNewChat/>
                             }
                         ]
                     }
