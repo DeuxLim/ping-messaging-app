@@ -1,16 +1,13 @@
-import { IoChatbubblesOutline } from "react-icons/io5";
+import { FaFacebookMessenger } from "react-icons/fa6";
 
 export default function Start() {
 	return (
 		<>
-			<div className="h-full flex justify-center items-center">
+			<div className="h-full flex justify-center items-center bg-gray-100">
 				<div className="flex justify-center items-center gap-4">
-					<div className="text-9xl text-gray-200">
-						<IoChatbubblesOutline />
+					<div className="text-4xl text-gray-400">
+						<FaFacebookMessenger />
 					</div>
-					<span className="text-4xl text-gray-300 font-bold">
-						Chat someone!
-					</span>
 				</div>
 			</div>
 		</>
