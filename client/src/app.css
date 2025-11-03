@@ -9,3 +9,9 @@
     display: none;             /* Chrome, Safari */
   }
 }
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+}
