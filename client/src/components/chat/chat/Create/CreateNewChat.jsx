@@ -35,7 +35,7 @@ export default function CreateNewChat() {
 
 				<div className="flex flex-col">
 					{/* Menu Item 1 */}
-					<div className="flex w-full">
+					<Link to="/chats/create-new-group" className="flex w-full">
 						<div className="py-2 px-4">
 							<div className="bg-gray-300 rounded-full size-12 flex justify-center items-center text-4xl">
 								<MdGroups />
@@ -51,7 +51,7 @@ export default function CreateNewChat() {
 								<IoChevronForward />
 							</div>
 						</div>
-					</div>
+					</Link>
 				</div>
 
 				<div className="text-xs text-gray-500 px-4 py-2 mt-4">
@@ -59,7 +59,7 @@ export default function CreateNewChat() {
 				</div>
 
 				{/* List suggested users below */}
-				
+
 			</div>
 		</>
 	)
