@@ -12,7 +12,8 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Start from "../components/chat/start/start";
 import MainWindow from "../components/chat/MainWindow";
 import ChatWindow from "../components/chat/chat/ChatWindow";
-import CreateNewChat from "../components/chat/chat/CreateNewChat/CreateNewChat";
+import CreateNewChat from "../components/chat/chat/Create/CreateNewChat";
+import CreateNewGroup from "../components/chat/chat/Create/CreateNewGroup";
 
 /* Settings */
 import Profile from "../pages/Profile";
@@ -60,6 +61,10 @@ export const routes = createBrowserRouter([
                             {
                                 path: "create-new-chat",
                                 element: <CreateNewChat/>
+                            },
+                            {
+                                path: "create-new-group",
+                                element: <CreateNewGroup/>
                             }
                         ]
                     }
