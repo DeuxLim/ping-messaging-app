@@ -1,16 +1,17 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { IoChevronForward } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 
 export default function CreateNewGroup() {
+    const navigate = useNavigate();
 
     return (
         <>
             <div>
                 <div className="flex justify-between items-center px-4 py-2">
-                    <Link to="/chats" className="text-blue-500 text-xs">
+                    <button onClick={() => navigate(-1)} className="text-blue-500 text-xs">
                         Cancel
-                    </Link>
+                    </button>
                     <div className="font-semibold text-sm">
                         New Group
                     </div>
