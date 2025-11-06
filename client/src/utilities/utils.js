@@ -19,7 +19,7 @@ export function formatLastMessageDateTime(isoString) {
 		date.getFullYear() === now.getFullYear();
 
 	return isToday
-		? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+		? date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
 		: date.toLocaleDateString([], {
 				month: "short",
 				day: "2-digit",
