@@ -6,7 +6,8 @@ import { useEffect, useState, useMemo, memo } from "react";
 import AvatarWithStatus from "./AvatarWithStatus";
 import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
-import { FaCircle } from "react-icons/fa";
+import { MdPushPin } from "react-icons/md";
+import { BsBellSlashFill } from "react-icons/bs";
 
 function ChatItem({ chatData }) {
     const { isUserOnline } = useChat();
@@ -68,36 +69,55 @@ function ChatItem({ chatData }) {
             {/* Profile Picture */}
             <AvatarWithStatus chatPhotoUrl={chatPhoto} userStatus={userStatus} />
 
-            {/* Chat Details */}
-            <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center mb-1">
-                    <span className={`${!msgSeen && chatData.lastMessage?.sender !== currentUser._id && "font-semibold"} truncate`}>{chatName}</span>
-                    <span className={`text-sm text-gray-500 ml-2 flex-shrink-0 ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id && "font-bold"}`}>
-                        {lastMessageDateTime}
+            {/* Chat Data UI - main content area */}
+            <div className="flex-1 min-w-0 flex flex-col gap-1">
+                {/* Chat Name */}
+                <div className="flex items-center gap-2">
+                    <span
+                        className={`truncate ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id ? "font-semibold" : ""}`}
+                    >
+                        {chatName}
                     </span>
                 </div>
 
-                <div className={`flex justify-between items-center ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id && "font-bold"}`}>
-                    <span className="text-sm text-gray-600 flex gap-1 w-4/5">
-                        {chatData.lastMessage?.sender === currentUser._id ? (
-                            <div>you: </div>
-                        ) : (
-                            <div>
-                                {lastMessageSender}:
-                            </div>
-                        )}
-                        <div className="truncate">
-                            {typingChats[chatData._id] ? "typing..." : chatData.lastMessage?.text || ""}
-                        </div>
-                    </span>
-                    <div>
-                        {!msgSeen && chatData.lastMessage?.sender !== currentUser._id && (
-                            <div className="text-xs text-blue-500">
-                                <FaCircle />
-                            </div>
-                        )}
+                {/* Message Preview with Time */}
+                {typingChats[chatData._id] ? (
+                    <div className="text-xs text-gray-600">
+                        Typing ...
                     </div>
-                </div>
+                ) : (
+                    <div className="flex items-center gap-2 text-xs text-gray-600 min-w-0">
+                        <span className={`truncate flex-1 ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id ? "font-bold" : ""}`}>
+                            {chatData.lastMessage?.sender === currentUser._id ? (
+                                `you: ${chatData.lastMessage?.text || ""}`
+                            ) : !msgSeen ? (
+                                `${lastMessageSender} sent a message`
+                            ) : (
+                                chatData.lastMessage?.text || ""
+                            )}
+                        </span>
+
+                        <span className="text-gray-500 whitespace-nowrap flex-shrink-0">
+                            • {lastMessageDateTime}
+                        </span>
+                    </div>
+                )}
+            </div>
+
+            {/* Symbols - right side icons */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+                {/* Pinned */}
+                <MdPushPin className="text-gray-500 text-xl mt-0.5" />
+
+                {/* Muted */}
+                <BsBellSlashFill className="text-gray-500 text-xl" />
+
+                {/* Unread indicator */}
+                {!msgSeen && chatData.lastMessage?.sender !== currentUser._id && (
+                    <div className="text-3xl text-blue-500 leading-none">
+                        •
+                    </div>
+                )}
             </div>
         </div>
     );
