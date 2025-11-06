@@ -40,7 +40,7 @@ export default function CreateNewGroup() {
                         <input
                             type="text"
                             placeholder="Search"
-                            className="w-full text-xs bg-gray-100 py-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-full text-xs bg-gray-100 py-3 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                     </div>
                 </div>
