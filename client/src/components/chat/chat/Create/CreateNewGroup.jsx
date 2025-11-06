@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router";
-import { IoChevronForward } from "react-icons/io5";
-import { MdGroups } from "react-icons/md";
+import { TbSearch } from "react-icons/tb";
 
 export default function CreateNewGroup() {
     const navigate = useNavigate();
@@ -8,53 +7,42 @@ export default function CreateNewGroup() {
     return (
         <>
             <div>
-                <div className="flex justify-between items-center px-4 py-2">
+                <div className="flex justify-between items-center px-4 py-4">
                     <button onClick={() => navigate(-1)} className="text-blue-500 text-xs">
                         Cancel
                     </button>
                     <div className="font-semibold text-sm">
                         New Group
                     </div>
-                    <div className="text-blue-500 text-xs"> 
+                    <div className="text-blue-500 text-xs">
                         Create
                     </div>
                 </div>
 
-                {/* Search Bar */}
-                <div className="flex flex-row gap-3">
-                    <div className="relative w-full">
-                        {/* Icon */}
-                        <div className="text-xs absolute inset-y-0 flex items-center pl-4 text-gray-500">
-                            To:
-                        </div>
-
-                        {/* Input */}
-                        <input
-                            type="text"
-                            className="w-full bg-gray-50 py-3 pl-10 text-xs focus:outline-none"
-                        />
+                <div className="px-4 mb-4">
+                    <div className="text-sm relative">
+                        <label for="group-name" className="text-gray-500 text-xs px-1">
+                            Group name (optional)
+                        </label>
+                        <input type="text" id="group-name" name="group-name" className="w-full text-sm px-1 focus:outline-none focus:ring-0 focus:border-transparent" />
                     </div>
                 </div>
 
-                <div className="flex flex-col">
-                    {/* Menu Item 1 */}
-                    <Link to="" className="flex w-full">
-                        <div className="py-2 px-4">
-                            <div className="bg-gray-300 rounded-full size-12 flex justify-center items-center text-4xl">
-                                <MdGroups />
-                            </div>
+                {/* Search Bar */}
+                <div className="flex flex-row gap-3 mx-4">
+                    <div className="relative w-full">
+                        {/* Search Icon */}
+                        <div className="absolute inset-y-0 flex items-center pl-3 text-gray-500">
+                            <TbSearch />
                         </div>
-                        <div className="flex-1 flex justify-start items-center">
-                            <div className="font-medium text-sm">
-                                Create a new group
-                            </div>
-                        </div>
-                        <div className="flex items-center py-2 px-4">
-                            <div className="text-xl font-medium text-gray-500">
-                                <IoChevronForward />
-                            </div>
-                        </div>
-                    </Link>
+
+                        {/* Search Bar */}
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            className="w-full text-xs bg-gray-100 py-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
+                    </div>
                 </div>
 
                 <div className="text-xs text-gray-500 px-4 py-2 mt-4">
