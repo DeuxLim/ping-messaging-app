@@ -217,18 +217,16 @@ const searchChat = async (req, res) => {
 		);
 
 		// Get all users with no existing chat
-		const users = (
-			await User.find({
-				_id: {
-					$ne: currentUserId,
-					$nin: existingChatUserIds,
-				},
-				fullName: {
-					$regex: search,
-					$options: "i",
-				},
-			}).select("fullName userName profilePicture bio isOnline lastSeen")
-		);
+		const users = await User.find({
+			_id: {
+				$ne: currentUserId,
+				$nin: existingChatUserIds,
+			},
+			fullName: {
+				$regex: search,
+				$options: "i",
+			},
+		}).select("fullName userName profilePicture bio isOnline lastSeen");
 
 		// Get all group chats
 		const groups = await Chat.find({
