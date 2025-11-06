@@ -7,7 +7,7 @@ export default function CreateNewChat() {
 	return (
 		<>
 			<div>
-				<div className="flex justify-between items-center px-4 py-2">
+				<div className="flex justify-between items-center px-4 py-4">
 					<Link to="/chats" className="text-blue-500 text-xs">
 						Cancel
 					</Link>
