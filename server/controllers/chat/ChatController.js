@@ -137,14 +137,34 @@ const getUserChats = async (req, res) => {
 			"participants",
 			"-refreshToken -refreshTokenExpiresAt -password"
 		)
-		.populate("lastMessage")
+		.populate({
+			path: "lastMessage",
+			populate: {
+				path: "sender",
+				select: "-password -refreshToken -refreshTokenExpiresAt",
+			},
+		})
 		.sort({ updatedAt: -1 })
 		.lean();
 
-	// Filter out chats without lastMessage
 	const chats = existingChats.filter((chat) => chat.lastMessage != null);
 
-	return res.status(200).json(chats);
+	const chatsWithUnreadCount = await Promise.all(
+		chats.map(async (chat) => {
+			const unreadCount = await Message.countDocuments({
+				chat: chat._id,
+				sender: { $ne: currentUser._id },
+				isSeen: false,
+			});
+
+			return {
+				...chat,
+				unreadCount,
+			};
+		})
+	);
+
+	return res.status(200).json(chatsWithUnreadCount);
 };
 
 const getChatMessages = async (req, res) => {

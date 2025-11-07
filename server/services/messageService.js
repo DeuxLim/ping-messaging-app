@@ -24,7 +24,15 @@ export const addMessageToChat = async ({ chatId, senderId, text }) => {
 		{
 			path: "chat",
 			populate: [
-				{ path: "lastMessage" }, // make sure chat.lastMessage is now updated
+				{
+					path: "lastMessage",
+					populate: [
+						{
+							path: "sender",
+							select: "-password -refreshToken -refreshAccessToken",
+						},
+					],
+				},
 				{
 					path: "participants",
 					select: "-password -refreshToken -refreshAccessToken",
