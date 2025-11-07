@@ -32,8 +32,7 @@ function ChatItem({ chatData }) {
         return "Unknown User";
     }, [chatData, chatParticipants]);
 
-
-    const lastMessageSender = (chatParticipants.find(p => p._id === chatData.lastMessage?.sender))?.firstName;
+    const lastMessageSender = (chatParticipants.find(p => p._id === chatData.lastMessage?.sender?._id))?.firstName;
 
     const userStatus = useMemo(() => {
         const targetId =
@@ -46,7 +45,9 @@ function ChatItem({ chatData }) {
         return isUserOnline(targetId) ? "online" : "offline";
     }, [chatData, chatParticipants, isUserOnline]);
 
-    const msgSeen = chatData.lastMessage?.isSeen;
+    const lastMsgSeen = chatData.lastMessage?.isSeen;
+    const lastSender = chatData.lastMessage?.sender?.firstName;
+    const unread = chatData.unreadCount > 0 && `${lastSender} sent ${chatData.unreadCount} message${chatData.unreadCount > 1 ? "s" : ""}`;
 
     useEffect(() => {
         setLastMessageDateTime(formatLastMessageDateTime(chatData?.lastMessage?.createdAt));
@@ -74,7 +75,7 @@ function ChatItem({ chatData }) {
                 {/* Chat Name */}
                 <div className="flex items-center gap-2">
                     <span
-                        className={`truncate ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id ? "font-semibold" : ""}`}
+                        className={`truncate ${!lastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id ? "font-semibold" : ""}`}
                     >
                         {chatName}
                     </span>
@@ -88,10 +89,12 @@ function ChatItem({ chatData }) {
                 ) : (
                     <div className="flex gap-1">
                         <div className="flex items-center gap-2 text-xs text-gray-600 min-w-0">
-                            <span className={`truncate flex-1 ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id ? "font-bold" : ""}`}>
-                                {chatData.lastMessage?.sender === currentUser._id ? (
+                            <span className={`truncate flex-1 ${!lastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id ? "font-bold" : ""}`}>
+                                {chatData.lastMessage?.sender?._id === currentUser._id ? (
                                     `you: ${chatData.lastMessage?.text || ""}`
-                                ) : !msgSeen ? (
+                                ) : chatData.unreadCount > 0 ? (
+                                    unread ?? "Someone sent a message."
+                                ) : !lastMsgSeen ? (
                                     `${lastMessageSender} sent a message`
                                 ) : (
                                     chatData.lastMessage?.text || ""
@@ -99,7 +102,7 @@ function ChatItem({ chatData }) {
                             </span>
 
                         </div>
-                        <span className="text-gray-500 whitespace-nowrap flex-shrink-0">
+                        <span className="text-gray-500 whitespace-nowrap flex-shrink-0 text-xs">
                             • {lastMessageDateTime}
                         </span>
                     </div>
@@ -115,7 +118,7 @@ function ChatItem({ chatData }) {
                 <BsBellSlashFill className="text-gray-500 text-xl" />
 
                 {/* Unread indicator */}
-                {!msgSeen && chatData.lastMessage?.sender !== currentUser._id && (
+                {!lastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id && (
                     <div className="text-3xl text-blue-500 leading-none">
                         •
                     </div>
