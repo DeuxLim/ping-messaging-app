@@ -86,17 +86,19 @@ function ChatItem({ chatData }) {
                         Typing ...
                     </div>
                 ) : (
-                    <div className="flex items-center gap-2 text-xs text-gray-600 min-w-0">
-                        <span className={`truncate flex-1 ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id ? "font-bold" : ""}`}>
-                            {chatData.lastMessage?.sender === currentUser._id ? (
-                                `you: ${chatData.lastMessage?.text || ""}`
-                            ) : !msgSeen ? (
-                                `${lastMessageSender} sent a message`
-                            ) : (
-                                chatData.lastMessage?.text || ""
-                            )}
-                        </span>
+                    <div className="flex gap-1">
+                        <div className="flex items-center gap-2 text-xs text-gray-600 min-w-0">
+                            <span className={`truncate flex-1 ${!msgSeen && chatData.lastMessage?.sender !== currentUser._id ? "font-bold" : ""}`}>
+                                {chatData.lastMessage?.sender === currentUser._id ? (
+                                    `you: ${chatData.lastMessage?.text || ""}`
+                                ) : !msgSeen ? (
+                                    `${lastMessageSender} sent a message`
+                                ) : (
+                                    chatData.lastMessage?.text || ""
+                                )}
+                            </span>
 
+                        </div>
                         <span className="text-gray-500 whitespace-nowrap flex-shrink-0">
                             • {lastMessageDateTime}
                         </span>
