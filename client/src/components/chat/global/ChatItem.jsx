@@ -92,7 +92,7 @@ function ChatItem({ chatData }) {
                             <span className={`truncate flex-1 ${!lastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id ? "font-bold" : ""}`}>
                                 {chatData.lastMessage?.sender?._id === currentUser._id ? (
                                     `you: ${chatData.lastMessage?.text || ""}`
-                                ) : chatData.unreadCount > 0 ? (
+                                ) : chatData.unreadCount > 0 && !lastMsgSeen ? (
                                     unread ?? "Someone sent a message."
                                 ) : !lastMsgSeen ? (
                                     `${lastMessageSender} sent a message`
