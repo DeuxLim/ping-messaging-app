@@ -93,7 +93,7 @@ function ChatItem({ chatData }) {
                                 {chatData.lastMessage?.sender?._id === currentUser._id ? (
                                     `you: ${chatData.lastMessage?.text || ""}`
                                 ) : chatData.unreadCount > 0 && !lastMsgSeen ? (
-                                    unread ?? "Someone sent a message."
+                                    unread
                                 ) : !lastMsgSeen ? (
                                     `${lastMessageSender} sent a message`
                                 ) : (
