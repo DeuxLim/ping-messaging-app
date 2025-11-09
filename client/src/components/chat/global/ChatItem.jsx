@@ -3,36 +3,33 @@ import useAuth from "../../../hooks/useAuth";
 import useChat from "../../../hooks/useChat";
 import useChatDisplay from "../../../hooks/useChatDisplay";
 import { useEffect, useState, useMemo, memo } from "react";
-import AvatarWithStatus from "./AvatarWithStatus";
 import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
-import { MdPushPin } from "react-icons/md";
-import { BsBellSlashFill } from "react-icons/bs";
+import ChatItemAvatar from "./ChatItem/ChatItemAvatar";
+import ChatItemName from "./ChatItem/ChatItemName";
+import ChatItemContentPreview from "./ChatItem/ChatItemContentPreview";
+import ChatItemMeta from "./ChatItem/ChatItemMeta";
 
-function ChatItem({ chatData }) {
+function ChatItem({ chatData, variant }) {
     const { isUserOnline } = useChat();
-    const { typingChats, setActiveView } = useChatDisplay();
+    const { setActiveView } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
-    const [lastMessageDateTime, setLastMessageDateTime] = useState("");
-    const chatParticipants = useOtherParticipants(chatData, currentUser._id);
 
-    const chatPhoto = useMemo(() => {
+    // -- Global values start --
+    const chatParticipants = useOtherParticipants(chatData, currentUser._id);
+    const isLastMsgSeen = chatData.lastMessage?.isSeen;
+    // -- Global values end ----
+
+
+    // -- Avatar values start --
+    const chatPhotoUrl = useMemo(() => {
         if (chatData.isGroup) return chatData.chatPhoto;
         if (chatData.type === "user") return chatData.profilePicture?.url;
         if (chatParticipants?.length) return chatParticipants[0]?.profilePicture?.url;
         return null;
     }, [chatData, chatParticipants]);
-
-    const chatName = useMemo(() => {
-        if (chatData.isGroup) return chatData.groupName;
-        if (chatData.type === "user") return chatData.fullName;
-        if (chatParticipants?.length) return chatParticipants[0]?.fullName || "Unknown User";
-        return "Unknown User";
-    }, [chatData, chatParticipants]);
-
-    const lastMessageSender = (chatParticipants.find(p => p._id === chatData.lastMessage?.sender?._id))?.firstName;
 
     const userStatus = useMemo(() => {
         const targetId =
@@ -44,14 +41,29 @@ function ChatItem({ chatData }) {
 
         return isUserOnline(targetId) ? "online" : "offline";
     }, [chatData, chatParticipants, isUserOnline]);
+    // -- Avatar values end ----
 
-    const lastMsgSeen = chatData.lastMessage?.isSeen;
-    const lastSender = chatData.lastMessage?.sender?.firstName;
-    const unread = chatData.unreadCount > 0 && `${lastSender} sent ${chatData.unreadCount} message${chatData.unreadCount > 1 ? "s" : ""}`;
 
+    // -- Chat name values start --
+    const chatName = useMemo(() => {
+        if (chatData.isGroup) return chatData.groupName;
+        if (chatData.type === "user") return chatData.fullName;
+        if (chatParticipants?.length) return chatParticipants[0]?.fullName || "Unknown User";
+        return "Unknown User";
+    }, [chatData, chatParticipants]);
+    // -- Chat name values end ----
+
+
+    // -- Message Preview values start --
+    const { typingChats } = useChatDisplay();
+    const [lastMessageDateTime, setLastMessageDateTime] = useState("");
+    const lastMessageSender = (chatParticipants.find(p => p._id === chatData.lastMessage?.sender?._id))?.firstName;
+    const unread = chatData.unreadCount > 0 && `${chatData.lastMessage?.sender?.firstName} sent ${chatData.unreadCount} message${chatData.unreadCount > 1 ? "s" : ""}`;
     useEffect(() => {
         setLastMessageDateTime(formatLastMessageDateTime(chatData?.lastMessage?.createdAt));
     }, [chatData?.lastMessage?.createdAt]);
+    // -- Message Preview values end ----
+
 
     // --- Handlers ---
     const handleChatSelect = () => {
@@ -68,62 +80,34 @@ function ChatItem({ chatData }) {
             onClick={handleChatSelect}
         >
             {/* Profile Picture */}
-            <AvatarWithStatus chatPhotoUrl={chatPhoto} userStatus={userStatus} />
+            <ChatItemAvatar data={{ chatPhotoUrl, userStatus }} />
 
             {/* Chat Data UI - main content area */}
             <div className="flex-1 min-w-0 flex flex-col gap-1">
                 {/* Chat Name */}
-                <div className="flex items-center gap-2">
-                    <span
-                        className={`truncate ${!lastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id ? "font-semibold" : ""}`}
-                    >
-                        {chatName}
-                    </span>
-                </div>
+                <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName }} />
+
 
                 {/* Message Preview with Time */}
-                {typingChats[chatData._id] ? (
-                    <div className="text-xs text-gray-600">
-                        Typing ...
-                    </div>
-                ) : (
-                    <div className="flex gap-1">
-                        <div className="flex items-center gap-2 text-xs text-gray-600 min-w-0">
-                            <span className={`truncate flex-1 ${!lastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id ? "font-bold" : ""}`}>
-                                {chatData.lastMessage?.sender?._id === currentUser._id ? (
-                                    `you: ${chatData.lastMessage?.text || ""}`
-                                ) : chatData.unreadCount > 0 && !lastMsgSeen ? (
-                                    unread
-                                ) : !lastMsgSeen ? (
-                                    `${lastMessageSender} sent a message`
-                                ) : (
-                                    chatData.lastMessage?.text || ""
-                                )}
-                            </span>
-
-                        </div>
-                        <span className="text-gray-500 whitespace-nowrap flex-shrink-0 text-xs">
-                            • {lastMessageDateTime}
-                        </span>
-                    </div>
+                {variant === "full" && (
+                    <ChatItemContentPreview
+                        data={{
+                            typingChats,
+                            chatData,
+                            isLastMsgSeen,
+                            currentUser,
+                            unread,
+                            lastMessageSender,
+                            lastMessageDateTime,
+                        }}
+                    />
                 )}
             </div>
 
             {/* Symbols - right side icons */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Pinned */}
-                <MdPushPin className="text-gray-500 text-xl mt-0.5" />
-
-                {/* Muted */}
-                <BsBellSlashFill className="text-gray-500 text-xl" />
-
-                {/* Unread indicator */}
-                {!lastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id && (
-                    <div className="text-3xl text-blue-500 leading-none">
-                        •
-                    </div>
-                )}
-            </div>
+            {variant === "full" && (
+                <ChatItemMeta data={{ isLastMsgSeen, chatData, currentUser }} />
+            )}
         </div>
     );
 }
