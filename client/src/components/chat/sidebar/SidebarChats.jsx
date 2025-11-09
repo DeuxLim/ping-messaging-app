@@ -12,7 +12,7 @@ export default function SidebarChats() {
             : usersAndChatsList.filter(item => item.type === "chat"); // hide users otherwise
 
         return filtered.map(item => (
-            <ChatItem key={`${item.type}-${item._id}`} chatData={item} />
+            <ChatItem key={`${item.type}-${item._id}`} chatData={item} variant={isSearch ? "compact" : "full"}/>
         ));
     }, [usersAndChatsList, isSearch]);
     
