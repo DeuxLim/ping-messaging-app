@@ -1,5 +1,3 @@
-import { BiMessageRounded } from "react-icons/bi";
-import { IoPersonAddOutline } from "react-icons/io5";
 import ChatItem from "../global/ChatItem";
 import useChat from "../../../hooks/useChat";
 import CenteredMessage from "../../common/CenteredMessage";
