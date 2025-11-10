@@ -11,8 +11,10 @@ export default function SidebarSearch() {
     /* Handle chat query logic */
     const handleChatSearch = async (value) => {
         const searchQuery = value.trim();
-        if (!searchQuery) return updateChatSearchResults({});
-
+        if (!searchQuery) {
+            return updateChatSearchResults({ isSearch : false})
+        }
+        
         try {
             const response = await fetchAPI.get(`/chats/search?q=${encodeURIComponent(searchQuery)}`);
             updateChatSearchResults({
