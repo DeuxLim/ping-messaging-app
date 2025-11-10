@@ -26,6 +26,7 @@ export default function ChatBoxHeader() {
 
 	const chatName = isGroup
 		? activeChatData.chatName || "Unnamed Group"
+		: otherUser.fullName ? `${otherUser.fullName}`.trim() 
 		: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
 
 	// --- Online status logic ---

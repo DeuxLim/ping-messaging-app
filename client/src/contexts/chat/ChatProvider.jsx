@@ -43,9 +43,7 @@ export default function ChatProvider({ children }) {
         (data) => {
             if (isEmpty(data)) return;
 
-            setIsSearch(false);
-
-            const chatData = Array.isArray(data?.participants) && data.participants.length > 0
+            const chatData = Array.isArray(data.participants) && data.participants.length > 0
                 ? {
                     _id: data._id,
                     isGroup: !!data.isGroup,
