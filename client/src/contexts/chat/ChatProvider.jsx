@@ -15,6 +15,7 @@ export default function ChatProvider({ children }) {
     const [chatItems, setChatItems] = useState([]);
     const [userItems, setUserItems] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
+    const [searchResults, setSearchResults] = useState({ chats: [], users: [] });
     const [onlineUsers, setOnlineUsers] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,8 +24,9 @@ export default function ChatProvider({ children }) {
     const isUserOnline = useCallback((userId) => onlineUsers[userId] === "online", [onlineUsers]);
     const updateChatSearchResults = useCallback(
         ({ chats = [], users = [], isSearch = false }) => {
-            setChatItems(chats);
-            setUserItems(users);
+            const searchChatsList = (chats || []).map(c => ({ ...c, type: "chat" }));
+            const searchUsersList = (users || []).map(u => ({ ...u, type: "user" }));
+            setSearchResults([...searchChatsList, ...searchUsersList]);
             setIsSearch(isSearch);
         },
         []
@@ -151,7 +153,7 @@ export default function ChatProvider({ children }) {
     useEffect(() => {
         activeChatDataRef.current = activeChatData;
     }, [activeChatData]);
-    
+
     useEffect(() => {
         if (!socket) return;
 
@@ -231,6 +233,7 @@ export default function ChatProvider({ children }) {
         userItems,
         setUserItems,
         usersAndChatsList,
+        searchResults,
 
         // presence + search
         onlineUsers,
