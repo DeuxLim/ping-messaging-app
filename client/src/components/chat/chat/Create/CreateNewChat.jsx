@@ -3,23 +3,55 @@ import { IoChevronForward } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 import useChat from "../../../../hooks/useChat"
 import ChatItem from "../../global/ChatItem";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import useDebounceSearch from "../../../../hooks/common/useDebounceSearch";
+import { isEmpty } from "../../../../utilities/utils";
 
 export default function CreateNewChat() {
 	const { usersAndChatsList } = useChat();
+	const [filteredList, setFilteredList] = useState([]);
+
+	useEffect(() => {
+		setFilteredList(usersAndChatsList);
+	}, [usersAndChatsList]);
 
 	const chatNodes = useMemo(() => {
-		if (usersAndChatsList.length === 0) return [];
+		if (isEmpty(filteredList)) return [];
 
-		return usersAndChatsList.map(item => (
-			<ChatItem key={`${item.type}-${item._id}`} chatData={item} variant="compact" />
+		return filteredList?.map(item => (
+			<div key={`${item.type}-${item._id}`} className="text-sm relative after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-[94%] after:border-b after:border-gray-200">
+				<ChatItem chatData={item} variant="compact" selectionEnabled={true} />
+			</div>
 		));
-	}, [usersAndChatsList]);
+	}, [filteredList]);
 
 	const renderList =
 		usersAndChatsList.length === 0
 			? <div className="text-gray-500">No results</div>
 			: chatNodes;
+
+	const handleChatSearch = (value) => {
+		const searchQuery = value.trim().toLowerCase();
+
+		if (isEmpty(searchQuery)) return setFilteredList(usersAndChatsList);
+
+
+		const filtered = usersAndChatsList.filter(item => {
+			if (item.type === 'chat') {
+				return item.participants?.some(user =>
+					user.fullName?.toLowerCase().includes(searchQuery)
+				);
+			}
+			if (item.type === 'user') {
+				return item.fullName?.toLowerCase().includes(searchQuery);
+			}
+			return false;
+		});
+		
+		setFilteredList(filtered);
+	};
+
+	const { query, handleChange } = useDebounceSearch(handleChatSearch, 400);
 
 	return (
 		<>
@@ -46,6 +78,8 @@ export default function CreateNewChat() {
 						<input
 							type="text"
 							className="w-full bg-gray-50 py-3 pl-10 text-xs focus:outline-none"
+							value={query}
+							onChange={handleChange}
 						/>
 					</div>
 				</div>
@@ -76,7 +110,9 @@ export default function CreateNewChat() {
 				</div>
 
 				{/* List suggested users below */}
-				{renderList}
+				<div className="p-2">
+					{renderList}
+				</div>
 			</div>
 		</>
 	)
