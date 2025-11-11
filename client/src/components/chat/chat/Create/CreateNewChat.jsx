@@ -1,8 +1,25 @@
 import { Link } from "react-router";
 import { IoChevronForward } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
+import useChat from "../../../../hooks/useChat"
+import ChatItem from "../../global/ChatItem";
+import { useMemo } from "react";
 
 export default function CreateNewChat() {
+	const { usersAndChatsList } = useChat();
+
+	const chatNodes = useMemo(() => {
+		if (usersAndChatsList.length === 0) return [];
+
+		return usersAndChatsList.map(item => (
+			<ChatItem key={`${item.type}-${item._id}`} chatData={item} variant="compact" />
+		));
+	}, [usersAndChatsList]);
+
+	const renderList =
+		usersAndChatsList.length === 0
+			? <div className="text-gray-500">No results</div>
+			: chatNodes;
 
 	return (
 		<>
@@ -59,7 +76,7 @@ export default function CreateNewChat() {
 				</div>
 
 				{/* List suggested users below */}
-
+				{renderList}
 			</div>
 		</>
 	)
