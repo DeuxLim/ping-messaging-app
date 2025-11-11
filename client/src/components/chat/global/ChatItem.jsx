@@ -20,6 +20,7 @@ function ChatItem({ chatData, variant }) {
     // -- Global values start --
     const chatParticipants = useOtherParticipants(chatData, currentUser._id);
     const isLastMsgSeen = chatData.lastMessage?.isSeen;
+    const existingChat = chatData.participants ? true : false;
     // -- Global values end ----
 
 
@@ -85,7 +86,7 @@ function ChatItem({ chatData, variant }) {
             {/* Chat Data UI - main content area */}
             <div className="flex-1 min-w-0 flex flex-col gap-1">
                 {/* Chat Name */}
-                <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName }} />
+                <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName, existingChat }} />
 
 
                 {/* Message Preview with Time */}
