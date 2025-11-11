@@ -1,12 +1,10 @@
-import { useState, useRef } from "react";
 import { fetchAPI } from "../../../api/fetchApi";
 import { TbSearch } from "react-icons/tb";
 import useChat from "../../../hooks/useChat";
+import useDebounceSearch from "../../../hooks/common/useDebounceSearch";
 
 export default function SidebarSearch() {
     const { updateChatSearchResults } = useChat();
-    const [query, setQuery] = useState("");
-    const debounceRef = useRef(null);
 
     /* Handle chat query logic */
     const handleChatSearch = async (value) => {
@@ -27,14 +25,7 @@ export default function SidebarSearch() {
         }
     };
 
-    /* Debounce, only trigger search requests after a few milliseconds. (not per key stroke) */
-    const handleChange = (e) => {
-        const value = e.target.value;
-        setQuery(value);
-
-        clearTimeout(debounceRef.current);
-        debounceRef.current = setTimeout(() => handleChatSearch(value), 400);
-    };
+    const { query, handleChange } = useDebounceSearch(handleChatSearch, 400);
 
     return (
         <div className="flex flex-row px-4 py-2">
