@@ -1,14 +1,14 @@
 import { IoChevronBackOutline, IoVideocam, IoCall } from "react-icons/io5";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
-import useChatDisplay from "../../../hooks/useChatDisplay";
 import AvatarWithStatus from "../global/AvatarWithStatus";
 import { getOtherParticipant } from "../../../utilities/utils";
+import { useNavigate } from "react-router";
 
 export default function ChatBoxHeader() {
 	const { activeChatData, onlineUsers } = useChat();
 	const { currentUser } = useAuth();
-	const { setActiveView } = useChatDisplay();
+	const navigate = useNavigate();
 
 	// --- Guard: ensure valid data before rendering ---
 	if (!activeChatData || !activeChatData.participants?.length) {
@@ -26,8 +26,8 @@ export default function ChatBoxHeader() {
 
 	const chatName = isGroup
 		? activeChatData.chatName || "Unnamed Group"
-		: otherUser.fullName ? `${otherUser.fullName}`.trim() 
-		: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
+		: otherUser.fullName ? `${otherUser.fullName}`.trim()
+			: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
 
 	// --- Online status logic ---
 	const isOnline = otherUser?._id && onlineUsers?.[otherUser._id];
@@ -44,7 +44,10 @@ export default function ChatBoxHeader() {
 					: "Offline";
 
 	// --- Event Handlers ---
-	const handleBackClick = () => setActiveView(null);
+	const handleBackClick = () => {
+		navigate("/", { replace: true })
+	};
+
 	const handleVideoCall = () => {
 		console.log("Start video call");
 		// Placeholder for future video call logic
@@ -90,7 +93,7 @@ export default function ChatBoxHeader() {
 				>
 					<IoCall />
 				</button>
-				
+
 				{/* Video call button */}
 				<button
 					onClick={handleVideoCall}

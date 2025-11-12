@@ -8,7 +8,6 @@ export default function ChatDisplayProvider({ children }) {
 	const [typingChats, setTypingChats] = useState({});
 	const [sidebarVisible, setSidebarVisible] = useState(true);
 	const [isDesktop, setIsDesktop] = useState(false);
-	const [activeView, setActiveView] = useState(null);
 	const { setActiveChatData } = useChat();
 	const { socket } = useSocket();
 	const navigate = useNavigate();
@@ -35,7 +34,6 @@ export default function ChatDisplayProvider({ children }) {
 		const updateLayout = (e) => {
 			setIsDesktop(e.matches);
 			setActiveChatData(null);
-			setActiveView(e.matches ? "start" : null);
 		};
 
 		updateLayout(desktopQuery);
@@ -45,7 +43,6 @@ export default function ChatDisplayProvider({ children }) {
 
 	const data = {
 		typingChats, setTypingChats,
-		activeView, setActiveView,
 		sidebarVisible, setSidebarVisible,
 		isDesktop, setIsDesktop,
 	};

@@ -1,10 +1,11 @@
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import Sidebar from "../components/chat/Sidebar";
 import useChatDisplay from "../hooks/useChatDisplay";
 
 export default function ChatApp() {
     const { sidebarVisible, isDesktop } = useChatDisplay();
-    const { activeView } = useChatDisplay();
+    const location = useLocation();
+    const isRoot = location.pathname === "/chats";
 
     return (
         <>
@@ -17,7 +18,7 @@ export default function ChatApp() {
                         </>
                     )
                     : (
-                        !activeView
+                        isRoot
                             ? sidebarVisible && <Sidebar />
                             : <Outlet />
                     )
