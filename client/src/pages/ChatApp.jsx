@@ -9,7 +9,7 @@ export default function ChatApp() {
 
     return (
         <>
-            <div className="h-screen flex">
+            <div className="h-screen flex p-4 bg-gray-100 gap-4">
                 {isDesktop
                     ? (
                         <>
