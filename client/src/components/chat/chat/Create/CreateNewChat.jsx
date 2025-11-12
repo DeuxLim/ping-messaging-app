@@ -20,7 +20,7 @@ export default function CreateNewChat() {
 
 		return filteredList?.map(item => (
 			<div key={`${item.type}-${item._id}`} className="text-sm relative after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-[94%] after:border-b after:border-gray-200">
-				<ChatItem chatData={item} variant="compact" selectionEnabled={true} />
+				<ChatItem chatData={item} variant="compact" isSelecting={true} />
 			</div>
 		));
 	}, [filteredList]);
