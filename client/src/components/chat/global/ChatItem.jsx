@@ -10,9 +10,9 @@ import ChatItemName from "./ChatItem/ChatItemName";
 import ChatItemContentPreview from "./ChatItem/ChatItemContentPreview";
 import ChatItemMeta from "./ChatItem/ChatItemMeta";
 
-function ChatItem({ chatData, variant }) {
+function ChatItem({ chatData, variant, isSelecting = false }) {
     const { isUserOnline } = useChat();
-    const { setActiveView } = useChatDisplay();
+    const { selectionEnabled, setSelectionEnabled } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -68,8 +68,12 @@ function ChatItem({ chatData, variant }) {
 
     // --- Handlers ---
     const handleChatSelect = () => {
-        setActiveView("chat");
-        navigate(`/chats/${chatData._id}`);
+        if (!selectionEnabled) {
+            navigate(`/chats/${chatData._id}`);
+        } else {
+            setSelectionEnabled(isSelecting);
+            navigate(`/chats/${chatData._id}`);
+        }
     };
 
     if (!chatData) return null;
