@@ -136,7 +136,7 @@ export default function ChatContent() {
                     if (!isGroup && p._id === currentUser._id) return;
 
                     return (
-                        <div className="size-40 rounded-full overflow-hidden">
+                        <div className="size-40 rounded-full overflow-hidden" key={`${p._id}`}>
                             <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
                         </div>
                     );
@@ -162,7 +162,7 @@ export default function ChatContent() {
                 )}
             </div>
 
-            <div className="p-3 h-full flex flex-col gap-[2.5px]">
+            <div className="p-3 flex flex-col gap-[2.5px]">
                 {activeChatMessages?.map((m) => (
                     <ChatMessage key={m._id} data={m} />
                 ))}
@@ -185,7 +185,7 @@ export default function ChatContent() {
                         </div>
                     ))
                 }
-                {/* <div ref={messagesEndRef} /> */}
+                <div ref={messagesEndRef} />
             </div>
         </section>
     );
