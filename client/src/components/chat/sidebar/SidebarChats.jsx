@@ -22,9 +22,9 @@ export default function SidebarChats() {
     if (error) return <CenteredMessage color="red">{error}</CenteredMessage>;
 
     return (
-        <section className="flex-1 p-3 flex flex-col gap-3 overflow-auto">
+        <section className="flex-1 px-2 py-3 flex flex-col gap-3 overflow-auto">
             <div>
-                <div className="text-sm flex flex-col gap-3">
+                <div className="text-sm flex flex-col gap-1">
                     {renderList}
                 </div>
             </div>
