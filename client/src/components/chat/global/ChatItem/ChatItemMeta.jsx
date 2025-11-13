@@ -1,19 +1,16 @@
 import { MdPushPin } from "react-icons/md";
 import { BsBellSlashFill } from "react-icons/bs";
 
-export default function ChatItemMeta({data}) {
+export default function ChatItemMeta({ data }) {
     const { isLastMsgSeen, chatData, currentUser } = data;
     return (
-        <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Pinned */}
-            <MdPushPin className="text-gray-500 text-xl mt-0.5" />
-
+        <div className="flex items-center justify-center gap-1 flex-shrink-0">
             {/* Muted */}
-            <BsBellSlashFill className="text-gray-500 text-xl" />
+            <BsBellSlashFill className="text-lg text-gray-300 mt-1.5" />
 
             {/* Unread indicator */}
             {!isLastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id && (
-                <div className="text-3xl text-blue-500 leading-none">
+                <div className="text-5xl text-blue-500 leading-none">
                     •
                 </div>
             )}
