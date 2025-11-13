@@ -4,7 +4,7 @@ function AvatarWithStatus({ chatPhotoUrl, userStatus }) {
     return (
         <div className="relative">
             {/* Avatar Image */}
-            <div className="border border-gray-300 flex justify-center items-center rounded-full w-15 h-15 flex-shrink-0 overflow-hidden bg-gray-100">
+            <div className="border border-gray-300 flex justify-center items-center rounded-full size-12 flex-shrink-0 overflow-hidden bg-gray-100">
                 <AvatarImage chatPhotoUrl={chatPhotoUrl} />
             </div>
 
