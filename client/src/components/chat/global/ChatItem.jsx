@@ -11,7 +11,7 @@ import ChatItemContentPreview from "./ChatItem/ChatItemContentPreview";
 import ChatItemMeta from "./ChatItem/ChatItemMeta";
 
 function ChatItem({ chatData, variant, isSelecting = false }) {
-    const { isUserOnline } = useChat();
+    const { isUserOnline, activeChatData } = useChat();
     const { selectionEnabled, setSelectionEnabled } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
@@ -21,6 +21,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     const chatParticipants = useOtherParticipants(chatData, currentUser._id);
     const isLastMsgSeen = chatData.lastMessage?.isSeen;
     const existingChat = chatData.participants ? true : false;
+    const isActiveChat = activeChatData?._id === chatData?._id;
     // -- Global values end ----
 
 
@@ -81,7 +82,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     // --- UI ---
     return (
         <div
-            className="flex gap-4 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+            className={`flex gap-2.5 items-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors ${ isActiveChat ? `bg-gray-100` : ``}`}
             onClick={handleChatSelect}
         >
             {/* Profile Picture */}
