@@ -3,6 +3,6 @@ import AvatarWithStatus from "../AvatarWithStatus"
 export default function ChatItemAvatar({data}) {
     const {chatPhotoUrl, userStatus} = data;
     return (
-        <AvatarWithStatus chatPhotoUrl={chatPhotoUrl} userStatus={userStatus} />
+        <AvatarWithStatus chatPhotoUrl={chatPhotoUrl} userStatus={userStatus} containerClass="size-12"/>
     )
 }
