@@ -58,7 +58,7 @@ export default function ChatBoxHeader() {
 	};
 
 	return (
-		<header className="h-21 border-b border-gray-300 bg-white">
+		<header className="h-15 border-b border-gray-300 bg-white">
 			<div className="flex items-center justify-between h-full px-3 md:px-4">
 				{/* Back button (mobile only) */}
 				<button
@@ -74,10 +74,11 @@ export default function ChatBoxHeader() {
 					<AvatarWithStatus
 						chatPhotoUrl={isGroup ? activeChatData.chatPhotoUrl : otherUser?.profilePicture?.url}
 						userStatus={isOnline ? "online" : "offline"}
+						containerClass="size-10"
 					/>
 
 					<div className="flex flex-col truncate">
-						<span className="font-medium truncate">{chatName}</span>
+						<span className="font-normal truncate">{chatName}</span>
 						{!isGroup && (
 							<span className="text-xs text-gray-500 dark:text-gray-400">
 								{activeStatus}
@@ -88,7 +89,7 @@ export default function ChatBoxHeader() {
 
 				<button
 					onClick={handleVoiceCall}
-					className="text-3xl p-2 hover:text-blue-500 transition-colors text-blue-500"
+					className="text-xl p-2 hover:text-blue-500 transition-colors text-blue-500"
 					aria-label="Start video call"
 				>
 					<IoCall />
@@ -97,7 +98,7 @@ export default function ChatBoxHeader() {
 				{/* Video call button */}
 				<button
 					onClick={handleVideoCall}
-					className="text-3xl p-2 hover:text-blue-500 transition-colors text-blue-500"
+					className="text-xl p-2 hover:text-blue-500 transition-colors text-blue-500"
 					aria-label="Start video call"
 				>
 					<IoVideocam />
