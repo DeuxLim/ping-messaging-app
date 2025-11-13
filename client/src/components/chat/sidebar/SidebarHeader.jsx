@@ -1,8 +1,5 @@
 import { Link } from "react-router"
 import { RiEditBoxLine } from "react-icons/ri";
-// import AvatarWithStatus from "../global/AvatarWithStatus.jsx";
-// import useAuth from "../../../hooks/useAuth.js";
-// import useChat from "../../../hooks/useChat.js";
 
 export default function SidebarHeader() {
 	return (
