@@ -11,7 +11,7 @@ import ChatItemContentPreview from "./ChatItem/ChatItemContentPreview";
 import ChatItemMeta from "./ChatItem/ChatItemMeta";
 
 function ChatItem({ chatData, variant, isSelecting = false }) {
-    const { isUserOnline, activeChatData } = useChat();
+    const { isUserOnline, activeChatData, isSearch } = useChat();
     const { selectionEnabled, setSelectionEnabled } = useChatDisplay();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     const chatParticipants = useOtherParticipants(chatData, currentUser._id);
     const isLastMsgSeen = chatData.lastMessage?.isSeen;
     const existingChat = chatData.participants ? true : false;
-    const isActiveChat = activeChatData?._id === chatData?._id;
+    const isActiveChat = activeChatData?._id === chatData?._id && !isSelecting && !isSearch;
     // -- Global values end ----
 
 
