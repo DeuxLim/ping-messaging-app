@@ -28,20 +28,20 @@ export default function SidebarSearch() {
     const { query, handleChange } = useDebounceSearch(handleChatSearch, 400);
 
     return (
-        <div className="flex flex-row px-4 py-2">
+        <div className="flex flex-row px-4 pt-1">
             <div className="relative w-full">
                 {/* Search Icon */}
-                <div className="absolute inset-y-0 flex items-center pl-3 text-gray-500">
+                <div className="absolute text-xl inset-y-0 flex items-center pl-3 text-gray-500">
                     <TbSearch />
                 </div>
 
                 {/* Search Bar */}
                 <input
                     type="text"
-                    placeholder="Search"
+                    placeholder="Search Messenger"
                     value={query}
                     onChange={handleChange}
-                    className="w-full text-xs bg-gray-100 py-3 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full text-sm bg-gray-100 py-2 pl-10 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
             </div>
         </div>
