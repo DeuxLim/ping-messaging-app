@@ -65,6 +65,10 @@ export default function ChatProvider({ children }) {
         },
         [currentUser]
     );
+    const clearActiveChat = useCallback(() => {
+        setActiveChatData(null);
+        setActiveChatMessages(null);
+    }, [setActiveChatData, setActiveChatMessages]);
 
     // ---- Socket Presence ----
     useEffect(() => {
@@ -226,6 +230,7 @@ export default function ChatProvider({ children }) {
         setActiveChatMessages,
         setActiveChat,
         setActiveChatData,
+        clearActiveChat,
 
         // fetched lists
         chatItems,
