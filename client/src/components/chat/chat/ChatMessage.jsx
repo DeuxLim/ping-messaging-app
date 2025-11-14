@@ -92,7 +92,7 @@ export default function ChatMessage({ data }) {
                         data-seen={data.isSeen}
                         className={
                             `bg-blue-500 text-white px-4 py-1.5 max-w-2/3 break-words 
-                            ${isNewGroup ?
+                            ${isNewGroup && longTimeGapFromLast ?
                                 "rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-sm"
                                 : "rounded-tl-2xl rounded-tr-md rounded-bl-2xl rounded-br-md"}`
                         }
