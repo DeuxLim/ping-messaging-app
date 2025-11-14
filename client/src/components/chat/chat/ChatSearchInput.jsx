@@ -1,10 +1,12 @@
 import useDebounceSearch from "../../../hooks/common/useDebounceSearch";
+import useActiveChat from "../../../hooks/useActiveChat";
 import useChat from "../../../hooks/useChat";
 import { isEmpty } from "../../../utilities/utils";
 
 export default function ChatSearchInput() {
-    const { usersAndChatsList, setFilteredList } = useChat();
-    
+    const { usersAndChatsList } = useChat();
+    const { setFilteredList } = useActiveChat();
+
     const handleChatSearch = (value) => {
         const searchQuery = value.trim().toLowerCase();
 
