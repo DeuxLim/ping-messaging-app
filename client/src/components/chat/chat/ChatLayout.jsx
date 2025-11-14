@@ -8,7 +8,7 @@ import ChatBoxHeader from "./ChatBoxHeader";
 
 export default function ChatLayout() {
     const { token } = useAuth();
-    const { setActiveChat, activeChatData, usersAndChatsList } = useChat();
+    const { setActiveChat, activeChatData, usersAndChatsList, clearActiveChat } = useChat();
     const { chatId } = useParams();
     const navigate = useNavigate();
 
@@ -38,8 +38,9 @@ export default function ChatLayout() {
 
         return () => {
             isMounted = false;
+            clearActiveChat();
         };
-    }, [chatId, navigate, setActiveChat, token, usersAndChatsList]);
+    }, [chatId, navigate, setActiveChat, token, usersAndChatsList, clearActiveChat]);
 
     if (loading || isEmpty(activeChatData)) {
         return (
@@ -52,7 +53,7 @@ export default function ChatLayout() {
     return (
         <div className="flex flex-col h-full">
             <ChatBoxHeader />
-            <Outlet/>
+            <Outlet />
         </div>
     );
 }
