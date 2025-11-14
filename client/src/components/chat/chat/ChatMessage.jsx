@@ -7,7 +7,7 @@ import AvatarImage from "../global/AvatarImage";
 export default function ChatMessage({ data }) {
     const { currentUser } = useAuth();
     const { activeChatData, activeChatMessages } = useChat();
-    const [ messageClicked, setMessageClicked ] = useToggle(false);
+    const [messageClicked, setMessageClicked] = useToggle(false);
 
     const isSender = data.sender._id === currentUser._id;
     const isLastMessage =
@@ -50,7 +50,7 @@ export default function ChatMessage({ data }) {
                         {formatLastMessageDateTime(data.createdAt)}
                     </div>
                 )}
-                <div className={`flex text-sm ${isNewGroup ? "mt-3" : "mt-0.5"}`}>
+                <div className={`flex text-sm ${isNewGroup ? "mt-3" : ""}`}>
                     <div className="flex gap-2 items-end w-full">
                         <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
                             {showAvatar && (
@@ -60,7 +60,15 @@ export default function ChatMessage({ data }) {
                             )}
                         </div>
 
-                        <div id={`msg-${data._id}`} data-seen={data.isSeen} className="border border-gray-200 rounded-lg px-3 py-1.5 bg-gray-200 break-words max-w-2/3">
+                        <div
+                            id={`msg-${data._id}`}
+                            data-seen={data.isSeen}
+                            className={`
+                                border border-gray-200 px-3 py-1.5 bg-gray-200 break-words max-w-2/3
+                                ${isNewGroup ?
+                                    "rounded-tl-3xl rounded-tr-3xl rounded-bl-sm rounded-br-3xl"
+                                    : "rounded-tl-md rounded-tr-2xl rounded-bl-md rounded-br-2xl"}
+                            `}>
                             {data.text}
                         </div>
                     </div>
@@ -77,9 +85,18 @@ export default function ChatMessage({ data }) {
                     {formatLastMessageDateTime(data.createdAt)}
                 </div>
             )}
-            <div className={`flex flex-col items-end text-sm ${isNewGroup ? "mt-3" : "mt-0.5"} pr-2.5`}>
+            <div className={`flex flex-col items-end text-sm ${isNewGroup ? "mt-3" : ""} pr-2.5`}>
                 <div className="flex flex-col gap-1 items-end w-full" onClick={setMessageClicked}>
-                    <div id={`msg-${data._id}`} data-seen={data.isSeen} className="border border-gray-300 bg-blue-500 text-white rounded-lg px-4 py-1.5 max-w-2/3 break-words">
+                    <div
+                        id={`msg-${data._id}`}
+                        data-seen={data.isSeen}
+                        className={
+                            `bg-blue-500 text-white px-4 py-1.5 max-w-2/3 break-words 
+                            ${isNewGroup ?
+                                "rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-sm"
+                                : "rounded-tl-2xl rounded-tr-md rounded-bl-2xl rounded-br-md"}`
+                        }
+                    >
                         {data.text}
                     </div>
                 </div>
