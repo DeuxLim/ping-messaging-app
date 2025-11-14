@@ -11,8 +11,10 @@ import ForgotPassword from "../pages/Auth/ForgotPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Start from "../components/chat/start/start";
 import MainWindow from "../components/chat/MainWindow";
+import ChatLayout from "../components/chat/chat/ChatLayout";
+import NewChatLayout from "../components/chat/chat/NewChatLayout";
 import ChatWindow from "../components/chat/chat/ChatWindow";
-import NewChatWrapper from "../components/chat/chat/NewChatWrapper";
+import ActiveChatWrapper from "../components/chat/chat/ActiveChatWrapper";
 
 /* Settings */
 import Profile from "../pages/Profile";
@@ -20,6 +22,7 @@ import Profile from "../pages/Profile";
 /* Context */
 import ChatProvider from "../contexts/chat/ChatProvider";
 import ChatDisplayProvider from "../contexts/chat/chatDisplay/ChatDisplayProvider";
+import ActiveChatProvider from "../contexts/chat/ActiveChat/ActiveChatProvider";
 
 export const routes = createBrowserRouter([
     {
@@ -54,13 +57,28 @@ export const routes = createBrowserRouter([
                                 element: <Start />
                             },
                             {
-                                path: ":chatId",
                                 element: (
-                                    <NewChatWrapper>
-                                        <ChatWindow />
-                                    </NewChatWrapper>
-                                )
-                            },
+                                    <ActiveChatProvider>
+                                        <ActiveChatWrapper />
+                                    </ActiveChatProvider>
+                                ),
+                                children: [
+                                    {
+                                        path: ":chatId",
+                                        element: <ChatLayout />,
+                                        children: [
+                                            { index: true, element: <ChatWindow /> }
+                                        ]
+                                    },
+                                    {
+                                        path: "new",
+                                        element: <NewChatLayout />,
+                                        children: [
+                                            { index: true, element: <ChatWindow /> }
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     }
                 ]
