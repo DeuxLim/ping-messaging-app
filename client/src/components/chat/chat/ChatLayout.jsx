@@ -38,7 +38,6 @@ export default function ChatLayout() {
 
         return () => {
             isMounted = false;
-            clearActiveChat();
         };
     }, [chatId, navigate, setActiveChat, token, usersAndChatsList, clearActiveChat]);
 
