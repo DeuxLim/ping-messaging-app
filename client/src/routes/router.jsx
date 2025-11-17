@@ -43,7 +43,9 @@ export const routes = createBrowserRouter([
                 element: (
                     <ChatProvider>
                         <ChatDisplayProvider>
-                            <ChatApp />
+                            <ActiveChatProvider>
+                                <ChatApp />
+                            </ActiveChatProvider>
                         </ChatDisplayProvider>
                     </ChatProvider>
                 ),
@@ -57,26 +59,17 @@ export const routes = createBrowserRouter([
                                 element: <Start />
                             },
                             {
-                                element: (
-                                    <ActiveChatProvider>
-                                        <ActiveChatWrapper />
-                                    </ActiveChatProvider>
-                                ),
+                                path: ":chatId",
+                                element: <ChatLayout />,
                                 children: [
-                                    {
-                                        path: ":chatId",
-                                        element: <ChatLayout />,
-                                        children: [
-                                            { index: true, element: <ChatWindow /> }
-                                        ]
-                                    },
-                                    {
-                                        path: "new",
-                                        element: <NewChatLayout />,
-                                        children: [
-                                            { index: true, element: <ChatWindow /> }
-                                        ]
-                                    }
+                                    { index: true, element: <ChatWindow /> }
+                                ]
+                            },
+                            {
+                                path: "new",
+                                element: <NewChatLayout />,
+                                children: [
+                                    { index: true, element: <ChatWindow /> }
                                 ]
                             }
                         ]
