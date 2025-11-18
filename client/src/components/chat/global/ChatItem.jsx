@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import useChat from "../../../hooks/useChat";
 import useChatDisplay from "../../../hooks/useChatDisplay";
+import useActiveChat from "../../../hooks/useActiveChat";
 import { useEffect, useState, useMemo, memo } from "react";
 import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
@@ -12,7 +13,8 @@ import ChatItemMeta from "./ChatItem/ChatItemMeta";
 
 function ChatItem({ chatData, variant, isSelecting = false }) {
     const { isUserOnline, activeChatData, isSearch } = useChat();
-    const { selectionEnabled, setSelectionEnabled } = useChatDisplay();
+    const { setSelectionEnabled } = useChatDisplay();
+    const { setSelectedChats } = useActiveChat();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -69,11 +71,13 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
 
     // --- Handlers ---
     const handleChatSelect = () => {
-        if (!selectionEnabled) {
+        if (!isSelecting) {
             navigate(`/chats/${chatData._id}`);
         } else {
             setSelectionEnabled(isSelecting);
-            navigate(`/chats/${chatData._id}`);
+            setSelectedChats(prev => [...prev, chatData]);
+            // Reusable Chat content api call , set active view data here.
+            // Reuse ChatLayout.
         }
     };
 
@@ -82,7 +86,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     // --- UI ---
     return (
         <div
-            className={`flex gap-2.5 items-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors ${ isActiveChat ? `bg-gray-100` : ``}`}
+            className={`flex gap-2.5 items-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors ${isActiveChat ? `bg-gray-100` : ``}`}
             onClick={handleChatSelect}
         >
             {/* Profile Picture */}
