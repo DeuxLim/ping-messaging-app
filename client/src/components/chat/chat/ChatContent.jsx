@@ -127,7 +127,7 @@ export default function ChatContent() {
     /* ----- HANDLE MESSAGE SEEN STATUS ----  */
 
     return (
-        <section className="flex-1 overflow-y-auto hide-scrollbar mb-4">
+        <section className="flex-1 overflow-y-auto hide-scrollbar mb-4 h-full">
             {isLoading && <div>Loading...</div>}
             {error && <div>Something went wrong...</div>}
 
