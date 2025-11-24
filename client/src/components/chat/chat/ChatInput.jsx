@@ -82,7 +82,7 @@ export default function ChatInput() {
 
 	// ---- Render ----
 	return (
-		<footer className="h-16 p-3 border-t border-gray-200 bg-white">
+		<footer className="h-16 p-3 border-t border-gray-200 bg-white sticky bottom-0">
 			<form onSubmit={handleSendMessage} className="flex h-full gap-3">
 				<input
 					type="text"
