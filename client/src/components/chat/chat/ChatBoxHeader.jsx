@@ -1,4 +1,5 @@
-import { IoChevronBackOutline, IoVideocam, IoCall } from "react-icons/io5";
+import { IoVideocam, IoCall } from "react-icons/io5";
+import { IoMdArrowBack } from "react-icons/io";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 import AvatarWithStatus from "../global/AvatarWithStatus";
@@ -63,10 +64,12 @@ export default function ChatBoxHeader() {
 				{/* Back button (mobile only) */}
 				<button
 					onClick={handleBackClick}
-					className="text-2xl p-2 md:hidden hover:text-gray-700 dark:hover:text-gray-200"
+					className="text-2xl md:hidden hover:text-gray-700 dark:hover:text-gray-200 hover:rounded-full hover:bg-gray-100 size-10 flex justify-center items-center"
 					aria-label="Back"
 				>
-					<IoChevronBackOutline />
+					<div className="text-md text-blue-500">
+						<IoMdArrowBack />
+					</div>
 				</button>
 
 				{/* Chat info */}
