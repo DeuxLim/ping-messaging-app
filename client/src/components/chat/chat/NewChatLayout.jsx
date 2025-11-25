@@ -2,14 +2,14 @@ import { Outlet, useNavigate } from "react-router";
 import useChat from "../../../hooks/useChat"
 import ChatItem from "../global/ChatItem";
 import { useEffect, useState } from "react";
-import { isEmpty } from "../../../utilities/utils";
+import { getOtherParticipants, isEmpty } from "../../../utilities/utils";
 import ChatSearchInput from "./ChatSearchInput";
 import useActiveChat from "../../../hooks/useActiveChat";
 import { fetchAPI } from "../../../api/fetchApi";
 import useAuth from "../../../hooks/useAuth";
 
 export default function NewChatLayout() {
-	const { token } = useAuth();
+	const { token, currentUser } = useAuth();
 	const { usersAndChatsList, activeChatData, clearActiveChat, setActiveChat, setActiveChatMessages } = useChat();
 	const { setFilteredList, selectedChats, setSelectedChats } = useActiveChat();
 	const [isLoading, setIsLoading] = useState(false);
@@ -24,13 +24,45 @@ export default function NewChatLayout() {
 		const loadChat = async () => {
 			try {
 				setIsLoading(true);
-				// find chat or user entry by ID
-				const chatData = usersAndChatsList.find((item) => item._id === selectedChats[0]?._id);
+
+				// get user data only not chat collection
+				let selectedChatsUsers = selectedChats.map((chat) => {
+					if (chat.type === "chat") {
+						return getOtherParticipants(chat.participants, currentUser._id)[0];
+					} else {
+						return chat
+					}
+				});
+
+				// include current user
+				const selectedChatUsersWithCurrentUser = [...selectedChatsUsers, currentUser];
+
+				// Check for existing chat in memory
+				const chatData = usersAndChatsList.find(targetChat => {
+					if (targetChat.isGroup) return false;
+
+					// Compare candidate chat participants to the currently selected ones
+					const participantIds = targetChat.type === "chat" ? targetChat.participants.map(u => u._id).sort() : [targetChat._id, currentUser._id];
+					const selectedIds = selectedChatUsersWithCurrentUser.map(u => u._id).sort();
+
+					if (participantIds.length !== selectedIds.length) return false;
+
+					return participantIds.every((id, idx) => id === selectedIds[idx]);
+				});
+
+				if (!chatData) {
+					// next step create a new chat
+					return;
+				}
 
 				fetchAPI.setAuth(token);
-				const res = await fetchAPI.get(`/chats/${selectedChats[0]?._id}`);
-				if (res?.error) setActiveChatMessages([]);
-				else setActiveChatMessages(res);
+				const res = await fetchAPI.get(`/chats/${chatData._id}`);
+
+				if (res?.error) {
+					setActiveChatMessages([]);
+				} else {
+					setActiveChatMessages(res);
+				}
 
 				if (isMounted) {
 					setActiveChat(chatData);
@@ -46,7 +78,7 @@ export default function NewChatLayout() {
 		if (!isEmpty(selectedChats)) {
 			loadChat();
 		}
-	}, [usersAndChatsList, setFilteredList, selectedChats, clearActiveChat, navigate, setActiveChat, setActiveChatMessages, token]);
+	}, [usersAndChatsList, setFilteredList, selectedChats, clearActiveChat, navigate, setActiveChat, setActiveChatMessages, token, currentUser]);
 
 	// cleanup only
 	useEffect(() => {
