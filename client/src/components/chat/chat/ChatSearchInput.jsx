@@ -104,13 +104,13 @@ export default function ChatSearchInput() {
 
                             <div className="flex gap-2">
                                 {selectedChats.map(chat => {
-                                    const otherUser = getOtherParticipant(chat.participants, currentUser?._id);
+                                    const otherUser = chat.type === "chat" ? getOtherParticipant(chat.participants, currentUser?._id) : chat;
                                     return (
                                         <div
                                             key={chat._id}
                                             className="px-2 py-1 bg-gray-100 rounded-md text-sm flex justify-center items-center gap-2"
                                         >
-                                            <div className="font-medium">{otherUser.fullName}</div>
+                                            <div className="font-medium">{otherUser?.fullName}</div>
                                             <div
                                                 className="text-xs cursor-pointer"
                                                 onClick={() => removeSelectedChat(chat._id)}
