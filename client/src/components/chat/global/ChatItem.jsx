@@ -14,7 +14,7 @@ import ChatItemMeta from "./ChatItem/ChatItemMeta";
 function ChatItem({ chatData, variant, isSelecting = false }) {
     const { isUserOnline, activeChatData, isSearch } = useChat();
     const { setSelectionEnabled } = useChatDisplay();
-    const { setSelectedChats } = useActiveChat();
+    const { setSelectedChats, selectedChats } = useActiveChat();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -71,13 +71,12 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
 
     // --- Handlers ---
     const handleChatSelect = () => {
-        if (!isSelecting) {
+        // Navigate to chat if user is not selecting OR the first selected chat is a group
+        if (!isSelecting || (selectedChats.length === 1 && selectedChats.isGroup)) {
             navigate(`/chats/${chatData._id}`);
         } else {
             setSelectionEnabled(isSelecting);
             setSelectedChats(prev => [...prev, chatData]);
-            // Reusable Chat content api call , set active view data here.
-            // Reuse ChatLayout.
         }
     };
 
