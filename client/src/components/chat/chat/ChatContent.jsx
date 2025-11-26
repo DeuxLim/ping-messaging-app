@@ -7,7 +7,7 @@ import ChatMessage from "./ChatMessage";
 import useChatDisplay from "../../../hooks/useChatDisplay";
 import AvatarImage from "../global/AvatarImage";
 import useSocket from "../../../hooks/useSocket";
-import { getOtherParticipant } from "../../../utilities/utils";
+import ChatDetailsPanel from "./ChatDetailsPanel";
 
 export default function ChatContent() {
     const { token, currentUser } = useAuth();
@@ -22,11 +22,7 @@ export default function ChatContent() {
     const messagesEndRef = useRef(null);
     const isTyping = !!typingChats?.[activeChatData?._id];
     const typingUserIds = typingChats?.[activeChatData?._id] || [];
-    const typingUsers = activeChatData?.participants?.filter((p) => typingUserIds.includes(p._id)) || [];
-    const isGroup = !!activeChatData.isGroup;
-    const otherUser = !isGroup
-        ? getOtherParticipant(activeChatData.participants, currentUser?._id)
-        : null;
+    const typingUsers = activeChatData?.participants?.filter((p) => typingUserIds.includes(p._id)) || [];    
 
     // Fetch chat messages
     useEffect(() => {
@@ -131,37 +127,8 @@ export default function ChatContent() {
             {isLoading && <div>Loading...</div>}
             {error && <div>Something went wrong...</div>}
 
-            <div className="flex justify-center items-center mt-4 flex-col gap-4">
-                {activeChatData.participants.map((p) => {
-                    if (!isGroup && p._id === currentUser._id) return;
-
-                    return (
-                        <div className="size-40 rounded-full overflow-hidden" key={`${p._id}`}>
-                            <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
-                        </div>
-                    );
-                })}
-
-
-                {!isGroup && (
-                    <div className="flex flex-col justify-center items-center gap-2">
-                        <div className="flex flex-col justify-center items-center">
-                            <div className="font-semibold text-2xl">
-                                {otherUser.fullName}
-                            </div>
-                            <div>
-                                @{otherUser.userName}
-                            </div>
-                        </div>
-                        <div className="flex justify-center items-center">
-                            <button type="button" className="py-2 px-2 text-xs bg-gray-300 flex justify-center items-center rounded-full font-semibold">
-                                View Profile
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
-
+            <ChatDetailsPanel/>
+            
             <div className="p-3 flex flex-col gap-[2.5px]">
                 {activeChatMessages?.map((m) => (
                     <ChatMessage key={m._id} data={m} />
