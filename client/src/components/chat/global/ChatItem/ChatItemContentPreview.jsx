@@ -1,13 +1,13 @@
 
-export default function ChatItemContentPreview({data}) {
+export default function ChatItemContentPreview({ data }) {
     const {
         typingChats,
-        chatData, 
-        isLastMsgSeen, 
-        currentUser, 
-        unread, 
-        lastMessageSender, 
-        lastMessageDateTime 
+        chatData,
+        isLastMsgSeen,
+        currentUser,
+        unread,
+        lastMessageSender,
+        lastMessageDateTime
     } = data;
 
     return (
@@ -24,7 +24,7 @@ export default function ChatItemContentPreview({data}) {
                                 `you: ${chatData.lastMessage?.text || ""}`
                             ) : chatData.unreadCount > 0 && !isLastMsgSeen ? (
                                 unread
-                            ) : !isLastMsgSeen ? (
+                            ) : !isLastMsgSeen && lastMessageSender ? (
                                 `${lastMessageSender} sent a message`
                             ) : (
                                 chatData.lastMessage?.text || ""
@@ -33,7 +33,7 @@ export default function ChatItemContentPreview({data}) {
 
                     </div>
                     <span className="text-gray-500 whitespace-nowrap flex-shrink-0 text-xs">
-                        • {lastMessageDateTime}
+                        {lastMessageDateTime && `• ${lastMessageDateTime}`}
                     </span>
                 </div>
             )}
