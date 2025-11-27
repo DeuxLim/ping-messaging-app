@@ -10,7 +10,7 @@ import useAuth from "../../../hooks/useAuth";
 
 export default function NewChatLayout() {
 	const { token, currentUser } = useAuth();
-	const { usersAndChatsList, activeChatData, clearActiveChat, setActiveChat, setActiveChatMessages } = useChat();
+	const { usersAndChatsList, activeChatData, setActiveChatData, clearActiveChat, setActiveChat, setActiveChatMessages } = useChat();
 	const { setFilteredList, selectedChats, setSelectedChats } = useActiveChat();
 	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
@@ -51,7 +51,14 @@ export default function NewChatLayout() {
 				});
 
 				if (!chatData) {
-					// next step create a new chat
+					setActiveChatData({
+						_id: crypto.randomUUID(),
+						isGroup: selectedChatUsersWithCurrentUser.length > 2,
+						participants: selectedChatUsersWithCurrentUser,
+						chatName: null,
+						lastMessage: null,
+					});
+					//Group Chat Creation Functionality with Backend.
 					return;
 				}
 
@@ -78,7 +85,7 @@ export default function NewChatLayout() {
 		if (!isEmpty(selectedChats)) {
 			loadChat();
 		}
-	}, [usersAndChatsList, setFilteredList, selectedChats, clearActiveChat, navigate, setActiveChat, setActiveChatMessages, token, currentUser]);
+	}, [usersAndChatsList, setFilteredList, selectedChats, clearActiveChat, navigate, setActiveChat, setActiveChatMessages, token, currentUser, setActiveChatData]);
 
 	// cleanup only
 	useEffect(() => {
