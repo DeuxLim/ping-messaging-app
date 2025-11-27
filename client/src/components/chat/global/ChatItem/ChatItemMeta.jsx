@@ -6,7 +6,7 @@ export default function ChatItemMeta({ data }) {
     return (
         <div className="flex items-center justify-center gap-1 flex-shrink-0">
             {/* Muted */}
-            <BsBellSlashFill className="text-lg text-gray-300 mt-1.5" />
+            {/* <BsBellSlashFill className="text-lg text-gray-300 mt-1.5" /> */}
 
             {/* Unread indicator */}
             {!isLastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id && (
