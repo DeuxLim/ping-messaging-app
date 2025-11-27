@@ -94,7 +94,22 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
             {/* Chat Data UI - main content area */}
             <div className="flex-1 min-w-0 flex flex-col gap-1">
                 {/* Chat Name */}
-                <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName, existingChat }} />
+                {variant !== "preview" && <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName, existingChat }} />}
+                {variant === "preview" && (() => {
+                    const names = activeChatData.participants.map(u => u.firstName);
+
+                    let usersDisplayName = "";
+
+                    if (names.length === 1) {
+                        usersDisplayName = names[0];
+                    } else if (names.length === 2) {
+                        usersDisplayName = `${names[0]} and ${names[1]}`;
+                    } else {
+                        usersDisplayName = `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+                    }
+
+                    return `New message to ${usersDisplayName}`;
+                })()}
 
 
                 {/* Message Preview with Time */}
