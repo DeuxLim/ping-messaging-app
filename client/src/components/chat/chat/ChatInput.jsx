@@ -10,7 +10,7 @@ export default function ChatInput() {
 	const { activeChatData } = useChat();
 	const { currentUser, token } = useAuth();
 	const { socket } = useSocket();
-	const { chatId } = useParams();
+	const { chatId = null } = useParams();
 	const navigate = useNavigate();
 
 	// ---- Handlers ----
@@ -23,11 +23,11 @@ export default function ChatInput() {
 			try {
 				fetchAPI.setAuth(token);
 
-				let chatIdToUse = activeChatData?._id;
+				let chatIdToUse = activeChatData.type === "temp" ? null : activeChatData?._id;
 
 				// If no chat exists, create one first
 				if (!chatIdToUse) {
-					const res = await fetchAPI.post(`/chats`, { id: chatId });
+					const res = await fetchAPI.post(`/chats`, { id: chatId, participants : activeChatData.participants, chatName : activeChatData.chatName });
 					if (res?.error || !res?.data?.chat?._id) {
 						console.error("Chat creation failed:", res?.error || res);
 						navigate("/chats", { replace: true });
