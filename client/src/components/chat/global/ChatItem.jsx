@@ -96,7 +96,9 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
                 {/* Chat Name */}
                 {variant !== "preview" && <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName, existingChat }} />}
                 {variant === "preview" && (() => {
-                    const names = activeChatData.participants.map(u => u.firstName);
+                    const names = activeChatData.participants
+                        .filter(u => u._id !== currentUser._id)
+                        .map(u => u.firstName);
 
                     let usersDisplayName = "";
 
