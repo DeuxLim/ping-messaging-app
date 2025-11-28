@@ -1,14 +1,17 @@
 import { IoVideocam, IoCall } from "react-icons/io5";
 import { IoMdArrowBack } from "react-icons/io";
+import { HiDotsCircleHorizontal } from "react-icons/hi";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 import AvatarWithStatus from "../global/AvatarWithStatus";
 import { getOtherParticipant } from "../../../utilities/utils";
 import { useNavigate } from "react-router";
+import useChatDisplay from "../../../hooks/useChatDisplay";
 
 export default function ChatBoxHeader() {
 	const { activeChatData, onlineUsers } = useChat();
 	const { currentUser } = useAuth();
+	const { setIsChatSettingsOpen } = useChatDisplay();
 	const navigate = useNavigate();
 
 	// --- Guard: ensure valid data before rendering ---
@@ -50,6 +53,10 @@ export default function ChatBoxHeader() {
 	const handleBackClick = () => {
 		navigate("/", { replace: true })
 	};
+
+	const handleChatMenuClick = () => {
+		setIsChatSettingsOpen(prev => !prev);
+	}
 
 	const handleVideoCall = () => {
 		console.log("Start video call");
@@ -107,6 +114,14 @@ export default function ChatBoxHeader() {
 					aria-label="Start video call"
 				>
 					<IoVideocam />
+				</button>
+
+				<button
+					onClick={handleChatMenuClick}
+					className="text-xl p-2 hover:text-blue-500 transition-colors text-blue-500"
+					aria-label="Start video call"
+				>
+					<HiDotsCircleHorizontal />
 				</button>
 
 			</div>
