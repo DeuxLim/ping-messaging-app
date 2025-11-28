@@ -27,7 +27,7 @@ export default function ChatSearchInput() {
 
     const handleChatSearch = (value) => {
         const searchQuery = value.trim().toLowerCase();
-        if (isEmpty(searchQuery)) return setFilteredList(usersAndChatsList);
+        if (isEmpty(searchQuery)) return setFilteredList(usersAndChatsList.filter(item => item.type !== "chat"));
 
         const filtered = usersAndChatsList.filter(item => {
             if (item.type === "chat") {
