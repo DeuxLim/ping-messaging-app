@@ -27,7 +27,7 @@ export default function ChatInput() {
 
 				// If no chat exists, create one first
 				if (!chatIdToUse) {
-					const res = await fetchAPI.post(`/chats`, { id: chatId, participants : activeChatData.participants, chatName : activeChatData.chatName });
+					const res = await fetchAPI.post(`/chats`, { id: chatId, participants: activeChatData.participants, chatName: activeChatData.chatName });
 					if (res?.error || !res?.data?.chat?._id) {
 						console.error("Chat creation failed:", res?.error || res);
 						navigate("/chats", { replace: true });
@@ -49,7 +49,7 @@ export default function ChatInput() {
 				console.error("Message send failed:", err);
 			}
 		},
-		[message, activeChatData?._id, chatId, currentUser?._id, navigate, socket, token]
+		[message, chatId, currentUser?._id, navigate, socket, token, activeChatData]
 	);
 
 	// ---- Typing Indicator ----
