@@ -26,7 +26,9 @@ export default function ChatBoxHeader() {
 		: null;
 
 	const chatName = isGroup
-		? activeChatData.chatName || "Unnamed Group"
+		? activeChatData.chatName ? activeChatData.chatName : activeChatData.participants.map((u) => {
+			return u.firstName
+		}).join(", ")
 		: otherUser.fullName ? `${otherUser.fullName}`.trim()
 			: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
 
