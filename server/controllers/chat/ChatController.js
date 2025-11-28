@@ -26,80 +26,88 @@ const findOrCreateChat = async (req, res) => {
 	try {
 		// Get request ID
 		const id = req.body.id;
-		if (!mongoose.Types.ObjectId.isValid(id)) {
+		if (!mongoose.Types.ObjectId.isValid(id) && id !== null) {
 			return res.status(400).json({ message: "Invalid ID format" });
 		}
 
 		// Get current user
 		const currentUser = await User.findOne({ email: req.user.email });
 
-		/**
-		 * Handle when current user selects a Chat-List Item
-		 */
-		// Check first if chat exists
-		const existingChat = await Chat.findById(id)
-			.populate(
-				"participants",
-				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
-			)
-			.populate("lastMessage");
+		let chatParticipantsIds = [];
+		if (id !== null) {
+			/**
+			 * Handle when current user selects a Chat-List Item
+			 */
+			// Check first if chat exists
+			const existingChat = await Chat.findById(id)
+				.populate(
+					"participants",
+					"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+				)
+				.populate("lastMessage");
 
-		// Return existing chat
-		if (existingChat) {
-			return res.status(200).json({
-				message: "chat exists",
-				data: {
-					isNew: false,
-					chat: existingChat,
-				},
-			});
+			// Return existing chat
+			if (existingChat) {
+				return res.status(200).json({
+					message: "chat exists",
+					data: {
+						isNew: false,
+						chat: existingChat,
+					},
+				});
+			}
+
+			/**
+			 * Handle when current user selects a USER-List Item (NON Chat-List Item)
+			 * with existing chat
+			 */
+			// Check if chat exists with the selected user
+			let existingChatByUser = await Chat.findOne({
+				isGroup: false,
+				participants: { $all: [id, currentUser._id], $size: 2 },
+			})
+				.populate(
+					"participants",
+					"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+				)
+				.populate("lastMessage");
+
+			// Return existing chat
+			if (existingChatByUser) {
+				return res.status(200).json({
+					message: "chat exists",
+					data: {
+						isNew: false,
+						chat: existingChatByUser,
+					},
+				});
+			}
+
+			/**
+			 * Handle when current user selects a chat/user without existing chat
+			 */
+			const selectedUser = await User.findById(id);
+			if (!selectedUser) {
+				return res.status(200).json({
+					error: {
+						message: "Chat not found",
+					},
+				});
+			}
+
+			chatParticipantsIds = [id, currentUser._id];
+		} else {
+			chatParticipantsIds = req.body.participants.map((p) => p._id);
 		}
 
-		/**
-		 * Handle when current user selects a USER-List Item (NON Chat-List Item)
-		 * with existing chat
-		 */
-		// Check if chat exists with the selected user
-		let existingChatByUser = await Chat.findOne({
-			isGroup: false,
-			participants: { $all: [id, currentUser._id], $size: 2 },
-		})
-			.populate(
-				"participants",
-				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
-			)
-			.populate("lastMessage");
-
-		// Return existing chat
-		if (existingChatByUser) {
-			return res.status(200).json({
-				message: "chat exists",
-				data: {
-					isNew: false,
-					chat: existingChatByUser,
-				},
-			});
-		}
-
-		/**
-		 * Handle when current user selects a chat/user without existing chat
-		 */
-		const selectedUser = await User.findById(id);
-		if (!selectedUser) {
-			return res.status(200).json({
-				error: {
-					message: "Chat not found",
-				},
-			});
-		}
-
-		const chatParticipantsIds = [id, currentUser._id];
+		const isMultipleParticipants = chatParticipantsIds.length > 2;
+		const chatName = req.body.chatName ?? null;
 
 		// Create Chat
 		const newChat = await Chat.create({
-			isGroup: false,
+			isGroup: isMultipleParticipants,
 			participants: chatParticipantsIds,
-			chatName: null,
+			chatName: chatName,
 			lastMessage: null,
 		});
 
