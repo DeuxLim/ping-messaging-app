@@ -49,7 +49,7 @@ export default function ChatDetailsPanel() {
                             </div>
                         ) : (
                             <div className="font-semibold text-2xl">
-                                {otherUser.fullName}
+                                {otherUser?.fullName}
                             </div>
                         )}
                     </div>
