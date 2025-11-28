@@ -50,7 +50,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
 
     // -- Chat name values start --
     const chatName = useMemo(() => {
-        if (chatData.isGroup) return chatData.groupName;
+        if (chatData.isGroup) return chatData.chatName ? chatData.chatName : chatData.participants.map(u => u.firstName).join(", ");
         if (chatData.type === "user") return chatData.fullName;
         if (chatParticipants?.length) return chatParticipants[0]?.fullName || "Unknown User";
         return "Unknown User";
