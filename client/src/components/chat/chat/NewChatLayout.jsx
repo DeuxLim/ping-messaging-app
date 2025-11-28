@@ -57,6 +57,7 @@ export default function NewChatLayout() {
 						participants: selectedChatUsersWithCurrentUser,
 						chatName: null,
 						lastMessage: null,
+						type: "temp",
 					});
 					//Group Chat Creation Functionality with Backend.
 					return;
