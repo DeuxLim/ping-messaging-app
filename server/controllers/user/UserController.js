@@ -39,11 +39,7 @@ const suggested = async (req, res) => {
 		);
 
 		// Find users NOT in that list
-		const suggestedUsers = await User.find({
-			_id: {
-				$nin: [...chattedUserIds, currentUserId],
-			},
-		})
+		const suggestedUsers = await User.find({})
 			.select("fullName firstName lastName userName profilePicture bio isOnline lastSeen")
 			.limit(10)
 			.sort({ createdAt: -1 });
