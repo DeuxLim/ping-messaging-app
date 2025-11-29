@@ -1,7 +1,7 @@
 import useToggle from "../../../hooks/common/useToggle";
 import useAuth from "../../../hooks/useAuth";
 import useChat from "../../../hooks/useChat";
-import { formatLastMessageDateTime } from "../../../utilities/utils";
+import { formatLastMessageDateTime, isEmpty } from "../../../utilities/utils";
 import AvatarImage from "../global/AvatarImage";
 
 export default function ChatMessage({ data }) {
@@ -53,7 +53,7 @@ export default function ChatMessage({ data }) {
                 <div className={`flex text-sm ${isNewGroup ? "mt-3" : ""}`}>
                     <div className="flex gap-2 items-end w-full">
                         <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
-                            {showAvatar && (
+                            {showAvatar && isEmpty(data.media) && (
                                 <div className="w-7 h-7 rounded-full overflow-hidden">
                                     <AvatarImage chatPhotoUrl={data.sender.profilePicture?.url} />
                                 </div>
@@ -73,6 +73,55 @@ export default function ChatMessage({ data }) {
                         </div>
                     </div>
                 </div>
+
+                {/* Photo and Video */}
+                {!isEmpty(data.media) && (
+                    <div className={`flex text-sm ${isNewGroup ? "mt-3" : ""}`}>
+                        {(() => {
+                            return data.media.map((media) => {
+                                if (media.type === "image") {
+                                    return (
+                                        <div className="flex gap-2 items-end w-full" key={media.publicId}>
+                                            <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end" key={media.publicId}>
+                                                {showAvatar && (
+                                                    <div className="w-7 h-7 rounded-full overflow-hidden">
+                                                        <AvatarImage chatPhotoUrl={data.sender.profilePicture?.url} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="rounded-lg overflow-hidden max-w-56 max-h-80">
+                                                <img
+                                                    src={media.url}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                } else if (media.type === "video") {
+                                    return (
+                                        <div className="flex gap-2 items-end w-full">
+                                            <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end" key={media.publicId}>
+                                                {showAvatar && (
+                                                    <div className="w-7 h-7 rounded-full overflow-hidden">
+                                                        <AvatarImage chatPhotoUrl={data.sender.profilePicture?.url} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="rounded-lg overflow-hidden max-w-56 max-h-80" key={media.publicId}>
+                                                <video
+                                                    src={media.url}
+                                                    controls
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+                            });
+                        })()}
+                    </div>
+                )}
             </>
         );
     }
@@ -87,6 +136,7 @@ export default function ChatMessage({ data }) {
             )}
             <div className={`flex flex-col items-end text-sm ${isNewGroup ? "mt-3" : ""} pr-2.5`}>
                 <div className="flex flex-col gap-1 items-end w-full" onClick={setMessageClicked}>
+
                     <div
                         id={`msg-${data._id}`}
                         data-seen={data.isSeen}
@@ -101,12 +151,49 @@ export default function ChatMessage({ data }) {
                     </div>
                 </div>
 
-                {(isLastMessage || messageClicked) && (
+                {((isLastMessage || messageClicked) && isEmpty(data.media)) && (
                     <div className="flex justify-end items-center text-xs text-gray-400 mt-0.5">
                         <span>{sentMessageStatus}</span>
                     </div>
                 )}
             </div>
+
+            {/* Photo and Video */}
+            {!isEmpty(data.media) && (
+                <div className={`flex flex-col items-end text-sm ${isNewGroup ? "mt-3" : ""} pr-2.5`}>
+                    {(() => {
+                        return data.media.map((media) => {
+                            if (media.type === "image") {
+                                return (
+                                    <div className="rounded-lg overflow-hidden max-w-56 max-h-80" key={media.publicId}>
+                                        <img
+                                            src={media.url}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                )
+                            } else if (media.type === "video") {
+                                return (
+                                    <div className="rounded-lg overflow-hidden max-w-56 max-h-80" key={media.publicId}>
+                                        <video
+                                            src={media.url}
+                                            controls
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                )
+                            }
+
+                        });
+                    })()}
+
+                    {(isLastMessage || messageClicked) && (
+                        <div className="flex justify-end items-center text-xs text-gray-400 mt-0.5">
+                            <span>{sentMessageStatus}</span>
+                        </div>
+                    )}
+                </div>
+            )}
         </>
     );
 }
