@@ -43,13 +43,14 @@ export const socketHandler = (io) => {
 		});
 
 		/** ─────────────── MESSAGES ─────────────── **/
-		socket.on("sendMessage", async ({ chatId, senderId, text }) => {
+		socket.on("sendMessage", async ({ chatId, senderId, text, media }) => {
 			if (!chatId || !senderId || !text) return;
 
 			const newMessage = await addMessageToChat({
 				chatId,
 				senderId,
 				text,
+				media,
 			});
 
 			const room = `chat:${chatId}`;
