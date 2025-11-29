@@ -1,17 +1,22 @@
 @import "tailwindcss";
 
 @layer utilities {
-  .hide-scrollbar {
-    -ms-overflow-style: none;  /* IE/Edge */
-    scrollbar-width: none;     /* Firefox */
-  }
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;             /* Chrome, Safari */
-  }
+	.hide-scrollbar {
+		-ms-overflow-style: none; /* IE/Edge */
+		scrollbar-width: none; /* Firefox */
+	}
+	.hide-scrollbar::-webkit-scrollbar {
+		display: none; /* Chrome, Safari */
+	}
 }
 
 @layer base {
-  body {
-    @apply font-sans;
-  }
+	body {
+		@apply font-sans;
+	}
+}
+
+.placeholder-div:empty::before {
+	content: attr(data-placeholder);
+	color: #9ca3af;
 }
