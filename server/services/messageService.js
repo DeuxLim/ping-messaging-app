@@ -1,19 +1,51 @@
 // services/messageService.js
 import Chat from "./../models/chat.js";
 import Message from "./../models/message.js";
+import cloudinary from "../library/cloudinary.js";
 
-export const addMessageToChat = async ({ chatId, senderId, text }) => {
+export const addMessageToChat = async ({ chatId, senderId, text, media }) => {
 	if (!senderId) throw new Error("senderId is required");
 
 	// Verify chat exists
 	const chat = await Chat.findById(chatId);
 	if (!chat) throw new Error("Chat not found");
 
+	// Handle media attachments
+	let uploadedFiles = [];
+
+	if (media.length > 0) {
+		uploadedFiles = await Promise.all(
+			media.map(async (attachment) => {
+				const uploadResponse = await cloudinary.uploader.upload(
+					attachment.base64,
+					{
+						folder: `chat_media_uploads/${chatId}`,
+						resource_type: "auto",
+					}
+				);
+
+				let mediaType;
+				if (uploadResponse.resource_type === "image")
+					mediaType = "image";
+				else if (uploadResponse.resource_type === "video")
+					mediaType = "video";
+				else mediaType = "file";
+
+				return {
+					url: uploadResponse.secure_url,
+					publicId: uploadResponse.public_id,
+					type: mediaType,
+				};
+			})
+		);
+	}
+
 	// Create message
 	const newMessage = await Message.create({
 		chat: chat._id,
 		sender: senderId,
 		text,
+		media: uploadedFiles,
 	});
 
 	// Update chat's last message
