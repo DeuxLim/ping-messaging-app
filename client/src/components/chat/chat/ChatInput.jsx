@@ -1,9 +1,14 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 import useSocket from "../../../hooks/useSocket";
 import { fetchAPI } from "../../../api/fetchApi";
+import { FaThumbsUp } from "react-icons/fa6";
+import { FaRegImage } from "react-icons/fa6";
+import { isEmpty } from "../../../utilities/utils";
+import { RxCross2 } from "react-icons/rx";
+import { LuCopyPlus } from "react-icons/lu";
 
 export default function ChatInput() {
 	const [message, setMessage] = useState("");
@@ -12,13 +17,15 @@ export default function ChatInput() {
 	const { socket } = useSocket();
 	const { chatId = null } = useParams();
 	const navigate = useNavigate();
+	const fileInputRef = useRef(null);
+	const [selectedMediaAttachments, setSelectedMediaAttachments] = useState([]);
 
 	// ---- Handlers ----
 	const handleSendMessage = useCallback(
 		async (e) => {
 			e.preventDefault();
 			const trimmedMessage = message.trim();
-			if (!trimmedMessage) return;
+			if (!trimmedMessage && isEmpty(selectedMediaAttachments)) return;
 
 			try {
 				fetchAPI.setAuth(token);
@@ -37,19 +44,23 @@ export default function ChatInput() {
 					navigate(`/chats/${chatIdToUse}`, { replace: true });
 				}
 
-				// Send message through socket
-				socket?.emit("sendMessage", {
+				const payload = {
 					chatId: chatIdToUse,
 					senderId: currentUser._id,
 					text: trimmedMessage,
-				});
+					media : selectedMediaAttachments,
+				};
+
+				// Send message through socket
+				socket?.emit("sendMessage", payload);
 
 				setMessage("");
+				setSelectedMediaAttachments([]);
 			} catch (err) {
 				console.error("Message send failed:", err);
 			}
 		},
-		[message, chatId, currentUser?._id, navigate, socket, token, activeChatData]
+		[message, chatId, currentUser?._id, navigate, socket, token, activeChatData, selectedMediaAttachments]
 	);
 
 	// ---- Typing Indicator ----
@@ -80,25 +91,135 @@ export default function ChatInput() {
 		}
 	}, [message, socket, activeChatData?._id, currentUser?._id]);
 
+	const handleMediaAttachmentTrigger = () => {
+		fileInputRef.current?.click();
+	};
+
+	const handleMediaAttachment = (e) => {
+		const files = Array.from(e.target.files);
+		if (files.length === 0) return;
+
+		files.forEach(file => {
+			const reader = new FileReader();
+
+			reader.onload = () => {
+				const base64 = reader.result;
+
+				setSelectedMediaAttachments(prev => [
+					...prev,
+					{
+						id: crypto.randomUUID(),
+						file,                          // full file object
+						base64,                        // encoded image
+						type: file.type,               // mime type (image/png, video/mp4)
+						name: file.name,               // "photo.png"
+						size: file.size,               // in bytes
+						extension: file.name.split('.').pop(),
+						previewUrl: URL.createObjectURL(file),
+					}
+				]);
+			};
+
+			reader.readAsDataURL(file);
+		});
+	};
+
+	const handleRemoveMedia = (toRemoveId) => {
+		setSelectedMediaAttachments(prev => prev.filter(selectedItem => selectedItem.id !== toRemoveId))
+	}
+
+	const renderMedia = (media) => {
+		if (media.type.startsWith("image/")) {
+			return (
+				<img
+					src={media.previewUrl}
+					className="w-full h-full object-cover rounded-xl"
+					alt=""
+				/>
+			);
+		}
+
+		if (media.type.startsWith("video/")) {
+			return (
+				<video
+					src={media.previewUrl}
+					className="w-full h-full object-cover"
+					controls
+				/>
+			);
+		}
+
+		return <div className="text-xs text-gray-500">Unsupported</div>;
+	};
+
 	// ---- Render ----
 	return (
-		<footer className="h-16 p-3 border-t border-gray-200 bg-white sticky bottom-0">
-			<form onSubmit={handleSendMessage} className="flex h-full gap-3">
-				<input
-					type="text"
-					placeholder="Aa"
-					name="chatInput"
-					className="flex-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-					value={message}
-					onChange={(e) => setMessage(e.target.value)}
-					autoComplete="off"
-				/>
+		<footer className="min-h-16 p-3 sticky bottom-0">
+			<form onSubmit={handleSendMessage} className="flex h-full gap-3 justify-center items-center">
+
+				{/* isEmpty(message.trim()) &&  */(
+					<>
+						<button
+							type="button"
+							className="text-xl text-blue-500 size-10 hover:bg-gray-100 rounded-full flex justify-center items-center"
+							onClick={handleMediaAttachmentTrigger}
+						>
+							<FaRegImage />
+						</button>
+						<input type="file" className="hidden" ref={fileInputRef} accept="image/*, video/*" onChange={handleMediaAttachment} multiple />
+					</>
+				)}
+
+				{/* Chat Message Input */}
+				<div
+					className="flex-1 rounded-2xl flex flex-col overflow-hidden bg-gray-100"
+				>
+					{/* Media Attachments Preview */}
+					<div className={`w-full h-24 flex gap-4 p-4 ${isEmpty(selectedMediaAttachments) && "hidden"}`}>
+						{!isEmpty(selectedMediaAttachments) && (() => {
+							return (
+								<>
+									<button
+										type="button"
+										className="relative size-12 rounded-xl bg-gray-200 flex justify-center items-center"
+										onClick={handleMediaAttachmentTrigger}
+									>
+										<LuCopyPlus className="text-3xl" />
+									</button>
+									{selectedMediaAttachments.map(media => (
+										<div className="relative size-12 rounded-xl" key={media.id}>
+											{renderMedia(media)}
+
+											<button
+												type="button"
+												onClick={() => handleRemoveMedia(media.id)}
+												className="size-7 rounded-full border border-gray-300 bg-gray-50 absolute -top-2.5 -right-2.5 flex justify-center items-center"
+											>
+												<RxCross2 className="text-xs" />
+											</button>
+										</div>
+									))}
+								</>
+							)
+
+						})()}
+					</div>
+
+					{/* Text Input */}
+					<input
+						type="text"
+						placeholder="Aa"
+						value={message}
+						onChange={(e) => setMessage(e.target.value)}
+						className="focus:outline-none h-9 flex items-center w-full rounded-2xl px-3"
+					/>
+				</div>
+
 				<button
 					type="submit"
-					className="w-16 flex items-center justify-center rounded-xl border border-gray-300 bg-blue-500 text-white font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-					disabled={!message.trim()}
+					className="size-10 rounded-full flex items-center justify-center text-blue-500 text-xl hover:bg-gray-100"
 				>
-					Send
+					<FaThumbsUp />
 				</button>
 			</form>
 		</footer>
