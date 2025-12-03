@@ -69,7 +69,6 @@ export default function ChatProvider({ children }) {
     const clearActiveChat = useCallback(() => {
         setActiveChatData(null);
         setActiveChatMessages(null);
-        setSelectedMediaAttachments([]);
     }, [setActiveChatData, setActiveChatMessages]);
 
     // ---- Socket Presence ----

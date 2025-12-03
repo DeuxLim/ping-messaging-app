@@ -152,6 +152,13 @@ export default function ChatInput() {
 		return <div className="text-xs text-gray-500">Unsupported</div>;
 	};
 
+	useEffect(() => {
+		return () => {
+			setSelectedMediaAttachments([]);
+			setMessage("");
+		}
+	}, [activeChatData]);
+
 	// ---- Render ----
 	return (
 		<footer className="min-h-16 p-3 sticky bottom-0">
