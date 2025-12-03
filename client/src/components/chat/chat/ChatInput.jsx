@@ -67,6 +67,8 @@ export default function ChatInput() {
 	useEffect(() => {
 		if (!socket || !activeChatData?._id || !currentUser?._id) return;
 
+		// Remove selected attachments
+		setSelectedMediaAttachments([]);
 		const trimmed = message.trim();
 
 		if (trimmed) {
