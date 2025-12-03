@@ -12,6 +12,7 @@ export default function ChatProvider({ children }) {
     // ---- Chat States ----
     const [activeChatData, setActiveChatData] = useState(null);
     const [activeChatMessages, setActiveChatMessages] = useState([]);
+    const [selectedMediaAttachments, setSelectedMediaAttachments] = useState([]);
     const [chatItems, setChatItems] = useState([]);
     const [userItems, setUserItems] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
@@ -68,6 +69,7 @@ export default function ChatProvider({ children }) {
     const clearActiveChat = useCallback(() => {
         setActiveChatData(null);
         setActiveChatMessages(null);
+        setSelectedMediaAttachments([]);
     }, [setActiveChatData, setActiveChatMessages]);
 
     // ---- Socket Presence ----
@@ -230,6 +232,8 @@ export default function ChatProvider({ children }) {
         setActiveChatMessages,
         setActiveChat,
         setActiveChatData,
+        selectedMediaAttachments, 
+        setSelectedMediaAttachments,
         clearActiveChat,
 
         // fetched lists
