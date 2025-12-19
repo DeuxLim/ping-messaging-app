@@ -18,10 +18,6 @@ export default function Sidebar() {
 
                 {/* CHATS LIST */}
                 <SidebarChats />
-
-                {/* FOOTER */}
-                <SidebarFooter />
-
             </aside>
         </>
     )
