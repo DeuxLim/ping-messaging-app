@@ -11,7 +11,7 @@ export default function ChatApp() {
 
     return (
         <>
-            <div className="h-screen flex py-4 px-2 bg-gray-100 gap-6">
+            <div className="h-screen flex py-4 px-2 bg-gray-100 gap-4">
                 <IconMenu />
 
                 {isDesktop
