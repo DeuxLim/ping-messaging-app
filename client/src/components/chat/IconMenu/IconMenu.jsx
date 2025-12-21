@@ -1,12 +1,12 @@
 import { BiFoodMenu } from "react-icons/bi";
 import ChatItemAvatar from "../global/ChatItem/ChatItemAvatar";
 import { TbMessageCircleFilled } from "react-icons/tb";
-import { TbLogout2 } from "react-icons/tb";
+import { CgProfile } from "react-icons/cg";
 import useAuth from "../../../hooks/useAuth";
 import useToggle from "../../../hooks/common/useToggle";
 import useDropdownMenu from "../../../hooks/common/useDropdownMenu";
 import { TbLogout } from "react-icons/tb";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 
 export default function IconMenu() {
     const [isIconMenuExpanded, setIsIconMenuExpanded] = useToggle(false);
@@ -61,19 +61,31 @@ export default function IconMenu() {
                             aria-labelledby="sidebar-settings-button"
                             className="absolute bottom-12 left-0 rounded-xl shadow-lg border border-gray-200 z-50 bg-white p-1 w-80"
                         >
-                            <div className="">
+                            {/* Profile */}
+                            <Link to="/profile">
                                 <button
                                     type="button"
-                                    role="menuitem"
-                                    onClick={handleLogout}
                                     className="w-full text-left p-2 hover:bg-gray-100 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 >
                                     <span className="size-8 bg-gray-100 rounded-full flex justify-center items-center">
-                                        <TbLogout className="text-lg" />
+                                        <CgProfile className="text-xl" />
                                     </span>
-                                    <span className="text-sm">Log out</span>
+                                    <span className="text-sm">Profile</span>
                                 </button>
-                            </div>
+                            </Link>
+
+                            {/* Log out */}
+                            <button
+                                type="button"
+                                role="menuitem"
+                                onClick={handleLogout}
+                                className="w-full text-left p-2 hover:bg-gray-100 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            >
+                                <span className="size-8 bg-gray-100 rounded-full flex justify-center items-center">
+                                    <TbLogout className="text-lg" />
+                                </span>
+                                <span className="text-sm">Log out</span>
+                            </button>
                         </div>
                     )}
                 </div>
