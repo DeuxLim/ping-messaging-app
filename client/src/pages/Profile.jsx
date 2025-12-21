@@ -39,7 +39,7 @@ export default function Profile() {
 		reader.onload = async () => {
 			const base64Image = reader.result;
 			setSelectedImg(base64Image);
-			await updateUserProfilePicture({profilePicture : base64Image});
+			await updateUserProfilePicture({ profilePicture: base64Image });
 		}
 	};
 
