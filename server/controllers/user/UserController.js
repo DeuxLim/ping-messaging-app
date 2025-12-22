@@ -129,6 +129,74 @@ const updateProfile = async (req, res) => {
 		});
 	}
 };
+
+const updatePassword = async (req, res) => {
+	try {
+		const userId = req.user.id;
+		const { currentPassword, newPassword } = req.body;
+
+		// ---------------- Guards ----------------
+		if (!currentPassword || !newPassword) {
+			return res.status(400).json({
+				updateSuccess: false,
+				message: "Current and new password are required.",
+			});
+		}
+
+		if (newPassword.length < 8) {
+			return res.status(400).json({
+				updateSuccess: false,
+				message: "Password must be at least 8 characters.",
+			});
+		}
+
+		// ---------------- Fetch user ----------------
+		const user = await User.findById(userId).select("+password");
+
+		if (!user) {
+			return res.status(404).json({
+				updateSuccess: false,
+				message: "User not found.",
+			});
+		}
+
+		// ---------------- Verify current password ----------------
+		const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+		if (!isMatch) {
+			return res.status(401).json({
+				updateSuccess: false,
+				message: "Current password is incorrect.",
+			});
+		}
+
+		// ---------------- Prevent reuse ----------------
+		const isSamePassword = await bcrypt.compare(newPassword, user.password);
+
+		if (isSamePassword) {
+			return res.status(400).json({
+				updateSuccess: false,
+				message:
+					"New password must be different from current password.",
+			});
+		}
+
+		user.password = newPassword;
+		user.refreshToken = null;
+		user.refreshAccessToken = null;
+
+		await user.save();
+
+		return res.status(200).json({
+			updateSuccess: true,
+			message: "Password updated successfully.",
+		});
+	} catch (error) {
+		console.error("Error updating password:", error);
+		return res.status(500).json({
+			updateSuccess: false,
+			message: "Server error while updating password.",
+		});
 	}
 };
 
@@ -136,4 +204,5 @@ export default {
 	index,
 	suggested,
 	updateProfile,
+	updatePassword,
 };
