@@ -43,7 +43,7 @@ export default function AuthProvider({ children }) {
         }
     }, []);
 
-    const updateUserProfilePicture = async (data) => {
+    const updateUserProfile = async (data) => {
         try {
             fetchAPI.setAuth(token);
             const response = await fetchAPI.put('/users/update-profile', data);
@@ -57,6 +57,18 @@ export default function AuthProvider({ children }) {
         }
     }
 
+    const updatePassword = async (data) => {
+        try {
+            fetchAPI.setAuth(token);
+            const response = await fetchAPI.put('/users/update-password', data);
+            if(!response.updateSuccess){
+                console.log('failed to update profile picture...');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
         refreshToken();
     }, [refreshToken]);
@@ -69,7 +81,8 @@ export default function AuthProvider({ children }) {
         logout,
         refreshToken,
         isAuthenticated: Boolean(currentUser && token),
-        updateUserProfilePicture,
+        updateUserProfile,
+        updatePassword,
     };
 
     if (!isUserReady) return <div>Loading...</div>;

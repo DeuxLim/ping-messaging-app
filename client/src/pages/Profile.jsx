@@ -9,7 +9,6 @@ export default function Profile() {
 	const {
 		currentUser,
 		updateUserProfile,
-		updateUserProfilePicture,
 		updatePassword,
 	} = useAuth();
 
@@ -68,7 +67,7 @@ export default function Profile() {
 		await updateUserProfile(formData);
 
 		if (previewImg !== currentUser.profilePicture?.url) {
-			await updateUserProfilePicture({ profilePicture: previewImg });
+			await updateUserProfile({ profilePicture: previewImg });
 		}
 
 		setIsEditMode(false);
