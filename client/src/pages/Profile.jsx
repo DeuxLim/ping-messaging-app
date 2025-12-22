@@ -4,6 +4,7 @@ import { FiEdit } from "react-icons/fi";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoCameraOutline } from "react-icons/io5";
 import { useNavigate } from "react-router";
+import defaultUserImage from "../assets/images/default-user.png"
 
 export default function Profile() {
 	const {
@@ -136,7 +137,7 @@ export default function Profile() {
 						<div className="relative">
 							<div className="size-32 rounded-full overflow-hidden ring-4 ring-gray-100">
 								<img
-									src={previewImg || ""}
+									src={previewImg || defaultUserImage}
 									alt="Profile"
 									className="w-full h-full object-cover"
 								/>
