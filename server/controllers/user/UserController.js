@@ -1,7 +1,7 @@
 import User from "../../models/user.js";
 import Chat from "../../models/chat.js";
 import cloudinary from "../../library/cloudinary.js";
-import { isEmpty } from "../../../client/src/utilities/utils.js";
+import bcrypt from "bcrypt";
 
 // GET /users - Get all users with pagination and search
 const index = async (req, res) => {
