@@ -1,58 +1,54 @@
-import ping from './../../assets/images/ping-messenger-logo.png';
-import { Outlet, useNavigate } from 'react-router';
-import bgImage from './../../assets/images/ping-messenger-background.jpg';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 import { useEffect } from 'react';
+import { FaFacebookMessenger } from "react-icons/fa6";
 
 export default function StartAuth() {
 	const { token, currentUser } = useAuth();
 	const navigate = useNavigate();
+	const location = useLocation();
+	const isLoggingIn = location.pathname === "/auth/login";
 
 	useEffect(() => {
-		if(token || currentUser){
+		if (token || currentUser) {
 			navigate("/chats");
 		}
 	}, [token, currentUser, navigate]);
 
 	return (
-		<div className="min-h-screen m-0 bg-white flex justify-center items-center 
-			bg-cover 
-			bg-center 
-			bg-gradient-to-b 
-			from-black/50 
-			to-black/20"
-			style={{
-				backgroundImage: `url(${bgImage})`,
-				backgroundSize: 'cover',
-				backgroundPosition: 'center',
-			}}>
-				
-			<div className='flex flex-col h-full justify-center items-center p-10 w-full'>
+		<div className="min-h-screen m-0 bg-white flex flex-col justify-center items-center">
+			<div className='flex flex-col justify-center h-full items-center p-10 w-full flex-1'>
 
 				{/* Logo, Name, Tagline */}
-				<div className='flex flex-col items-center gap-1 mb-10'>
+				<div className='flex flex-col items-center gap-11 mb-10'>
 					<div className="flex items-center justify-center mr-6">
-						<img src={ping} alt="logo" className='w-18 h-18' />
-						<h1 className='text-4xl font-black text-blue-500'>Ping</h1>
+						<FaFacebookMessenger className='text-blue-600 text-7xl' />
 					</div>
-					<span className='font-bold'>
-						Your world, one Ping away.
+					<span className='font-light text-4xl'>
+						Connect with your favorite people.
 					</span>
 				</div>
 
 				{/* Auth pages */}
-				<div className="max-w-md w-full mx-auto rounded-4xl flex flex-col gap-6 
-					md:p-10 
-					md:shadow-md 
-					md:backdrop-blur-xs 
-					md:bg-white/10 
-					md:border 
-					md:border-white/30"
-				>
+				<div className="max-w-md w-full mx-auto flex flex-col items-center">
 					<Outlet />
 				</div>
-
 			</div>
-		</div >
+
+			<div className="text-sm flex gap-6 justify-center items-center p-4">
+				{
+					isLoggingIn && (
+						<>
+							<Link to="/auth/register" className="hover:underline">
+								Not on Facebook?
+							</Link>
+							{/* <Link to="/auth/forgot-password">
+								<p className="font-bold hover:underline text-blue-500">Forgot password</p>
+							</Link> */}
+						</>
+					)
+				}
+			</div>
+		</div>
 	)
 }
