@@ -75,7 +75,7 @@ export default function Login() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-10 text-lg">
+            <div className="flex flex-col gap-8 text-lg w-80">
                 <div className="flex flex-col gap-3">
 
                     {/* EMAIL */}
@@ -118,29 +118,6 @@ export default function Login() {
                         ) : ""}
 
                     </div>
-
-                    {/* REMEMBER ME && FORGOT PASSWORD*/}
-                    <div className="flex text-sm justify-between mt-2 px-1">
-                        <label htmlFor={elementRememberMeId} className="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                id={elementRememberMeId}
-                                name="remember-me"
-                                className="hidden peer"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                            />
-                            <div className="relative w-5 h-5 border border-gray-200 rounded peer-checked:bg-blue-500 peer-checked:border-blue-500 transition-all duration-200"></div>
-                            <span className="text-sm text-gray-700">Remember me</span>
-                        </label>
-
-                        <div>
-                            <Link to="/auth/forgot-password">
-                                <p className="font-bold hover:underline text-blue-500">Forgot password</p>
-                            </Link>
-                        </div>
-                    </div>
-
                 </div>
 
                 {errors.general &&
@@ -154,25 +131,34 @@ export default function Login() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`bg-blue-500 py-2 px-8 rounded-lg w-full
+                        className={`bg-blue-500 py-3 px-6 rounded-full text-sm
                                         ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                         <span className="text-white">
-                            {loading ? "Logging in..." : "Login"}
+                            {loading ? "Logging in..." : "Continue"}
                         </span>
                     </button>
                 </div>
 
-                <div className="flex justify-between gap-3">
-                    <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div>
-                    <span className="text-sm">or</span>
-                    <div className="w-full flex items-center"><div className="h-0.5 w-full bg-gray-200"></div></div>
+                {/* REMEMBER ME && FORGOT PASSWORD*/}
+                <div className="flex text-sm justify-center items-center mt-2 px-1">
+                    <label htmlFor={elementRememberMeId} className="flex items-center gap-2 cursor-pointer text-gray-500">
+                        <input
+                            type="checkbox"
+                            id={elementRememberMeId}
+                            name="remember-me"
+                            className="hidden peer"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                        />
+                        <div className="relative size-4.5 border border-gray-400 text-gray-500 rounded peer-checked:bg-blue-500 peer-checked:border-blue-500 transition-all duration-200"></div>
+                        <span className="text-sm text-gray-500">Keep me signed in</span>
+                    </label>
+
+                    {/* <div>
+                            
+                        </div> */}
                 </div>
-
-                <Link to="/auth/register" className="flex justify-center items-center bg-orange-600 py-2 px-8 rounded-lg w-full text-white">
-                    Create an account
-                </Link>
-
             </div>
         </form>
     );
