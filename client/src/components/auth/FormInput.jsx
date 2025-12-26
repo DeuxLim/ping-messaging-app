@@ -28,8 +28,8 @@ export default function FormInput({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className={`w-full px-4 py-4 border rounded-lg text-gray-900 text-sm placeholder:text-gray-400 transition-all duration-200 outline-none
-                ${error ? "border-red-500 focus:ring-red-100" : "border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-100"}`}
+                className={`w-full px-4 py-2 border rounded-md text-black text-md font-light placeholder:text-gray-400 transition-all duration-200 outline-none
+                ${error ? "border-red-500 focus:ring-red-100" : "border-gray-300 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-100"}`}
             />
             {error && (
                 <p className="text-xs text-red-500 ml-0.5">{error}</p>
