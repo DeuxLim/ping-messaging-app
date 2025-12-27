@@ -2,10 +2,12 @@ import useAuth from '../../../hooks/useAuth';
 import useChat from '../../../hooks/useChat';
 import { getOtherParticipant, getOtherParticipants } from '../../../utilities/utils';
 import AvatarImage from '../global/AvatarImage';
+import useOtherParticipants from '../../../hooks/chat/useOtherParticipants';
 
 export default function ChatDetailsPanel() {
     const { activeChatData } = useChat();
     const { currentUser } = useAuth();
+    const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
 
     const isGroup = activeChatData?.isGroup;
     const otherUser = !isGroup
@@ -18,9 +20,7 @@ export default function ChatDetailsPanel() {
 
                 {/* Display Photo */}
                 <div className={`flex justify-center items-center w-58 min-h-28 relative ${!isGroup && 'h-44'}`}>
-                    {activeChatData?.participants?.map((p, index) => {
-                        if (p._id === currentUser._id) return;
-
+                    {chatParticipants?.map((p, index) => {
                         const displayPhotos = isGroup ? (
                             <div
                                 key={p?._id}
