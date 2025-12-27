@@ -32,7 +32,7 @@ export default function ChatBoxHeader() {
 		? activeChatData.chatName ? activeChatData.chatName : activeChatData.participants.map((u) => {
 			return u.firstName
 		}).join(", ")
-		: otherUser.fullName ? `${otherUser.fullName}`.trim()
+		: otherUser?.fullName ? `${otherUser?.fullName}`.trim()
 			: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
 
 	// --- Online status logic ---

@@ -28,14 +28,24 @@ export function formatLastMessageDateTime(isoString) {
 }
 
 /**
- * Returns all other participants in a chat excluding the current user.
+ * Returns all other participants in a chat excluding the current user if needed.
  * @param {Array} participants - chatData.participants
  * @param {string} currentUserId - logged-in user's _id
  * @returns {Array} filtered participants
  */
 export function getOtherParticipants(participants = [], currentUserId) {
 	if (!Array.isArray(participants) || !currentUserId) return [];
-	return participants.filter((p) => String(p._id) !== String(currentUserId));
+
+	let participantReturn = []
+
+	// Handle current user chatting itself
+	if(participants.length == 2 && participants[0]._id == participants[1]._id){
+		participantReturn = [participants[0]];
+	} else {
+		participantReturn = participants.filter((p) => String(p._id) !== String(currentUserId));
+	}
+
+	return participantReturn;
 }
 
 /**
