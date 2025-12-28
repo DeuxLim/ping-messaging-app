@@ -17,7 +17,6 @@ export default function NewChatLayout() {
 
 	useEffect(() => {
 		clearActiveChat();
-		setFilteredList(usersAndChatsList);
 
 		let isMounted = true;
 
