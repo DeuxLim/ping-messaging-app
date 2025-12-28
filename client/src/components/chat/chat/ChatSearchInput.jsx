@@ -25,9 +25,13 @@ export default function ChatSearchInput() {
         if (chipRef.current) setChipWidth(chipRef.current.offsetWidth + 12);
     }, [selectedChats]);
 
+    useEffect(() => {
+        setFilteredList(usersAndChatsList.filter(item => item.type !== "chat" && item.isGroup !== true));
+    }, [setFilteredList, usersAndChatsList]);
+
     const handleChatSearch = (value) => {
         const searchQuery = value.trim().toLowerCase();
-        if (isEmpty(searchQuery)) return setFilteredList(usersAndChatsList.filter(item => item.type !== "chat"));
+        if (isEmpty(searchQuery)) return setFilteredList(usersAndChatsList.filter(item => item.type !== "chat" && item.isGroup !== true));
 
         const filtered = usersAndChatsList.filter(item => {
             if (item.type === "chat") {
@@ -80,7 +84,7 @@ export default function ChatSearchInput() {
 
     return (
         <>
-            <div className="flex justify-between items-center sticky top-0">
+            <div className="flex justify-between items-center sticky top-0 z-10">
                 <div className="relative w-full flex shadow-black/10 shadow-[0_4px_6px_-1px] justify-start items-center px-2">
 
                     {/* Back button */}
