@@ -26,8 +26,50 @@ export default function ChatSearchInput() {
     }, [selectedChats]);
 
     useEffect(() => {
-        setFilteredList(usersAndChatsList.filter(item => item.type !== "chat" && item.isGroup !== true));
-    }, [setFilteredList, usersAndChatsList]);
+        if (!usersAndChatsList?.length) {
+            setFilteredList([]);
+            return;
+        }
+
+        const byUserId = new Map();
+
+        usersAndChatsList.forEach(item => {
+            let key = null;
+
+            // GROUP CHAT → standalone
+            if (item.type === "chat" && item.isGroup === true) {
+                key = item._id;
+            }
+
+            // 1-to-1 CHAT
+            else if (item.type === "chat" && item.participants?.length === 2) {
+                const [a, b] = item.participants;
+
+                if (a._id === b._id) {
+                    key = a._id; // self-chat
+                } else {
+                    key =
+                        a._id === currentUser._id ? b._id :
+                            b._id === currentUser._id ? a._id :
+                                null;
+                }
+            }
+
+            // USER
+            else if (item.type === "user") {
+                key = item._id;
+            }
+
+            if (!key) return;
+
+            // chat always wins over user
+            if (!byUserId.has(key) || item.type === "chat") {
+                byUserId.set(key, item);
+            }
+        });
+
+        setFilteredList(Array.from(byUserId.values()));
+    }, [usersAndChatsList, currentUser._id, setFilteredList]);
 
     const handleChatSearch = (value) => {
         const searchQuery = value.trim().toLowerCase();
@@ -70,7 +112,7 @@ export default function ChatSearchInput() {
                 key={`${item.type}-${item._id}`}
                 className="text-sm relative after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-[94%]"
             >
-                <ChatItem chatData={item} variant="compact" isSelecting={true} />
+                <ChatItem chatData={item} variant="compact" isSelecting={item.isGroup ? false : true} />
             </div>
         ));
     }, [filteredList]);
