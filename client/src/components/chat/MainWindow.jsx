@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 export default function MainWindow() {
     return (
         <>
-            <main className="flex-1 h-full shadow-sm overflow-hidden bg-white rounded-xl">
+            <main className="flex-1 h-full shadow-sm overflow-hidden bg-white rounded-xl min-w-[850px]">
                 <Outlet/>
             </main>
         </>
