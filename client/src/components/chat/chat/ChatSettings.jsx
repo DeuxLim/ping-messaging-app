@@ -7,12 +7,15 @@ import { RxCaretRight, RxCaretDown } from "react-icons/rx";
 import useToggle from '../../../hooks/common/useToggle';
 import CenterPopUpModal from '../../common/CenterPopUpModal';
 import { RiEdit2Fill } from "react-icons/ri";
+import { IoMdCheckmark } from "react-icons/io";
+import { useState } from 'react';
 
 export default function ChatSettings() {
     const { activeChatData, onlineUsers } = useChat();
     const { currentUser } = useAuth();
     const [menuExpanded, setMenuExpanded] = useToggle();
-    const [isEditingNickname, setIsEditingNickname] = useToggle();
+    const [isNicknameEditModalDisplayed, setIsNicknameEditModalDisplayed] = useToggle();
+    const [editingParticipantId, setEditingParticipantId] = useState(null);
 
     const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
     const isGroup = !!activeChatData?.isGroup;
@@ -100,7 +103,7 @@ export default function ChatSettings() {
                             {isGroup && (
                                 <div
                                     className='flex justify-between w-full items-center rounded-md p-2 hover:bg-gray-100 active:bg-gray-200 text-sm'
-                                    onClick={() => setIsEditingNickname(prev => !prev)}
+                                    onClick={() => setIsNicknameEditModalDisplayed(prev => !prev)}
                                 >
                                     <div className='flex gap-2 items-center justify-center'>
                                         <div className='size-8 rounded-full flex justify-center items-center bg-gray-200 font-semibold'>Aa</div>
@@ -111,7 +114,7 @@ export default function ChatSettings() {
 
                             <div
                                 className='flex justify-between w-full items-center rounded-md p-2 hover:bg-gray-100 active:bg-gray-200 text-sm'
-                                onClick={() => setIsEditingNickname(prev => !prev)}
+                                onClick={() => setIsNicknameEditModalDisplayed(prev => !prev)}
                             >
                                 <div className='flex gap-2 items-center justify-center'>
                                     <div className='size-8 rounded-full flex justify-center items-center bg-gray-200 font-semibold'>Aa</div>
@@ -122,38 +125,71 @@ export default function ChatSettings() {
                     )}
 
                     {/* Nickname edit form */}
-                    <CenterPopUpModal open={isEditingNickname} onClose={() => setIsEditingNickname(false)}>
+                    <CenterPopUpModal open={isNicknameEditModalDisplayed} onClose={() => setIsNicknameEditModalDisplayed(false)}>
                         <div className='p-5 w-[550px] flex flex-col gap-5'>
                             <div className='flex justify-between items-center'>
                                 <div></div>
                                 <div className='font-medium pl-6'>Nicknames</div>
-                                <div className='size-7 rounded-full bg-gray-100 text-[12px] font-bold flex justify-center items-center'>X</div>
+                                <div className='size-7 rounded-full bg-gray-100 text-[12px] font-bold flex justify-center items-center'
+                                    onClick={() => setIsNicknameEditModalDisplayed(false)}>X</div>
                             </div>
 
                             <div>
-                                {activeChatData?.participants.map((p, idx) => {
+                                {activeChatData?.participants.map((p) => {
+                                    const isEditing = editingParticipantId === p._id;
+
                                     return (
-                                        <div key={idx} className='w-full rounded-md hover:bg-gray-50 px-2 py-4'>
-                                            <div className='flex justify-between items-center gap-3'>
-                                                <div className="size-10 rounded-full overflow-hidden">
+                                        <div
+                                            key={p._id}
+                                            className="w-full rounded-md hover:bg-gray-50 px-2 py-4"
+                                        >
+                                            <div className="flex items-center gap-3">
+
+                                                {/* Avatar */}
+                                                <div className="size-10 rounded-full overflow-hidden flex-shrink-0">
                                                     <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
                                                 </div>
 
-                                                <div className='flex-1 flex flex-col'>
-                                                    <div className='text-sm font-medium'>
-                                                        {p.fullName}
+                                                {/* Name / Input */}
+                                                {isEditing ? (
+                                                    <input
+                                                        type="text"
+                                                        defaultValue={activeChatData.nicknames?.get(p._id) || ""}
+                                                        placeholder={p.fullName}
+                                                        className="flex-1 border border-gray-300 rounded-md p-2 text-sm"
+                                                        autoFocus
+                                                    />
+                                                ) : (
+                                                    <div className="flex-1 flex flex-col">
+                                                        <div className="text-sm font-medium">
+                                                            {p.fullName}
+                                                        </div>
+                                                        <div className="text-xs font-light text-gray-500">
+                                                            {activeChatData.nicknames?.get(p._id) || "Set nickname"}
+                                                        </div>
                                                     </div>
-                                                    <div className='text-xs font-light'>
-                                                        {activeChatData.nicknames?.get(p._id) || "Set nickname"}
-                                                    </div>
-                                                </div>
+                                                )}
 
-                                                <div className='size-10 text-2xl rounded-full hover:bg-gray-100 flex items-center justify-center'>
-                                                    <RiEdit2Fill />
-                                                </div>
+                                                {/* Action */}
+                                                {isEditing ? (
+                                                    <button
+                                                        className="size-10 text-2xl rounded-full hover:bg-gray-100 flex items-center justify-center"
+                                                        onClick={() => setEditingParticipantId(null)}
+                                                    >
+                                                        <IoMdCheckmark />
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        className="size-10 text-2xl rounded-full hover:bg-gray-100 flex items-center justify-center"
+                                                        onClick={() => setEditingParticipantId(p._id)}
+                                                    >
+                                                        <RiEdit2Fill />
+                                                    </button>
+                                                )}
+
                                             </div>
                                         </div>
-                                    )
+                                    );
                                 })}
                             </div>
                         </div>
