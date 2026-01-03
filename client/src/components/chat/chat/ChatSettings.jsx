@@ -15,7 +15,7 @@ export default function ChatSettings() {
     const [isEditingNickname, setIsEditingNickname] = useToggle();
 
     const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
-    const isGroup = !!activeChatData.isGroup;
+    const isGroup = !!activeChatData?.isGroup;
     const otherUser = !isGroup
         ? getOtherParticipant(activeChatData?.participants, currentUser?._id)
         : getOtherParticipants(activeChatData?.participants, currentUser?._id);
@@ -23,14 +23,14 @@ export default function ChatSettings() {
     const isOnline = otherUser?._id && onlineUsers?.[otherUser._id] || true;
 
     return (
-        <div className="flex-1 h-full shadow-sm overflow-hidden bg-white rounded-xl p-2">
+        <div className="h-full shadow-sm overflow-hidden bg-white rounded-xl p-2 min-w-80 w-full max-w-[400px]">
             <div className="flex justify-center items-center flex-col gap-4">
 
                 <div className='flex flex-col justify-center items-center gap-1 w-full p-4'>
 
                     {/* Display Photo */}
                     <div className={`flex justify-center items-center relative`}>
-                        {activeChatData.participants.length > 2 && (
+                        {activeChatData?.participants.length > 2 && (
                             <div className='size-20'>
                             </div>
                         )}
@@ -131,7 +131,7 @@ export default function ChatSettings() {
                             </div>
 
                             <div>
-                                {activeChatData.participants.map((p, idx) => {
+                                {activeChatData?.participants.map((p, idx) => {
                                     return (
                                         <div key={idx} className='w-full rounded-md hover:bg-gray-50 px-2 py-4'>
                                             <div className='flex justify-between items-center gap-3'>
