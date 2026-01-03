@@ -4,7 +4,7 @@ import { HiDotsCircleHorizontal } from "react-icons/hi";
 import useChat from "../../../hooks/useChat";
 import useAuth from "../../../hooks/useAuth";
 import AvatarWithStatus from "../global/AvatarWithStatus";
-import { getOtherParticipant } from "../../../utilities/utils";
+import { getOtherParticipant, isEmpty } from "../../../utilities/utils";
 import { useNavigate } from "react-router";
 import useChatDisplay from "../../../hooks/useChatDisplay";
 
@@ -32,7 +32,7 @@ export default function ChatBoxHeader() {
 		? activeChatData.chatName ? activeChatData.chatName : activeChatData.participants.map((u) => {
 			return u.firstName
 		}).join(", ")
-		: otherUser?.fullName ? `${otherUser?.fullName}`.trim()
+		: !isEmpty(activeChatData.nicknames?.get(otherUser._id)) ? activeChatData.nicknames.get(otherUser._id) : otherUser?.fullName ? `${otherUser?.fullName}`.trim()
 			: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
 
 	// --- Online status logic ---
