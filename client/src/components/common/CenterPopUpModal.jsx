@@ -22,7 +22,7 @@ export default function CenterPopUpModal({ open, onClose, children }) {
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-lg shadow-md px-6 py-5"
+                className="bg-white rounded-lg shadow-md"
                 onClick={(e) => e.stopPropagation()}
             >
                 {children}
