@@ -16,6 +16,7 @@ export default function ChatSettings() {
     const [menuExpanded, setMenuExpanded] = useToggle();
     const [isNicknameEditModalDisplayed, setIsNicknameEditModalDisplayed] = useToggle();
     const [editingParticipantId, setEditingParticipantId] = useState(null);
+    const [isChatNameEditModalDisplayed, setIsChatNameEditModalDisplayed] = useToggle();
 
     const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
     const isGroup = !!activeChatData?.isGroup;
@@ -101,15 +102,44 @@ export default function ChatSettings() {
                         <div className=''>
                             {/* Nicknames */}
                             {isGroup && (
-                                <div
-                                    className='flex justify-between w-full items-center rounded-md p-2 hover:bg-gray-100 active:bg-gray-200 text-sm'
-                                    onClick={() => setIsNicknameEditModalDisplayed(prev => !prev)}
-                                >
-                                    <div className='flex gap-2 items-center justify-center'>
-                                        <div className='size-8 rounded-full flex justify-center items-center bg-gray-200 font-semibold'>Aa</div>
-                                        Change chat name
+                                <>
+                                    <div
+                                        className='flex justify-between w-full items-center rounded-md p-2 hover:bg-gray-100 active:bg-gray-200 text-sm'
+                                        onClick={() => setIsChatNameEditModalDisplayed(prev => !prev)}
+                                    >
+                                        <div className='flex gap-2 items-center justify-center'>
+                                            <div className='size-8 rounded-full flex justify-center items-center bg-gray-200 font-semibold'>Aa</div>
+                                            Change chat name
+                                        </div>
                                     </div>
-                                </div>
+
+                                    <CenterPopUpModal open={isChatNameEditModalDisplayed} onClose={() => setIsChatNameEditModalDisplayed(false)}>
+                                        <div className='p-5 w-[550px] flex flex-col gap-5'>
+                                            <div className='flex justify-between items-center'>
+                                                <div></div>
+                                                <div className='font-medium pl-6'>Change chat name</div>
+                                                <div className='size-7 rounded-full bg-gray-100 text-[12px] font-bold flex justify-center items-center'
+                                                    onClick={() => setIsChatNameEditModalDisplayed(false)}>X</div>
+                                            </div>
+
+                                            <div className='flex flex-col gap-4'>
+                                                <div className='w-full text-xs'>Changing the name of a group chat changes it for everyone.</div>
+                                                <div className='w-full relative'>
+                                                    <div className='w-full text-xs absolute px-4 pt-2'>
+                                                        <div className='text-blue-500'>
+                                                            Chat name
+                                                        </div>
+                                                    </div>
+                                                    <input type="text" className='border w-full border-gray-300 rounded-sm py-2 px-4 pt-6' />
+                                                </div>
+                                                <div className='w-full flex gap-2'>
+                                                    <button onClick={() => setIsChatNameEditModalDisplayed(false)} type='button' className='rounded-md text-sm font-medium w-1/2 px-2 py-1 bg-gray-100'>Cancel</button>
+                                                    <button type='button' className='rounded-md text-sm font-medium w-1/2 px-2 py-1 bg-gray-100'>Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </CenterPopUpModal >
+                                </>
                             )}
 
                             <div
