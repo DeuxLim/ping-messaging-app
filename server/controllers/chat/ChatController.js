@@ -276,10 +276,38 @@ const searchChat = async (req, res) => {
 	}
 };
 
+const updateChat = async (req, res) => {
+	try {
+		const chatId = req.params.id;
+		const updatedFields = req.body.fields;
+
+		const updatedChat = await Chat.findByIdAndUpdate(
+			chatId,
+			{ $set: updatedFields },
+			{
+				new: true,
+				runValidators: true,
+			}
+		);
+
+		return res.status(200).json({
+			updateSuccess: true,
+			user: updatedChat,
+		});
+	} catch (error) {
+		console.error("Error updating profile:", error);
+		return res.status(500).json({
+			updateSuccess: false,
+			message: "Server error while updating chat.",
+		});
+	}
+};
+
 export default {
 	findOrCreateChat,
 	getUserChats,
 	getChatMessages,
 	addChatMessage,
 	searchChat,
+	updateChat,
 };
