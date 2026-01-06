@@ -43,7 +43,7 @@ export default function ChatDetailsPanel() {
                 {/* Display Names */}
                 <div className="flex flex-col justify-center items-center gap-2">
                     <div className="flex flex-col justify-center items-center">
-                        {isGroup ? (
+                        {isGroup ? activeChatData?.chatName ? activeChatData.chatName : (
                             <div className="font-semibold text-md">
                                 {otherUser.map(u => u.firstName).join(", ")}
                             </div>

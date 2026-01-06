@@ -9,14 +9,16 @@ import CenterPopUpModal from '../../common/CenterPopUpModal';
 import { RiEdit2Fill } from "react-icons/ri";
 import { IoMdCheckmark } from "react-icons/io";
 import { useState } from 'react';
+import { fetchAPI } from '../../../api/fetchApi';
 
 export default function ChatSettings() {
     const { activeChatData, onlineUsers } = useChat();
-    const { currentUser } = useAuth();
+    const { currentUser, token } = useAuth();
     const [menuExpanded, setMenuExpanded] = useToggle();
     const [isNicknameEditModalDisplayed, setIsNicknameEditModalDisplayed] = useToggle();
     const [editingParticipantId, setEditingParticipantId] = useState(null);
     const [isChatNameEditModalDisplayed, setIsChatNameEditModalDisplayed] = useToggle();
+    const [chatName, setChatName] = useState(activeChatData?.chatName || "");
 
     const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
     const isGroup = !!activeChatData?.isGroup;
@@ -25,6 +27,20 @@ export default function ChatSettings() {
         : getOtherParticipants(activeChatData?.participants, currentUser?._id);
 
     const isOnline = otherUser?._id && onlineUsers?.[otherUser._id] || true;
+
+    const handleChatNameUpdate = async () => {
+        try {
+            fetchAPI.setAuth(token);
+            await fetchAPI.patch(`/chats/${activeChatData._id}`, {
+                fields : {
+                    chatName : chatName
+                }
+            });
+            setIsChatNameEditModalDisplayed(false);
+        } catch (error) { 
+            console.log(error);
+        }
+    }
 
     return (
         <div className="h-full shadow-sm overflow-hidden bg-white rounded-xl p-2 min-w-80 w-full max-w-[400px]">
@@ -61,7 +77,7 @@ export default function ChatSettings() {
                     {/* Display Names */}
                     <div className="flex flex-col justify-center items-center gap-2">
                         <div className="flex flex-col justify-center items-center gap-1">
-                            {isGroup ? (
+                            {isGroup ? activeChatData?.chatName ? activeChatData.chatName : (
                                 <div className="font-semibold text-md">
                                     {otherUser?.map(u => u.firstName).join(", ")}
                                 </div>
@@ -100,7 +116,7 @@ export default function ChatSettings() {
 
                     {menuExpanded && (
                         <div className=''>
-                            {/* Nicknames */}
+                            {/* Chat Name Edit */}
                             {isGroup && (
                                 <>
                                     <div
@@ -130,11 +146,23 @@ export default function ChatSettings() {
                                                             Chat name
                                                         </div>
                                                     </div>
-                                                    <input type="text" className='border w-full border-gray-300 rounded-sm py-2 px-4 pt-6' />
+                                                    <input
+                                                        type="text"
+                                                        className='border w-full border-gray-300 rounded-sm py-2 px-4 pt-6'
+                                                        value={chatName}
+                                                        onChange={(e) => setChatName(e.target.value)}
+                                                    />
                                                 </div>
                                                 <div className='w-full flex gap-2'>
                                                     <button onClick={() => setIsChatNameEditModalDisplayed(false)} type='button' className='rounded-md text-sm font-medium w-1/2 px-2 py-1 bg-gray-100'>Cancel</button>
-                                                    <button type='button' className='rounded-md text-sm font-medium w-1/2 px-2 py-1 bg-gray-100'>Save</button>
+                                                    <button
+                                                        type='button'
+                                                        className={`rounded-md text-sm font-medium w-1/2 px-2 py-1 bg-gray-100 ${chatName === activeChatData.chatName && "text-gray-300"}`}
+                                                        disabled={chatName === activeChatData.chatName}
+                                                        onClick={handleChatNameUpdate}
+                                                    >
+                                                        Save
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
