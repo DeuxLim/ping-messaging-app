@@ -7,9 +7,11 @@ import { RxCaretRight, RxCaretDown } from "react-icons/rx";
 import useToggle from '../../../hooks/common/useToggle';
 import CenterPopUpModal from '../../common/CenterPopUpModal';
 import { RiEdit2Fill } from "react-icons/ri";
+import { IoMdArrowBack } from "react-icons/io";
 import { IoMdCheckmark } from "react-icons/io";
 import { useState } from 'react';
 import { fetchAPI } from '../../../api/fetchApi';
+import useChatDisplay from '../../../hooks/useChatDisplay';
 
 export default function ChatSettings() {
     const { activeChatData, onlineUsers } = useChat();
@@ -19,6 +21,7 @@ export default function ChatSettings() {
     const [editingParticipantId, setEditingParticipantId] = useState(null);
     const [isChatNameEditModalDisplayed, setIsChatNameEditModalDisplayed] = useToggle();
     const [chatName, setChatName] = useState(activeChatData?.chatName || "");
+    const { isChatSettingsOpen, isDesktop, setIsChatSettingsOpen } = useChatDisplay();
 
     const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
     const isGroup = !!activeChatData?.isGroup;
@@ -32,74 +35,90 @@ export default function ChatSettings() {
         try {
             fetchAPI.setAuth(token);
             await fetchAPI.patch(`/chats/${activeChatData._id}`, {
-                fields : {
-                    chatName : chatName
+                fields: {
+                    chatName: chatName
                 }
             });
             setIsChatNameEditModalDisplayed(false);
-        } catch (error) { 
+        } catch (error) {
             console.log(error);
         }
     }
 
+    // --- Event Handlers ---
+    const handleBackClick = () => {
+        setIsChatSettingsOpen(false);
+    };
+
     return (
-        <div className="h-full shadow-sm overflow-hidden bg-white rounded-xl p-2 min-w-80 w-full max-w-[400px]">
+        <div className={`h-full shadow-sm overflow-hidden bg-white rounded-xl p-2 min-w-80 w-full ${isChatSettingsOpen && isDesktop ? "max-w-[400px]" : ""}`}>
             <div className="flex justify-center items-center flex-col gap-4">
 
-                <div className='flex flex-col justify-center items-center gap-1 w-full p-4'>
+                <div className='flex justify-center items-start w-full relative'>
+                    <button
+                        onClick={handleBackClick}
+                        className="text-2xl md:hidden hover:text-gray-700 dark:hover:text-gray-200 hover:rounded-full hover:bg-gray-100 size-10 flex justify-center items-center absolute left-0 top-0"
+                        aria-label="Back"
+                    >
+                        <div className="text-md">
+                            <IoMdArrowBack />
+                        </div>
+                    </button>
 
-                    {/* Display Photo */}
-                    <div className={`flex justify-center items-center relative`}>
-                        {activeChatData?.participants.length > 2 && (
-                            <div className='size-20'>
-                            </div>
-                        )}
-                        {chatParticipants?.map((p, index) => {
-                            const displayPhotos = isGroup ? (
-                                <div
-                                    key={p?._id}
-                                    className={`absolute ${index === 0 ? 'right-1.5 top-2' : 'left-1.5 bottom-2'}`}
-                                >
-                                    <div className="size-12 rounded-full overflow-hidden">
+                    <div className='flex flex-col justify-center items-center gap-1 w-full p-4'>
+
+                        {/* Display Photo */}
+                        <div className={`flex justify-center items-center relative`}>
+                            {activeChatData?.participants.length > 2 && (
+                                <div className='size-20'>
+                                </div>
+                            )}
+                            {chatParticipants?.map((p, index) => {
+                                const displayPhotos = isGroup ? (
+                                    <div
+                                        key={p?._id}
+                                        className={`absolute ${index === 0 ? 'right-1.5 top-2' : 'left-1.5 bottom-2'}`}
+                                    >
+                                        <div className="size-12 rounded-full overflow-hidden">
+                                            <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="size-20 rounded-full overflow-hidden" key={`${p._id}`}>
                                         <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
                                     </div>
-                                </div>
-                            ) : (
-                                <div className="size-20 rounded-full overflow-hidden" key={`${p._id}`}>
-                                    <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
-                                </div>
-                            );
+                                );
 
-                            return displayPhotos;
-                        })}
-                    </div>
-
-                    {/* Display Names */}
-                    <div className="flex flex-col justify-center items-center gap-2">
-                        <div className="flex flex-col justify-center items-center gap-1">
-                            {isGroup ? activeChatData?.chatName ? activeChatData.chatName : (
-                                <div className="font-semibold text-md">
-                                    {otherUser?.map(u => u.firstName).join(", ")}
-                                </div>
-                            ) : (
-                                <div className="font-normal text-md text-blue-500">
-                                    {otherUser?.fullName}
-                                </div>
-                            )}
-
-                            {!isGroup && (
-                                <div className='text-xs'>
-                                    @{otherUser?.userName}
-                                </div>
-                            )}
+                                return displayPhotos;
+                            })}
                         </div>
 
-                        <div className='text-gray-400 text-xs font-light'>
-                            {isOnline ? "Active Now" : ""}
+                        {/* Display Names */}
+                        <div className="flex flex-col justify-center items-center gap-2">
+                            <div className="flex flex-col justify-center items-center gap-1">
+                                {isGroup ? activeChatData?.chatName ? activeChatData.chatName : (
+                                    <div className="font-semibold text-md">
+                                        {otherUser?.map(u => u.firstName).join(", ")}
+                                    </div>
+                                ) : (
+                                    <div className="font-normal text-md text-blue-500">
+                                        {otherUser?.fullName}
+                                    </div>
+                                )}
+
+                                {!isGroup && (
+                                    <div className='text-xs'>
+                                        @{otherUser?.userName}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className='text-gray-400 text-xs font-light'>
+                                {isOnline ? "Active Now" : ""}
+                            </div>
                         </div>
                     </div>
                 </div>
-
                 {/* Settings Menu */}
                 <div className='w-full'>
                     <div
