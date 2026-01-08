@@ -19,19 +19,23 @@ export default function ChatDetailsPanel() {
             <div className='flex flex-col justify-center items-center'>
 
                 {/* Display Photo */}
-                <div className={`flex justify-center items-center w-58 min-h-28 relative ${!isGroup && 'h-44'}`}>
+                <div className={`flex justify-center items-center relative`}>
+                    {activeChatData?.participants.length > 2 && (
+                        <div className='size-20'>
+                        </div>
+                    )}
                     {chatParticipants?.map((p, index) => {
                         const displayPhotos = isGroup ? (
                             <div
                                 key={p?._id}
-                                className={`absolute ${index === 0 ? 'top-8 right-20' : 'top-12 left-20'}`}
+                                className={`absolute ${index === 0 ? 'right-1.5 top-2' : 'left-1.5 bottom-2'}`}
                             >
                                 <div className="size-12 rounded-full overflow-hidden">
                                     <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
                                 </div>
                             </div>
                         ) : (
-                            <div className="size-40 rounded-full overflow-hidden" key={`${p._id}`}>
+                            <div className="size-20 rounded-full overflow-hidden" key={`${p._id}`}>
                                 <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
                             </div>
                         );

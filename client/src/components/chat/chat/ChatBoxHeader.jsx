@@ -7,12 +7,15 @@ import AvatarWithStatus from "../global/AvatarWithStatus";
 import { getOtherParticipant, isEmpty } from "../../../utilities/utils";
 import { useNavigate } from "react-router";
 import useChatDisplay from "../../../hooks/useChatDisplay";
+import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
+import AvatarImage from "../global/AvatarImage";
 
 export default function ChatBoxHeader() {
 	const { activeChatData, onlineUsers } = useChat();
 	const { currentUser } = useAuth();
 	const { setIsChatSettingsOpen } = useChatDisplay();
 	const navigate = useNavigate();
+	const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
 
 	// --- Guard: ensure valid data before rendering ---
 	if (!activeChatData || !activeChatData.participants?.length) {
@@ -69,7 +72,7 @@ export default function ChatBoxHeader() {
 
 	return (
 		<header className="h-15 border-b border-gray-300 bg-white">
-			<div className="flex items-center justify-between h-full px-3 md:px-4">
+			<div className="flex items-center justify-between h-full px-1">
 				{/* Back button (mobile only) */}
 				<button
 					onClick={handleBackClick}
@@ -82,12 +85,32 @@ export default function ChatBoxHeader() {
 				</button>
 
 				{/* Chat info */}
-				<div className="flex flex-1 items-center gap-3 overflow-hidden">
-					<AvatarWithStatus
-						chatPhotoUrl={isGroup ? activeChatData.chatPhotoUrl : otherUser?.profilePicture?.url}
-						userStatus={isOnline ? "online" : "offline"}
-						containerClass="size-10"
-					/>
+				<div className="flex flex-1 items-center gap-3 overflow-hidden h-full">
+					{/* Display Photo */}
+					<div className={`flex justify-center items-center relative h-10 w-15`}>
+						{chatParticipants?.map((p, index) => {
+							const displayPhotos = isGroup ? (
+								<div
+									key={p?._id}
+									className={`absolute ${index === 1 ? 'right-6 top-3' : 'left-6 bottom-3'}`}
+								>
+									<div className="size-7 rounded-full overflow-hidden">
+										<AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+									</div>
+								</div>
+							) : (
+								<AvatarWithStatus
+									chatPhotoUrl={isGroup ? activeChatData.chatPhotoUrl : otherUser?.profilePicture?.url}
+									userStatus={isOnline ? "online" : "offline"}
+									containerClass="size-10"
+								/>
+							);
+
+							return displayPhotos;
+						})}
+					</div>
+
+
 
 					<div className="flex flex-col truncate">
 						<span className="font-normal truncate">{chatName}</span>
