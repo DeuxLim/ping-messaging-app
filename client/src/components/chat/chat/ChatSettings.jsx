@@ -12,6 +12,7 @@ import { IoMdCheckmark } from "react-icons/io";
 import { useState } from 'react';
 import { fetchAPI } from '../../../api/fetchApi';
 import useChatDisplay from '../../../hooks/useChatDisplay';
+import { MdModeEdit } from "react-icons/md";
 
 export default function ChatSettings() {
     const { activeChatData, onlineUsers } = useChat();
@@ -119,6 +120,7 @@ export default function ChatSettings() {
                         </div>
                     </div>
                 </div>
+
                 {/* Settings Menu */}
                 <div className='w-full'>
                     <div
@@ -143,7 +145,7 @@ export default function ChatSettings() {
                                         onClick={() => setIsChatNameEditModalDisplayed(prev => !prev)}
                                     >
                                         <div className='flex gap-2 items-center justify-center'>
-                                            <div className='size-8 rounded-full flex justify-center items-center bg-gray-200 font-semibold'>Aa</div>
+                                            <div className='size-8 rounded-full flex justify-center items-center bg-gray-200 font-semibold'><MdModeEdit /></div>
                                             Change chat name
                                         </div>
                                     </div>
