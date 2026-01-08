@@ -64,13 +64,13 @@ export default function ChatDetailsPanel() {
                         </div>
                     )}
 
-                    {!isGroup && (
+                    {/* {!isGroup && (
                         <div className="flex justify-center items-center">
                             <button type="button" className="py-2 px-2 text-xs bg-gray-300 flex justify-center items-center rounded-full font-semibold">
                                 View Profile
                             </button>
                         </div>
-                    )}
+                    )} */}
                 </div>
 
             </div>

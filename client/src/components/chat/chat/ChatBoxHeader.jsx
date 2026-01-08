@@ -61,14 +61,14 @@ export default function ChatBoxHeader() {
 		setIsChatSettingsOpen(prev => !prev);
 	}
 
-	const handleVideoCall = () => {
+	/* const handleVideoCall = () => {
 		console.log("Start video call");
 		// Placeholder for future video call logic
 	};
 	const handleVoiceCall = () => {
 		console.log("Start video call");
 		// Placeholder for future video call logic
-	};
+	}; */
 
 	return (
 		<header className="h-15 border-b border-gray-300 bg-white">
@@ -122,22 +122,22 @@ export default function ChatBoxHeader() {
 					</div>
 				</div>
 
-				<button
+				{/* <button
 					onClick={handleVoiceCall}
 					className="text-xl p-2 hover:text-blue-500 transition-colors text-blue-500"
 					aria-label="Start video call"
 				>
 					<IoCall />
-				</button>
+				</button> */}
 
 				{/* Video call button */}
-				<button
+				{/* <button
 					onClick={handleVideoCall}
 					className="text-xl p-2 hover:text-blue-500 transition-colors text-blue-500"
 					aria-label="Start video call"
 				>
 					<IoVideocam />
-				</button>
+				</button> */}
 
 				<button
 					onClick={handleChatMenuClick}
