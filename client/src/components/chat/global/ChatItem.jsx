@@ -10,6 +10,7 @@ import ChatItemAvatar from "./ChatItem/ChatItemAvatar";
 import ChatItemName from "./ChatItem/ChatItemName";
 import ChatItemContentPreview from "./ChatItem/ChatItemContentPreview";
 import ChatItemMeta from "./ChatItem/ChatItemMeta";
+import AvatarImage from "./AvatarImage";
 
 function ChatItem({ chatData, variant, isSelecting = false }) {
     const { isUserOnline, activeChatData, isSearch } = useChat();
@@ -40,8 +41,8 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
             chatData.type === "user"
                 ? chatData._id
                 : chatData.type === "chat"
-                    ? chatParticipants[0]?._id
-                    : null;
+                    ? chatData.isGroup ?  chatParticipants : chatParticipants[0]?._id
+                : null;
 
         return isUserOnline(targetId) ? "online" : "offline";
     }, [chatData, chatParticipants, isUserOnline]);
@@ -88,8 +89,35 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
             className={`flex gap-2.5 items-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors ${isActiveChat ? `bg-gray-100` : ``}`}
             onClick={handleChatSelect}
         >
-            {/* Profile Picture */}
-            <ChatItemAvatar data={{ chatPhotoUrl, userStatus }} />
+
+            {/* Display Photo */}
+            <div className={`flex justify-center items-center relative size-12`}>
+                {chatParticipants?.map((p, index) => {
+                    const displayPhotos = chatData.isGroup ? (
+                        <div
+                            key={p?._id}
+                            className={`absolute ${index === 1 ? 'right-3.5 top-3' : 'left-3.5 bottom-3'}`}
+                        >
+                            <div className="size-9 rounded-full overflow-hidden">
+                                <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+                            </div>
+                        </div>
+                    ) : (
+                        <ChatItemAvatar key={p._id} data={{ chatPhotoUrl, userStatus }} />
+                    );
+
+                    return displayPhotos;
+                })}
+
+                {/* Status Icon */}
+                {
+                    userStatus === "online" && (
+                        <div className="absolute right-0 bottom-0">
+                            <div className="size-3.5 border-2 border-white rounded-full bg-green-500"></div>
+                        </div>
+                    )
+                }
+            </div>
 
             {/* Chat Data UI - main content area */}
             <div className="flex-1 min-w-0 flex flex-col gap-1">

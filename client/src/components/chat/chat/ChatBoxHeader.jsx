@@ -9,13 +9,20 @@ import { useNavigate } from "react-router";
 import useChatDisplay from "../../../hooks/useChatDisplay";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
 import AvatarImage from "../global/AvatarImage";
+import { useMemo } from "react";
 
 export default function ChatBoxHeader() {
-	const { activeChatData, onlineUsers } = useChat();
+	const { activeChatData, onlineUsers, isUserOnline } = useChat();
 	const { currentUser } = useAuth();
 	const { setIsChatSettingsOpen } = useChatDisplay();
 	const navigate = useNavigate();
 	const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
+
+	const userStatus = useMemo(() => {
+		const targetId = activeChatData.isGroup ? chatParticipants : chatParticipants[0]?._id
+
+		return isUserOnline(targetId) ? "online" : "offline";
+	}, [activeChatData, chatParticipants, isUserOnline]);
 
 	// --- Guard: ensure valid data before rendering ---
 	if (!activeChatData || !activeChatData.participants?.length) {
@@ -37,20 +44,6 @@ export default function ChatBoxHeader() {
 		}).join(", ")
 		: !isEmpty(activeChatData.nicknames?.get(otherUser._id)) ? activeChatData.nicknames.get(otherUser._id) : otherUser?.fullName ? `${otherUser?.fullName}`.trim()
 			: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
-
-	// --- Online status logic ---
-	const isOnline = otherUser?._id && onlineUsers?.[otherUser._id];
-	const activeStatus =
-		isGroup || !otherUser
-			? ""
-			: isOnline
-				? "Online"
-				: otherUser?.lastSeen
-					? `Last seen ${new Date(otherUser.lastSeen).toLocaleTimeString([], {
-						hour: "2-digit",
-						minute: "2-digit",
-					})}`
-					: "Offline";
 
 	// --- Event Handlers ---
 	const handleBackClick = () => {
@@ -90,18 +83,28 @@ export default function ChatBoxHeader() {
 					<div className={`flex justify-center items-center relative h-10 w-15`}>
 						{chatParticipants?.map((p, index) => {
 							const displayPhotos = isGroup ? (
-								<div
-									key={p?._id}
-									className={`absolute ${index === 1 ? 'right-6 top-3' : 'left-6 bottom-3'}`}
-								>
-									<div className="size-7 rounded-full overflow-hidden">
-										<AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+								<div key={p?._id}>
+									<div
+										className={`absolute ${index === 1 ? 'right-6 top-3' : 'left-6 bottom-3'}`}
+									>
+										<div className="size-7 rounded-full overflow-hidden">
+											<AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+										</div>
 									</div>
+
+									{/* Status Icon */}
+									{
+										userStatus === "online" && (
+											<div className="absolute right-0 bottom-0">
+												<div className="size-3.5 border-2 border-white rounded-full bg-green-500"></div>
+											</div>
+										)
+									}
 								</div>
 							) : (
 								<AvatarWithStatus
 									chatPhotoUrl={isGroup ? activeChatData.chatPhotoUrl : otherUser?.profilePicture?.url}
-									userStatus={isOnline ? "online" : "offline"}
+									userStatus={userStatus === "online" ? "online" : "offline"}
 									containerClass="size-10"
 								/>
 							);
@@ -114,9 +117,14 @@ export default function ChatBoxHeader() {
 
 					<div className="flex flex-col truncate">
 						<span className="font-normal truncate">{chatName}</span>
-						{!isGroup && (
+						{(
 							<span className="text-xs text-gray-500 dark:text-gray-400">
-								{activeStatus}
+								{userStatus === "online" ? "Online" : !isGroup ? otherUser?.lastSeen
+									? `Last seen ${new Date(otherUser.lastSeen).toLocaleTimeString([], {
+										hour: "2-digit",
+										minute: "2-digit",
+									})}`
+									: "Offline" : "Offline"}
 							</span>
 						)}
 					</div>

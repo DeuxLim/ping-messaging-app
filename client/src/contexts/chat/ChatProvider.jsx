@@ -22,7 +22,20 @@ export default function ChatProvider({ children }) {
     const [error, setError] = useState(null);
 
     /* Utilities */
-    const isUserOnline = useCallback((userId) => onlineUsers[userId] === "online", [onlineUsers]);
+    const isUserOnline = useCallback(
+        (participants) => {
+            let isSomeoneOnline = false;
+            if (Array.isArray(participants)) {
+                isSomeoneOnline = participants.some(
+                    participant => onlineUsers[participant._id] === "online"
+                );
+            } else {
+                isSomeoneOnline = onlineUsers[participants] === "online"
+            }
+            return isSomeoneOnline
+        },
+        [onlineUsers]);
+
     const updateChatSearchResults = useCallback(
         ({ chats = [], users = [], isSearch = false }) => {
             const searchChatsList = (chats || []).map(c => ({ ...c, type: "chat" }));
@@ -231,7 +244,7 @@ export default function ChatProvider({ children }) {
         setActiveChatMessages,
         setActiveChat,
         setActiveChatData,
-        selectedMediaAttachments, 
+        selectedMediaAttachments,
         setSelectedMediaAttachments,
         clearActiveChat,
 

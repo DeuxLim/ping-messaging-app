@@ -17,7 +17,8 @@ import { MdModeEdit } from "react-icons/md";
 export default function ChatSettings() {
     const { activeChatData, onlineUsers } = useChat();
     const { currentUser, token } = useAuth();
-    const [menuExpanded, setMenuExpanded] = useToggle();
+    const [isCustomizeChatExpanded, setIsCustomizeChatExpanded] = useToggle();
+    const [isChatMembersExpanded, setIsChatMembersExpanded] = useToggle();
     const [isNicknameEditModalDisplayed, setIsNicknameEditModalDisplayed] = useToggle();
     const [editingParticipantId, setEditingParticipantId] = useState(null);
     const [isChatNameEditModalDisplayed, setIsChatNameEditModalDisplayed] = useToggle();
@@ -123,19 +124,21 @@ export default function ChatSettings() {
 
                 {/* Settings Menu */}
                 <div className='w-full'>
+
+                    {/* Customize Chat Start */}
                     <div
                         className='flex justify-between w-full items-center rounded-md p-2 hover:bg-gray-100 active:bg-gray-200'
-                        onClick={() => setMenuExpanded(prev => !prev)}
+                        onClick={() => setIsCustomizeChatExpanded(prev => !prev)}
                     >
                         <div className='text-sm font-semibold'>
                             Customize Chat
                         </div>
                         <div className='text-3xl'>
-                            {menuExpanded ? <RxCaretDown /> : <RxCaretRight />}
+                            {isCustomizeChatExpanded ? <RxCaretDown /> : <RxCaretRight />}
                         </div>
                     </div>
 
-                    {menuExpanded && (
+                    {isCustomizeChatExpanded && (
                         <div className=''>
                             {/* Chat Name Edit */}
                             {isGroup && (
@@ -273,7 +276,48 @@ export default function ChatSettings() {
                             </div>
                         </div>
                     </CenterPopUpModal >
+                    {/* Customize Chat End */}
 
+                    <div
+                        className='flex justify-between w-full items-center rounded-md p-2 hover:bg-gray-100 active:bg-gray-200'
+                        onClick={() => setIsChatMembersExpanded(prev => !prev)}
+                    >
+                        <div className='text-sm font-semibold'>
+                            Chat Members
+                        </div>
+                        <div className='text-3xl'>
+                            {isChatMembersExpanded ? <RxCaretDown /> : <RxCaretRight />}
+                        </div>
+                    </div>
+
+                    {isChatMembersExpanded && (
+                        <>
+                            {
+                                activeChatData.participants.map((participant) => {
+                                    return (
+                                        <div
+                                            className='flex justify-between flex-col gap-2 w-full items-center rounded-md p-2 hover:bg-gray-100 active:bg-gray-200 text-sm'
+                                        >
+                                            <div className='flex gap-2 items-center w-full justify-start h-12'>
+                                                <div className='size-10 rounded-full overflow-hidden flex justify-center items-center'>
+                                                    <AvatarImage />
+                                                </div>
+                                                <div>
+                                                    <div className='font-medium'>
+                                                        {participant.fullName}
+                                                    </div>
+                                                    <div className='text-xs text-gray-500'>
+                                                        @{participant.userName}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    )
+                                })
+                            }
+                        </>
+                    )}
                 </div>
             </div>
         </div>
