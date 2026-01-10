@@ -12,7 +12,7 @@ import AvatarImage from "../global/AvatarImage";
 import { useMemo } from "react";
 
 export default function ChatBoxHeader() {
-	const { activeChatData, onlineUsers, isUserOnline } = useChat();
+	const { activeChatData, isUserOnline } = useChat();
 	const { currentUser } = useAuth();
 	const { setIsChatSettingsOpen } = useChatDisplay();
 	const navigate = useNavigate();
@@ -42,7 +42,7 @@ export default function ChatBoxHeader() {
 		? activeChatData.chatName ? activeChatData.chatName : activeChatData.participants.map((u) => {
 			return u.firstName
 		}).join(", ")
-		: !isEmpty(activeChatData.nicknames?.get(otherUser._id)) ? activeChatData.nicknames.get(otherUser._id) : otherUser?.fullName ? `${otherUser?.fullName}`.trim()
+		: !isEmpty(activeChatData.nicknames[otherUser._id]) ? activeChatData.nicknames[otherUser._id] : otherUser?.fullName ? `${otherUser?.fullName}`.trim()
 			: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
 
 	// --- Event Handlers ---

@@ -104,7 +104,7 @@ export default function ChatSettings() {
                                     </div>
                                 ) : (
                                     <div className="font-normal text-md text-blue-500">
-                                        {otherUser?.fullName}
+                                        {activeChatData.nicknames[otherUser._id] || otherUser?.fullName}
                                     </div>
                                 )}
 
@@ -236,7 +236,7 @@ export default function ChatSettings() {
                                                 {isEditing ? (
                                                     <input
                                                         type="text"
-                                                        defaultValue={activeChatData.nicknames?.get(p._id) || ""}
+                                                        defaultValue={activeChatData.nicknames[p._id] || ""}
                                                         placeholder={p.fullName}
                                                         className="flex-1 border border-gray-300 rounded-md p-2 text-sm"
                                                         autoFocus
@@ -247,7 +247,7 @@ export default function ChatSettings() {
                                                             {p.fullName}
                                                         </div>
                                                         <div className="text-xs font-light text-gray-500">
-                                                            {activeChatData.nicknames?.get(p._id) || "Set nickname"}
+                                                            {activeChatData.nicknames[p._id] || "Set nickname"}
                                                         </div>
                                                     </div>
                                                 )}

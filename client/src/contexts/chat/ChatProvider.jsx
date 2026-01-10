@@ -66,6 +66,13 @@ export default function ChatProvider({ children }) {
                     participants: data.participants,
                     chatName: data.chatName || null,
                     lastMessage: data.lastMessage || null,
+                    admins: data.admins || [],
+                    archivedBy: data.archivedBy || [],
+                    deletedFor: data.deletedFor || [],
+                    mutedBy: data.mutedBy || [],
+                    nicknames: data.nicknames || {},
+                    type: data.type || null,
+                    unreadCount: data.unreadCount || 0
                 }
                 : {
                     _id: null,
@@ -73,6 +80,13 @@ export default function ChatProvider({ children }) {
                     participants: [data, currentUser],
                     chatName: null,
                     lastMessage: null,
+                    admins: [],
+                    archivedBy: [],
+                    deletedFor: [],
+                    mutedBy: [],
+                    nicknames: {},
+                    type: null,
+                    unreadCount: 0
                 };
 
             setActiveChatData(chatData);

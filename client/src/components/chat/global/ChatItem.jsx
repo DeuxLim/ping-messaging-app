@@ -53,7 +53,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     const chatName = useMemo(() => {
         if (chatData.isGroup) return chatData.chatName ? chatData.chatName : chatData.participants.map(u => u.firstName).join(", ");
         if (chatData.type === "user") return chatData.fullName;
-        if (chatParticipants?.length) return chatParticipants[0]?.fullName || "Unknown User";
+        if (chatParticipants?.length) return chatData?.nicknames[chatParticipants[0]?._id] || chatParticipants[0]?.fullName || "Unknown User";
         return "Unknown User";
     }, [chatData, chatParticipants]);
     // -- Chat name values end ----
