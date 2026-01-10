@@ -102,11 +102,13 @@ export default function ChatBoxHeader() {
 									}
 								</div>
 							) : (
-								<AvatarWithStatus
-									chatPhotoUrl={isGroup ? activeChatData.chatPhotoUrl : otherUser?.profilePicture?.url}
-									userStatus={userStatus === "online" ? "online" : "offline"}
-									containerClass="size-10"
-								/>
+								<div key={p?._id}>
+									<AvatarWithStatus
+										chatPhotoUrl={isGroup ? activeChatData.chatPhotoUrl : otherUser?.profilePicture?.url}
+										userStatus={userStatus === "online" ? "online" : "offline"}
+										containerClass="size-10"
+									/>
+								</div>
 							);
 
 							return displayPhotos;
