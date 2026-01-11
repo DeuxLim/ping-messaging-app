@@ -9,7 +9,7 @@ import CenterPopUpModal from '../../common/CenterPopUpModal';
 import { RiEdit2Fill } from "react-icons/ri";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoMdCheckmark } from "react-icons/io";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchAPI } from '../../../api/fetchApi';
 import useChatDisplay from '../../../hooks/useChatDisplay';
 import { MdModeEdit } from "react-icons/md";
@@ -24,6 +24,7 @@ export default function ChatSettings() {
     const [isChatNameEditModalDisplayed, setIsChatNameEditModalDisplayed] = useToggle();
     const [chatName, setChatName] = useState(activeChatData?.chatName || "");
     const { isChatSettingsOpen, isDesktop, setIsChatSettingsOpen } = useChatDisplay();
+    const [nicknamesDraft, setNicknamesDraft] = useState({});
 
     const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
     const isGroup = !!activeChatData?.isGroup;
@@ -47,10 +48,31 @@ export default function ChatSettings() {
         }
     }
 
+    const handleNicknameEdit = async () => {
+        try {
+            fetchAPI.setAuth(token);
+            await fetchAPI.patch(`/chats/${activeChatData._id}`, {
+                fields: {
+                    nicknames: nicknamesDraft
+                }
+            });
+
+            setEditingParticipantId(null);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     // --- Event Handlers ---
     const handleBackClick = () => {
         setIsChatSettingsOpen(false);
     };
+
+    useEffect(() => {
+        if (isNicknameEditModalDisplayed) {
+            setNicknamesDraft(activeChatData?.nicknames || {});
+        }
+    }, [isNicknameEditModalDisplayed, activeChatData?.nicknames]);
 
     return (
         <div className={`h-full shadow-sm overflow-hidden bg-white rounded-xl p-2 min-w-80 w-full ${isChatSettingsOpen && isDesktop ? "max-w-[400px]" : ""}`}>
@@ -236,10 +258,16 @@ export default function ChatSettings() {
                                                 {isEditing ? (
                                                     <input
                                                         type="text"
-                                                        defaultValue={activeChatData.nicknames[p._id] || ""}
+                                                        value={nicknamesDraft[p._id] || ""}
                                                         placeholder={p.fullName}
                                                         className="flex-1 border border-gray-300 rounded-md p-2 text-sm"
                                                         autoFocus
+                                                        onChange={(e) =>
+                                                            setNicknamesDraft(prev => ({
+                                                                ...prev,
+                                                                [p._id]: e.target.value
+                                                            }))
+                                                        }
                                                     />
                                                 ) : (
                                                     <div className="flex-1 flex flex-col">
@@ -256,7 +284,7 @@ export default function ChatSettings() {
                                                 {isEditing ? (
                                                     <button
                                                         className="size-10 text-2xl rounded-full hover:bg-gray-100 flex items-center justify-center"
-                                                        onClick={() => setEditingParticipantId(null)}
+                                                        onClick={handleNicknameEdit}
                                                     >
                                                         <IoMdCheckmark />
                                                     </button>
@@ -296,6 +324,7 @@ export default function ChatSettings() {
                                 activeChatData.participants.map((participant) => {
                                     return (
                                         <div
+                                            key={participant._id}
                                             className='flex justify-between flex-col gap-2 w-full items-center rounded-md p-2 hover:bg-gray-100 active:bg-gray-200 text-sm'
                                         >
                                             <div className='flex gap-2 items-center w-full justify-start h-12'>
