@@ -126,7 +126,7 @@ export default function ChatSettings() {
                                     </div>
                                 ) : (
                                     <div className="font-normal text-md text-blue-500">
-                                        {activeChatData.nicknames[otherUser._id] || otherUser?.fullName}
+                                        {activeChatData?.nicknames[otherUser._id] || otherUser?.fullName}
                                     </div>
                                 )}
 
@@ -275,7 +275,7 @@ export default function ChatSettings() {
                                                             {p.fullName}
                                                         </div>
                                                         <div className="text-xs font-light text-gray-500">
-                                                            {activeChatData.nicknames[p._id] || "Set nickname"}
+                                                            {activeChatData?.nicknames[p._id] || "Set nickname"}
                                                         </div>
                                                     </div>
                                                 )}
