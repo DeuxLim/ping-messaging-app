@@ -21,7 +21,14 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
 
 
     // -- Global values start --
-    const chatParticipants = useOtherParticipants(chatData, currentUser._id);
+    const otherParticipants = useOtherParticipants(chatData, currentUser._id);
+
+    const chatParticipants = useMemo(() => {
+        return chatData.type === "chat"
+            ? otherParticipants
+            : [chatData];
+    }, [otherParticipants, chatData]);
+
     const isLastMsgSeen = chatData.lastMessage?.isSeen;
     const existingChat = chatData.participants ? true : false;
     const isActiveChat = activeChatData?._id === chatData?._id && !isSelecting && !isSearch;
@@ -41,8 +48,8 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
             chatData.type === "user"
                 ? chatData._id
                 : chatData.type === "chat"
-                    ? chatData.isGroup ?  chatParticipants : chatParticipants[0]?._id
-                : null;
+                    ? chatData.isGroup ? chatParticipants : chatParticipants[0]?._id
+                    : null;
 
         return isUserOnline(targetId) ? "online" : "offline";
     }, [chatData, chatParticipants, isUserOnline]);
@@ -91,7 +98,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
         >
 
             {/* Display Photo */}
-            <div className={`flex justify-center items-center relative size-12`}>
+            <div className="flex justify-center items-center relative size-12">
                 {chatParticipants?.map((p, index) => {
                     const displayPhotos = chatData.isGroup ? (
                         <div
