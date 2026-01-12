@@ -80,5 +80,12 @@ export const addMessageToChat = async ({ chatId, senderId, text, media }) => {
 	// Convert to plain object
 	const messageObject = newMessage.toObject();
 
+	// FIX: Map → Object
+	if (messageObject.chat?.nicknames instanceof Map) {
+		messageObject.chat.nicknames = Object.fromEntries(
+			messageObject.chat.nicknames
+		);
+	}
+
 	return messageObject;
 };
