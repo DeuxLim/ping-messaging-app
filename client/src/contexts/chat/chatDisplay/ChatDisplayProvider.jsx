@@ -15,7 +15,10 @@ export default function ChatDisplayProvider({ children }) {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		if (!socket) return;
+		
 		socket.on("typing:update", ({ chatId, userId, status }) => {
+
 			setTypingChats(prev => {
 				const typingUsers = new Set(prev[chatId] || []);
 				status === "typing" ? typingUsers.add(userId) : typingUsers.delete(userId);

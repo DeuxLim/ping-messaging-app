@@ -321,7 +321,7 @@ export default function ChatSettings() {
                     {isChatMembersExpanded && (
                         <>
                             {
-                                activeChatData.participants.map((participant) => {
+                                activeChatData?.participants.map((participant) => {
                                     return (
                                         <div
                                             key={participant._id}
