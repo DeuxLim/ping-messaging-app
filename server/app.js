@@ -21,6 +21,12 @@ app.use(
 	})
 );
 
+if (process.env.DEV_DEBUG === "true") {
+	app.use((req, res, next) => {
+		setTimeout(next, 3000); // 3s artificial latency
+	});
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
