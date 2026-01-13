@@ -4,11 +4,13 @@ import SocketContext from "./SocketContext";
 import useAuth from "../../hooks/useAuth";
 
 export default function SocketProvider({ children }) {
-	const { currentUser } = useAuth();
+	const { currentUser, authStatus } = useAuth();
 	const [socket, setSocket] = useState(null);
 	const [isSocketReady, setIsSocketReady] = useState(false);
 
 	useEffect(() => {
+		if (authStatus !== "authenticated") return;
+
 		let newSocket = null;
 		try {
 			if (!currentUser || !currentUser._id) return;
@@ -26,7 +28,7 @@ export default function SocketProvider({ children }) {
 		return () => {
 			newSocket.disconnect();
 		};
-	}, [currentUser]);
+	}, [currentUser, authStatus]);
 
 	if (!isSocketReady) {
 		return <div>Loading...</div>;

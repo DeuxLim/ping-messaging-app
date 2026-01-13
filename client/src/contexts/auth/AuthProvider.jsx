@@ -3,43 +3,53 @@ import AuthContext from "./AuthContext";
 import { fetchAPI } from "../../api/fetchApi";
 
 export default function AuthProvider({ children }) {
+    const [authStatus, setAuthStatus] = useState("checking");
     const [currentUser, setCurrentUser] = useState(null);
     const [token, setToken] = useState(null);
-    const [isUserReady, setIsUserReady] = useState(false);
+
+    const setAuthenticated = (user, accessToken) => {
+        setCurrentUser(user);
+        setToken(accessToken);
+        setAuthStatus("authenticated");
+    };
+
+    const setUnauthenticated = () => {
+        setCurrentUser(null);
+        setToken(null);
+        setAuthStatus("unauthenticated");
+    };
 
     const login = (user, accessToken) => {
         if (!user || !accessToken) {
-            console.error("Login failed: invalid user or token");
+            console.error("invalid login payload");
             return;
         }
-        setCurrentUser(user);
-        setToken(accessToken);
+        setAuthenticated(user, accessToken);
     };
 
     const logout = async () => {
         try {
             await fetchAPI.post("/auth/logout", null, { credentials: "include" });
-        } catch (err) {
-            console.error("Logout error:", err);
         } finally {
-            setCurrentUser(null);
-            setToken(null);
+            setUnauthenticated();
         }
     };
 
     const refreshToken = useCallback(async () => {
-        try {
-            const res = await fetchAPI.post("/auth/refresh", null, { credentials: "include" });
-            if (!res?.user || !res?.accessToken) throw new Error("Invalid refresh data");
+        setAuthStatus("checking");
 
-            setCurrentUser(res.user);
-            setToken(res.accessToken);
-        } catch (err) {
-            console.error("Token refresh failed:", err);
-            setCurrentUser(null);
-            setToken(null);
-        } finally {
-            setIsUserReady(true);
+        try {
+            const res = await fetchAPI.post("/auth/refresh", null, {
+                credentials: "include",
+            });
+
+            if (!res?.user || !res?.accessToken) {
+                throw new Error("Invalid refresh response");
+            }
+
+            setAuthenticated(res.user, res.accessToken);
+        } catch {
+            setUnauthenticated();
         }
     }, []);
 
@@ -61,7 +71,7 @@ export default function AuthProvider({ children }) {
         try {
             fetchAPI.setAuth(token);
             const response = await fetchAPI.put('/users/update-password', data);
-            if(!response.updateSuccess){
+            if (!response.updateSuccess) {
                 console.log('failed to update profile picture...');
             }
         } catch (error) {
@@ -73,10 +83,14 @@ export default function AuthProvider({ children }) {
         refreshToken();
     }, [refreshToken]);
 
+    useEffect(() => {
+        fetchAPI.setAuth(token);
+    }, [token]);
+
     const value = {
         currentUser,
         token,
-        isUserReady,
+        authStatus,
         login,
         logout,
         refreshToken,
@@ -85,7 +99,9 @@ export default function AuthProvider({ children }) {
         updatePassword,
     };
 
-    if (!isUserReady) return <div>Loading...</div>;
-
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    )
 }
