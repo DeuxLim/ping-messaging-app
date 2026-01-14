@@ -10,18 +10,18 @@ const messageSchema = new mongoose.Schema(
 		sender: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
-			required: true,
+			required: function () {
+				return this.type === "user";
+			},
 		},
 		text: {
 			type: String,
 			default: "",
 		},
-
-		// multiple media support
 		media: [
 			{
 				url: { type: String, required: true },
-				publicId : String, 
+				publicId: String,
 				type: {
 					type: String,
 					enum: ["image", "video", "file"],
@@ -29,7 +29,25 @@ const messageSchema = new mongoose.Schema(
 				},
 			},
 		],
-
+		type: {
+			type: String,
+			enum: ["user", "system"],
+			default: "user",
+			required: true,
+		},
+		systemAction: {
+			type: String,
+			enum: [
+				"user_joined",
+				"user_left",
+				"photo_changed",
+				"title_changed",
+				"admin_added",
+				"admin_removed",
+				"nickname_update",
+				"chatname_updated",
+			],
+		},
 		isSeen: {
 			type: Boolean,
 			default: false,
