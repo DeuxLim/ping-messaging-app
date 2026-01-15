@@ -30,7 +30,7 @@ export default function SocketProvider({ children }) {
 		};
 	}, [currentUser, authStatus]);
 
-	if (!isSocketReady) {
+	if (!isSocketReady && authStatus === "authenticated") {
 		return <div>Loading...</div>;
 	}
 
