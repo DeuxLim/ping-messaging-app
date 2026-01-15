@@ -9,10 +9,11 @@ import CenterPopUpModal from '../../common/CenterPopUpModal';
 import { RiEdit2Fill } from "react-icons/ri";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoMdCheckmark } from "react-icons/io";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { fetchAPI } from '../../../api/fetchApi';
 import useChatDisplay from '../../../hooks/useChatDisplay';
 import { MdModeEdit } from "react-icons/md";
+import useSocket from "../../../hooks/useSocket";
 
 export default function ChatSettings() {
     const { activeChatData, onlineUsers } = useChat();
@@ -24,7 +25,8 @@ export default function ChatSettings() {
     const [isChatNameEditModalDisplayed, setIsChatNameEditModalDisplayed] = useToggle();
     const [chatName, setChatName] = useState(activeChatData?.chatName || "");
     const { isChatSettingsOpen, isDesktop, setIsChatSettingsOpen } = useChatDisplay();
-    const [nicknamesDraft, setNicknamesDraft] = useState({});
+    const [updatedNickname, setUpdatedNickname] = useState({});
+    const { socket } = useSocket();
 
     const chatParticipants = useOtherParticipants(activeChatData, currentUser._id);
     const isGroup = !!activeChatData?.isGroup;
@@ -50,13 +52,21 @@ export default function ChatSettings() {
 
     const handleNicknameEdit = async () => {
         try {
-            fetchAPI.setAuth(token);
-            await fetchAPI.patch(`/chats/${activeChatData._id}`, {
-                fields: {
-                    nicknames: nicknamesDraft
-                }
-            });
+            const userId = editingParticipantId;
+            const nickname = updatedNickname[userId];
+            const payload = {
+                chatId: activeChatData._id,
+                updatedFields: {
+                    [`nicknames.${userId}`]: nickname,
+                },
+                systemAction: "nickname_update",
+                type: "system",
+                initiator: currentUser._id,
+                targetUser: userId,
+                newValue: nickname,
+            }
 
+            socket.emit("chat:updateChat", payload);
             setEditingParticipantId(null);
         } catch (error) {
             console.log(error);
@@ -67,12 +77,6 @@ export default function ChatSettings() {
     const handleBackClick = () => {
         setIsChatSettingsOpen(false);
     };
-
-    useEffect(() => {
-        if (isNicknameEditModalDisplayed) {
-            setNicknamesDraft(activeChatData?.nicknames || {});
-        }
-    }, [isNicknameEditModalDisplayed, activeChatData?.nicknames]);
 
     return (
         <div className={`h-full shadow-sm overflow-hidden bg-white rounded-xl p-2 min-w-80 w-full ${isChatSettingsOpen && isDesktop ? "max-w-[400px]" : ""}`}>
@@ -258,14 +262,14 @@ export default function ChatSettings() {
                                                 {isEditing ? (
                                                     <input
                                                         type="text"
-                                                        value={nicknamesDraft[p._id] || ""}
+                                                        value={updatedNickname[p._id] ?? activeChatData.nicknames[p._id]}
                                                         placeholder={p.fullName}
                                                         className="flex-1 border border-gray-300 rounded-md p-2 text-sm"
                                                         autoFocus
                                                         onChange={(e) =>
-                                                            setNicknamesDraft(prev => ({
+                                                            setUpdatedNickname(prev => ({
                                                                 ...prev,
-                                                                [p._id]: e.target.value
+                                                                [p._id]: e.target.value,
                                                             }))
                                                         }
                                                     />

@@ -163,6 +163,7 @@ const getUserChats = async (req, res) => {
 				chat: chat._id,
 				sender: { $ne: currentUser._id },
 				isSeen: false,
+				type: "user"
 			});
 
 			return {
@@ -279,7 +280,7 @@ const searchChat = async (req, res) => {
 const updateChat = async (req, res) => {
 	try {
 		const chatId = req.params.id;
-		const updatedFields = req.body.fields;
+		const updatedFields = req.body.updatedFields;
 
 		const updatedChat = await Chat.findByIdAndUpdate(
 			chatId,

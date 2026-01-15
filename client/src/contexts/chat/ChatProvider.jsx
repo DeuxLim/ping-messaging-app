@@ -121,7 +121,7 @@ export default function ChatProvider({ children }) {
             // --- Update chat messages on the chat window
             setActiveChatMessages(prev => {
                 // only update if current chat matches
-                if (!activeChatData?._id || msg.chat._id !== activeChatData._id) {
+                if (!activeChatData?._id || msg?.chat?._id !== activeChatData?._id) {
                     return prev; // ignore message from other chat
                 }
                 return [...prev, msg];
@@ -133,18 +133,18 @@ export default function ChatProvider({ children }) {
 
             // --- Update chat list and move the latest chat to top ---
             setChatItems(prev => {
-                const exists = prev.some(chat => chat._id === msg.chat._id);
+                const exists = prev.some(chat => chat?._id === msg?.chat?._id);
                 let updatedChats;
 
                 if (exists) {
                     // update existing chat and move it to top
                     const updated = prev.map(chat =>
-                        chat._id === msg.chat._id ? { ...msg.chat } : chat
+                        chat?._id === msg?.chat?._id ? { ...msg?.chat } : chat
                     );
-                    const movedChat = updated.find(chat => chat._id === msg.chat._id);
+                    const movedChat = updated.find(chat => chat?._id === msg?.chat?._id);
                     updatedChats = [
                         movedChat,
-                        ...updated.filter(chat => chat._id !== msg.chat._id),
+                        ...updated.filter(chat => chat?._id !== msg?.chat?._id),
                     ];
                 } else {
                     // new chat, add to top
@@ -156,17 +156,17 @@ export default function ChatProvider({ children }) {
 
             // --- Remove messaged user (the other participant) from suggested users ---
             setUserItems(prev => {
-                if (!msg.chat || !Array.isArray(msg.chat.participants)) return prev;
+                if (!msg?.chat || !Array.isArray(msg?.chat?.participants)) return prev;
 
                 // Identify the other user (not the sender)
-                const otherUser = msg.chat.participants.find(
-                    p => String(p._id) !== String(msg.sender._id)
+                const otherUser = msg?.chat?.participants.find(
+                    p => String(p?._id) !== String(msg.sender?._id)
                 );
 
                 if (!otherUser) return prev;
 
                 const filtered = prev.filter(
-                    user => String(user._id) !== String(otherUser._id)
+                    user => String(user?._id) !== String(otherUser?._id)
                 );
 
                 return filtered;

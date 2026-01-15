@@ -1,4 +1,4 @@
-import { addMessageToChat } from "./../services/messageService.js";
+import { addMessageToChat, updateChat } from "./../services/messageService.js";
 import {
 	addUser,
 	removeUser,
@@ -39,7 +39,6 @@ export const socketHandler = (io) => {
 				const room = `chat:${chatId}`;
 				socket.join(room);
 			});
-
 		});
 
 		/** ─────────────── MESSAGES ─────────────── **/
@@ -71,6 +70,33 @@ export const socketHandler = (io) => {
 				seenMessages,
 			});
 		});
+
+		/** ─────────────── Chat updates ─────────────── **/
+		socket.on(
+			"chat:updateChat",
+			async ({
+				chatId,
+				updatedFields,
+				systemAction,
+				type,
+				initiator,
+				targetUser,
+				newValue,
+			}) => {
+				const systemMessage = await updateChat({
+					chatId,
+					updatedFields,
+					systemAction,
+					type,
+					initiator,
+					targetUser,
+					newValue,
+				});
+
+				io.to(`chat:${chatId}`).emit("receiveMessage", systemMessage);
+			}
+		);
+		/** ─────────────── Chat updates ─────────────── **/
 
 		/** ─────────────── TYPING EVENTS ─────────────── **/
 		socket.on("typing:start", ({ chatId, userId }) => {

@@ -9,12 +9,12 @@ export default function ChatMessage({ data }) {
     const { activeChatData, activeChatMessages } = useChat();
     const [messageClicked, setMessageClicked] = useToggle(false);
 
-    const isSender = data.sender._id === currentUser._id;
+    const isSender = data.sender?._id === currentUser?._id;
     const isLastMessage =
-        data._id === activeChatData.lastMessage._id ||
-        data._id === activeChatData.lastMessage;
+        data?._id === activeChatData.lastMessage?._id ||
+        data?._id === activeChatData.lastMessage;
 
-    const msgIndex = activeChatMessages.findIndex((msg) => msg._id === data._id);
+    const msgIndex = activeChatMessages.findIndex((msg) => msg?._id === data?._id);
     const lastMsg = activeChatMessages[msgIndex - 1];
     const nextMsg = activeChatMessages[msgIndex + 1];
 
@@ -30,11 +30,11 @@ export default function ChatMessage({ data }) {
     const minutesDiffFromLast = getMinutesDiff(data?.createdAt, lastMsg?.createdAt);
     const timeGapFromLast = minutesDiffFromLast > MESSAGE_GROUPING_INTERVAL;
     const longTimeGapFromLast = minutesDiffFromLast > MESSAGE_GROUPING_LONG_INTERVAL;
-    const sameSenderAsLast = lastMsg && data.sender._id === lastMsg.sender._id;
+    const sameSenderAsLast = lastMsg && data.sender?._id === lastMsg.sender?._id;
     const isNewGroup = !sameSenderAsLast || timeGapFromLast;
 
     const minutesDiffToNext = getMinutesDiff(nextMsg?.createdAt, data?.createdAt);
-    const sameSenderAsNext = nextMsg && data.sender._id === nextMsg.sender._id;
+    const sameSenderAsNext = nextMsg && data.sender?._id === nextMsg.sender?._id;
     const longGapToNext = minutesDiffToNext > MESSAGE_GROUPING_INTERVAL;
     const showAvatar = !nextMsg || !sameSenderAsNext || longGapToNext;
 
@@ -61,7 +61,7 @@ export default function ChatMessage({ data }) {
                         </div>
 
                         <div
-                            id={`msg-${data._id}`}
+                            id={`msg-${data?._id}`}
                             data-seen={data.isSeen}
                             className={`
                                 border border-gray-200 px-3 py-1.5 bg-gray-200 break-words max-w-2/3
@@ -138,7 +138,7 @@ export default function ChatMessage({ data }) {
                 <div className="flex flex-col gap-1 items-end w-full" onClick={setMessageClicked}>
 
                     <div
-                        id={`msg-${data._id}`}
+                        id={`msg-${data?._id}`}
                         data-seen={data.isSeen}
                         className={
                             `bg-blue-500 text-white px-4 py-1.5 max-w-2/3 break-words 

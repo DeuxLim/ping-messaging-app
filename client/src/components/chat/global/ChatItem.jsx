@@ -70,7 +70,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     const { typingChats } = useChatDisplay();
     const [lastMessageDateTime, setLastMessageDateTime] = useState("");
     const lastMessageSender = (chatParticipants.find(p => p._id === chatData.lastMessage?.sender?._id))?.firstName;
-    const unread = chatData.unreadCount > 0 && `${chatData.lastMessage?.sender?.firstName} sent ${chatData.unreadCount} message${chatData.unreadCount > 1 ? "s" : ""}`;
+    const unread = chatData.type == "system" ? `${chatData.unreadCount} chat updates` : chatData.unreadCount > 0 && `${chatData.lastMessage?.sender?.firstName} sent ${chatData.unreadCount} message${chatData.unreadCount > 1 ? "s" : ""}`;
     useEffect(() => {
         setLastMessageDateTime(formatLastMessageDateTime(chatData?.lastMessage?.createdAt));
     }, [chatData?.lastMessage?.createdAt]);

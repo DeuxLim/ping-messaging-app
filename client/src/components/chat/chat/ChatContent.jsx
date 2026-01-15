@@ -22,7 +22,7 @@ export default function ChatContent() {
     const messagesEndRef = useRef(null);
     const isTyping = !!typingChats?.[activeChatData?._id];
     const typingUserIds = typingChats?.[activeChatData?._id] || [];
-    const typingUsers = activeChatData?.participants?.filter((p) => typingUserIds.includes(p._id)) || [];    
+    const typingUsers = activeChatData?.participants?.filter((p) => typingUserIds.includes(p._id)) || [];
 
     // Fetch chat messages
     useEffect(() => {
@@ -85,7 +85,7 @@ export default function ChatContent() {
                     .map(e => e.target.id.replace(/^msg-/, ""))
                     .filter(msgId => {
                         const msg = activeChatMessagesRef.current.find(m => m._id === msgId);
-                        return msg && !msg.isSeen && msg.sender._id !== currentUser._id;
+                        return msg && !msg.isSeen && msg.sender?._id !== currentUser._id;
                     });
 
                 if (seenMessages.length) {
@@ -127,12 +127,31 @@ export default function ChatContent() {
             {isLoading && <div>Loading...</div>}
             {error && <div>Something went wrong...</div>}
 
-            <ChatDetailsPanel/>
-            
+            <ChatDetailsPanel />
+
             <div className="p-3 flex flex-col gap-[2.5px]">
-                {activeChatMessages?.map((m) => (
-                    <ChatMessage key={m._id} data={m} />
-                ))}
+                {activeChatMessages?.map((m) => {
+                    // SYSTEM MESSAGE — NO sender access allowed
+                    if (m.type === "system") {
+                        return (
+                            <div
+                                id={`msg-${m._id}`}
+                                key={m._id}
+                                className="text-center text-xs text-gray-500 mt-4"
+                            >
+                                {m.text}
+                            </div>
+                        );
+                    }
+
+                    // USER MESSAGE — sender is guaranteed
+                    return (
+                        <ChatMessage
+                            key={m._id}
+                            data={m}
+                        />
+                    );
+                })}
                 {
                     typingUsers.map((user, index) => (
                         <div className="" key={index}>

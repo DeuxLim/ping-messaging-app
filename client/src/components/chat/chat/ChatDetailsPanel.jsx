@@ -20,7 +20,7 @@ export default function ChatDetailsPanel() {
 
                 {/* Display Photo */}
                 <div className={`flex justify-center items-center relative`}>
-                    {activeChatData?.participants.length > 2 && (
+                    {activeChatData?.participants?.length > 2 && (
                         <div className='size-20'>
                         </div>
                     )}
