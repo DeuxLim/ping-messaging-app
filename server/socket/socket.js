@@ -96,6 +96,29 @@ export const socketHandler = (io) => {
 				io.to(`chat:${chatId}`).emit("receiveMessage", systemMessage);
 			}
 		);
+
+		socket.on(
+			"chat:chatNameUpdate",
+			async ({
+				chatId,
+				updatedFields,
+				systemAction,
+				type,
+				initiator,
+				newValue,
+			}) => {
+				const systemMessage = await updateChat({
+					chatId,
+					updatedFields,
+					systemAction,
+					type,
+					initiator,
+					newValue,
+				});
+
+				io.to(`chat:${chatId}`).emit("receiveMessage", systemMessage);
+			}
+		);
 		/** ─────────────── Chat updates ─────────────── **/
 
 		/** ─────────────── TYPING EVENTS ─────────────── **/

@@ -12,7 +12,6 @@ export const addMessageToChat = async ({
 	type = "user",
 	systemAction = "",
 }) => {
-	
 	// Verify chat exists
 	const chat = await Chat.findById(chatId);
 	if (!chat) throw new Error("Chat not found");
@@ -53,11 +52,11 @@ export const addMessageToChat = async ({
 		sender: senderId ?? null,
 		text,
 		media: uploadedFiles,
-		type
+		type,
 	});
 
 	if (systemAction) {
-  		newMessage.systemAction = systemAction;
+		newMessage.systemAction = systemAction;
 	}
 
 	// Update chat's last message
@@ -173,10 +172,8 @@ export const updateChat = async ({
 	targetUser,
 	newValue,
 }) => {
-	console.log(targetUser);
-	console.log(newValue);
 	try {
-		const updatedChat = await Chat.findByIdAndUpdate(
+		await Chat.findByIdAndUpdate(
 			chatId,
 			{ $set: updatedFields },
 			{
@@ -186,12 +183,14 @@ export const updateChat = async ({
 		);
 
 		const initiatorUserCollection = await User.findById(initiator);
-		const targetUserCollection = await User.findById(targetUser);
+		let targetUserCollection = null;
+		if (targetUser) {
+			targetUserCollection = await User.findById(targetUser);
+		}
 
 		// Prepare system message
 		let perspective = "self";
-
-		if (initiator !== targetUser) {
+		if (initiator !== targetUser || targetUser === null) {
 			perspective = "other";
 		}
 
@@ -201,11 +200,14 @@ export const updateChat = async ({
 			perspective
 		);
 
-		const text = formatSystemMessage(systemMessageTemplate, {
+		const params = {
 			initiator: initiatorUserCollection.firstName,
 			value: newValue,
-			user: targetUserCollection.firstName,
-		});
+		};
+		if (targetUserCollection) {
+			params.user = targetUserCollection.firstName;
+		}
+		const text = formatSystemMessage(systemMessageTemplate, params);
 
 		const systemMessage = await addMessageToChat({
 			chatId,

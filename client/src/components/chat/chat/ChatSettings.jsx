@@ -10,14 +10,13 @@ import { RiEdit2Fill } from "react-icons/ri";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoMdCheckmark } from "react-icons/io";
 import { useState } from 'react';
-import { fetchAPI } from '../../../api/fetchApi';
 import useChatDisplay from '../../../hooks/useChatDisplay';
 import { MdModeEdit } from "react-icons/md";
 import useSocket from "../../../hooks/useSocket";
 
 export default function ChatSettings() {
     const { activeChatData, onlineUsers } = useChat();
-    const { currentUser, token } = useAuth();
+    const { currentUser } = useAuth();
     const [isCustomizeChatExpanded, setIsCustomizeChatExpanded] = useToggle();
     const [isChatMembersExpanded, setIsChatMembersExpanded] = useToggle();
     const [isNicknameEditModalDisplayed, setIsNicknameEditModalDisplayed] = useToggle();
@@ -38,12 +37,18 @@ export default function ChatSettings() {
 
     const handleChatNameUpdate = async () => {
         try {
-            fetchAPI.setAuth(token);
-            await fetchAPI.patch(`/chats/${activeChatData._id}`, {
-                fields: {
-                    chatName: chatName
-                }
-            });
+            const payload = {
+                chatId: activeChatData._id,
+                updatedFields: {
+                    chatName: chatName,
+                },
+                systemAction: "chatname_update",
+                type: "system",
+                initiator: currentUser._id,
+                newValue: chatName,
+            }
+
+            socket.emit("chat:chatNameUpdate", payload)
             setIsChatNameEditModalDisplayed(false);
         } catch (error) {
             console.log(error);
