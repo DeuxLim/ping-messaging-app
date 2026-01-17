@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
 	{
+		/* User Information */
 		firstName: {
 			type: String,
 			required: true,
@@ -13,7 +14,7 @@ const userSchema = new mongoose.Schema(
 		},
 		fullName: {
 			type: String,
-			index: true, // create index for faster search
+			index: true,
 		},
 		userName: {
 			type: String,
@@ -28,6 +29,7 @@ const userSchema = new mongoose.Schema(
 		password: {
 			type: String,
 			required: true,
+			select: false,
 		},
 		profilePicture: {
 			public_id: String,
@@ -46,13 +48,39 @@ const userSchema = new mongoose.Schema(
 			type: Date,
 			default: null,
 		},
+		isVerified: {
+			type: Boolean,
+			default: false,
+		},
+
+		// Auth Lifecycle - 7 Days Expiry
 		refreshToken: {
 			type: String,
-			default: null,
+			select: false,
 		},
 		refreshTokenExpiresAt: {
 			type: Date,
-			default: null,
+			select: false,
+		},
+
+		// Account Recovery - 10 Minutes Expiry
+		resetPasswordToken: {
+			type: String,
+			select: false,
+		},
+		resetPasswordExpiresAt: {
+			type: Date,
+			select: false,
+		},
+
+		// Onboarding - 24 Hours Expiry
+		verificationToken: {
+			type: String,
+			select: false,
+		},
+		verificationTokenExpiresAt: {
+			type: Date,
+			select: false,
 		},
 	},
 	{ timestamps: true }

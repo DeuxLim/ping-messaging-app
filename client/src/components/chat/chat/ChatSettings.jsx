@@ -34,7 +34,7 @@ export default function ChatSettings() {
         : getOtherParticipants(activeChatData?.participants, currentUser?._id);
 
     const userStatus = useMemo(() => {
-        const targetId = activeChatData.isGroup ? chatParticipants : chatParticipants[0]?._id
+        const targetId = activeChatData?.isGroup ? chatParticipants : chatParticipants[0]?._id
 
         return isUserOnline(targetId) ? "online" : "offline";
     }, [activeChatData, chatParticipants, isUserOnline]);

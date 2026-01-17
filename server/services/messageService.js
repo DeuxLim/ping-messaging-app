@@ -69,22 +69,15 @@ export const addMessageToChat = async ({
 			populate: [
 				{
 					path: "lastMessage",
-					populate: [
-						{
-							path: "sender",
-							select: "-password -refreshToken -refreshAccessToken",
-						},
-					],
+					populate: "sender",
 				},
 				{
 					path: "participants",
-					select: "-password -refreshToken -refreshAccessToken",
 				},
 			],
 		},
 		{
 			path: "sender",
-			select: "-password -refreshToken -refreshAccessToken",
 		},
 	]);
 

@@ -115,7 +115,7 @@ const updateProfile = async (req, res) => {
 				new: true,
 				runValidators: true,
 			}
-		).select("-password -refreshToken -refreshAccessToken");
+		);
 
 		return res.status(200).json({
 			updateSuccess: true,
@@ -151,7 +151,7 @@ const updatePassword = async (req, res) => {
 		}
 
 		// ---------------- Fetch user ----------------
-		const user = await User.findById(userId).select("+password");
+		const user = await User.findById(userId).select("+password +refreshToken +refreshTokenExpiresAt");
 
 		if (!user) {
 			return res.status(404).json({

@@ -39,7 +39,9 @@ const login = async (req, res) => {
 	const { email, password, rememberMe } = req.body;
 
 	// Check login email
-	let user = await User.findOne({ email });
+	let user = await User.findOne({ email }).select(
+		"+refreshToken +refreshTokenExpiresAt +password"
+	);
 	if (!user) {
 		return res.status(401).json({
 			error: { general: "Invalid Email or Password." },
@@ -129,7 +131,10 @@ const refreshTokens = async (req, res) => {
 	}
 
 	// Get User based on the refreshToken data
-	const user = await User.findOne({ email: payload.email });
+	const user = await User.findOne({ email: payload.email }).select(
+		"+refreshToken +refreshTokenExpiresAt"
+	);
+
 	if (!user) {
 		return res.status(404).json({ error: "User not found" });
 	}
@@ -196,7 +201,9 @@ const logout = async (req, res) => {
 	if (currentRefreshToken) {
 		// Find user by hashed refresh token
 		const hashedToken = hashToken(currentRefreshToken);
-		const user = await User.findOne({ refreshToken: hashedToken });
+		const user = await User.findOne({ refreshToken: hashedToken }).select(
+			"+refreshToken +refreshTokenExpiresAt"
+		);
 
 		if (user) {
 			user.refreshToken = null;

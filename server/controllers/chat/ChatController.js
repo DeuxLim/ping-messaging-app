@@ -141,16 +141,10 @@ const getUserChats = async (req, res) => {
 	const existingChats = await Chat.find({
 		participants: currentUser._id,
 	})
-		.populate(
-			"participants",
-			"-refreshToken -refreshTokenExpiresAt -password"
-		)
+		.populate("participants")
 		.populate({
 			path: "lastMessage",
-			populate: {
-				path: "sender",
-				select: "-password -refreshToken -refreshTokenExpiresAt",
-			},
+			populate: "sender",
 		})
 		.sort({ updatedAt: -1 })
 		.lean();
@@ -229,7 +223,6 @@ const searchChat = async (req, res) => {
 		})
 			.populate({
 				path: "participants",
-				select: "-refreshToken -refreshTokenExpiresAt -password",
 				match: { fullName: { $regex: search, $options: "i" } }, // filter participant names
 			})
 			.populate({
