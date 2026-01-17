@@ -3,10 +3,6 @@ import cors from "cors";
 import connectDB from "./config/database.js";
 import registerRoutes from "./routes/index.js";
 import cookieParser from "cookie-parser";
-import { configDotenv } from "dotenv";
-
-/* Allow .env file usage : process.env.variableName */
-configDotenv();
 
 /* Start Database */
 connectDB();
