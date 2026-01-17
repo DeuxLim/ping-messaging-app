@@ -26,7 +26,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     const chatParticipants = useMemo(() => {
         return chatData.type === "chat"
             ? otherParticipants
-            : [chatData];
+            : chatData.type === "temp" ? chatData.participants : [chatData];
     }, [otherParticipants, chatData]);
 
     const isLastMsgSeen = chatData.lastMessage?.isSeen;
@@ -99,7 +99,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
 
             {/* Display Photo */}
             <div className="flex justify-center items-center relative size-12">
-                {chatParticipants?.map((p, index) => {
+                {chatParticipants?.slice(0, 2).map((p, index) => {
                     const displayPhotos = chatData.isGroup ? (
                         <div
                             key={p?._id}

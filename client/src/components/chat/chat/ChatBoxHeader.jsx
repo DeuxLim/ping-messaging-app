@@ -81,7 +81,7 @@ export default function ChatBoxHeader() {
 				<div className="flex flex-1 items-center gap-3 overflow-hidden h-full">
 					{/* Display Photo */}
 					<div className={`flex justify-center items-center relative h-10 w-15`}>
-						{chatParticipants?.map((p, index) => {
+						{chatParticipants?.slice(0,2).map((p, index) => {
 							const displayPhotos = isGroup ? (
 								<div key={p?._id}>
 									<div

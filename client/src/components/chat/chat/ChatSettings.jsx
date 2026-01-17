@@ -106,7 +106,7 @@ export default function ChatSettings() {
                                 <div className='size-20'>
                                 </div>
                             )}
-                            {chatParticipants?.map((p, index) => {
+                            {chatParticipants?.slice(0,2).map((p, index) => {
                                 const displayPhotos = isGroup ? (
                                     <div
                                         key={p?._id}
