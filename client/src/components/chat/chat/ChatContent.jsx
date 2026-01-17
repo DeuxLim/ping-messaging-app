@@ -129,7 +129,7 @@ export default function ChatContent() {
 
             <ChatDetailsPanel />
 
-            <div className="p-3 flex flex-col gap-[2.5px]">
+            <div className="p-3 flex flex-col gap-[2.5px] h-full">
                 {activeChatMessages?.map((m) => {
                     // SYSTEM MESSAGE — NO sender access allowed
                     if (m.type === "system") {
@@ -152,27 +152,28 @@ export default function ChatContent() {
                         />
                     );
                 })}
-                {
-                    typingUsers.map((user, index) => (
-                        <div className="" key={index}>
-                            <div className="flex text-sm mt-0.5">
-                                <div className="flex gap-2 items-center max-w-[75%]">
-                                    <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
-                                        <div className="w-7 h-7 rounded-full overflow-hidden">
-                                            <AvatarImage chatPhotoUrl={user?.profilePicture?.url} />
-                                        </div>
-                                    </div>
+                <div ref={messagesEndRef} />
+            </div>
 
-                                    <div className="px-3 py-1.5 bg-white text-sm text-gray-400">
-                                        typing...
+            {
+                typingUsers.map((user, index) => (
+                    <div className="p-3" key={index}>
+                        <div className="flex text-sm mt-0.5">
+                            <div className="flex gap-2 items-center max-w-[75%]">
+                                <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
+                                    <div className="w-7 h-7 rounded-full overflow-hidden">
+                                        <AvatarImage chatPhotoUrl={user?.profilePicture?.url} />
                                     </div>
+                                </div>
+
+                                <div className="px-3 py-1.5 bg-white text-sm text-gray-400">
+                                    typing...
                                 </div>
                             </div>
                         </div>
-                    ))
-                }
-                <div ref={messagesEndRef} />
-            </div>
+                    </div>
+                ))
+            }
         </section>
     );
 }

@@ -59,17 +59,19 @@ export default function ChatMessage({ data }) {
                                 </div>
                             )}
                         </div>
-
-                        <div
-                            id={`msg-${data?._id}`}
-                            data-seen={data.isSeen}
-                            className={`
-                                border border-gray-200 px-3 py-1.5 bg-gray-200 break-words max-w-2/3
+                        <div className="flex flex-col max-w-2/3 gap-0.5">
+                            {isNewGroup || longTimeGapFromLast && <div className="px-3 text-xs text-gray-500">{activeChatData?.nicknames[data?.sender?._id] || data.sender.firstName}</div>}
+                            <div
+                                id={`msg-${data?._id}`}
+                                data-seen={data.isSeen}
+                                className={`
+                                border border-gray-200 px-3 py-1.5 bg-gray-200 break-words 
                                 ${isNewGroup ?
-                                    "rounded-tl-3xl rounded-tr-3xl rounded-bl-sm rounded-br-3xl"
-                                    : "rounded-tl-md rounded-tr-2xl rounded-bl-md rounded-br-2xl"}
+                                        "rounded-tl-3xl rounded-tr-3xl rounded-bl-sm rounded-br-3xl"
+                                        : "rounded-tl-md rounded-tr-2xl rounded-bl-md rounded-br-2xl"}
                             `}>
-                            {data.text}
+                                {data.text}
+                            </div>
                         </div>
                     </div>
                 </div>
