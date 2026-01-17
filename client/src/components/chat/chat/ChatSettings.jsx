@@ -9,13 +9,13 @@ import CenterPopUpModal from '../../common/CenterPopUpModal';
 import { RiEdit2Fill } from "react-icons/ri";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoMdCheckmark } from "react-icons/io";
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import useChatDisplay from '../../../hooks/useChatDisplay';
 import { MdModeEdit } from "react-icons/md";
 import useSocket from "../../../hooks/useSocket";
 
 export default function ChatSettings() {
-    const { activeChatData, onlineUsers } = useChat();
+    const { activeChatData, isUserOnline } = useChat();
     const { currentUser } = useAuth();
     const [isCustomizeChatExpanded, setIsCustomizeChatExpanded] = useToggle();
     const [isChatMembersExpanded, setIsChatMembersExpanded] = useToggle();
@@ -33,7 +33,11 @@ export default function ChatSettings() {
         ? getOtherParticipant(activeChatData?.participants, currentUser?._id)
         : getOtherParticipants(activeChatData?.participants, currentUser?._id);
 
-    const isOnline = otherUser?._id && onlineUsers?.[otherUser._id] || true;
+    const userStatus = useMemo(() => {
+        const targetId = activeChatData.isGroup ? chatParticipants : chatParticipants[0]?._id
+
+        return isUserOnline(targetId) ? "online" : "offline";
+    }, [activeChatData, chatParticipants, isUserOnline]);
 
     const handleChatNameUpdate = async () => {
         try {
@@ -106,15 +110,26 @@ export default function ChatSettings() {
                                 <div className='size-20'>
                                 </div>
                             )}
-                            {chatParticipants?.slice(0,2).map((p, index) => {
+                            {chatParticipants?.slice(0, 2).map((p, index) => {
                                 const displayPhotos = isGroup ? (
-                                    <div
-                                        key={p?._id}
-                                        className={`absolute ${index === 0 ? 'right-1.5 top-2' : 'left-1.5 bottom-2'}`}
-                                    >
-                                        <div className="size-12 rounded-full overflow-hidden">
-                                            <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+                                    <div className='' key={p?._id}>
+                                        <div
+                                            className={`absolute ${index === 0 ? 'right-1.5 top-2' : 'left-1.5 bottom-2'}`}
+                                        >
+                                            <div className="size-12 rounded-full overflow-hidden">
+                                                <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+                                            </div>
                                         </div>
+
+                                        {/* Status Icon */}
+                                        {
+                                            userStatus === "online" && (
+                                                <div className="absolute right-0 bottom-0">
+                                                    <div className="size-4 border-2 border-white rounded-full bg-green-500"></div>
+                                                </div>
+                                            )
+                                        }
+
                                     </div>
                                 ) : (
                                     <div className="size-20 rounded-full overflow-hidden" key={`${p._id}`}>
@@ -147,7 +162,7 @@ export default function ChatSettings() {
                             </div>
 
                             <div className='text-gray-400 text-xs font-light'>
-                                {isOnline ? "Active Now" : ""}
+                                {userStatus === "online" ? "Active Now" : ""}
                             </div>
                         </div>
                     </div>
