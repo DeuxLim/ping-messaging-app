@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 /**
  * Format a timestamp into a human-readable string.
  * - If the date is today → returns "HH:MM AM/PM"
@@ -36,13 +38,18 @@ export function formatLastMessageDateTime(isoString) {
 export function getOtherParticipants(participants = [], currentUserId) {
 	if (!Array.isArray(participants) || !currentUserId) return [];
 
-	let participantReturn = []
+	let participantReturn = [];
 
 	// Handle current user chatting itself
-	if(participants.length == 2 && participants[0]._id == participants[1]._id){
+	if (
+		participants.length == 2 &&
+		participants[0]._id == participants[1]._id
+	) {
 		participantReturn = [participants[0]];
 	} else {
-		participantReturn = participants.filter((p) => String(p._id) !== String(currentUserId));
+		participantReturn = participants.filter(
+			(p) => String(p._id) !== String(currentUserId)
+		);
 	}
 
 	return participantReturn;
@@ -62,4 +69,8 @@ export function isEmpty(value) {
 	if (Array.isArray(value)) return value.length === 0;
 	if (typeof value === "object") return Object.keys(value).length === 0;
 	return false;
+}
+
+export function generateVerificationToken() {
+	return crypto.randomInt(100000, 1000000).toString();
 }

@@ -1,4 +1,8 @@
-import { isEmpty } from "../../../client/src/utilities/utils.js";
+import {
+	isEmpty,
+	generateVerificationToken,
+} from "../../../client/src/utilities/utils.js";
+import { VERIFICATION_TOKEN_TTL } from "../../config/auth.js";
 import {
 	hashToken,
 	signAccessToken,
@@ -7,25 +11,60 @@ import {
 import User from "../../models/user.js";
 import authValidation from "../../validations/auth/authValidation.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { sendVerificationEmail } from "../../library/resend.js";
 
 const register = async (req, res) => {
-	// Validate register request
-	const errors = authValidation.validateRegistration(req.body);
-	if (!isEmpty(errors)) {
-		return res.status(400).json({ status: 400, errors });
-	}
+	try {
+		// Validate register request
+		const errors = authValidation.validateRegistration(req.body);
+		if (!isEmpty(errors)) {
+			return res.status(400).json({ status: 400, errors });
+		}
 
-	// Create user
-	const newUser = await User.create(req.body);
-	if (!newUser || !newUser._id) {
-		return res.status(500).json({ message: "User was not created." });
-	}
+		// Check if user already exists (unique email)
+		const userExists = await User.findOne({ email: req.body.email });
+		if (userExists) {
+			return res.status(400).json({ message: "Email already in use" });
+		}
 
-	// Send back response
-	res.status(201).json({
-		message: "user successfully created.",
-		status: 201,
-	});
+		// User Verification
+		const verificationToken = generateVerificationToken();
+		const hashedVerificationToken = crypto
+			.createHash("sha256")
+			.update(verificationToken)
+			.digest("hex");
+		const verificationDetails = {
+			verificationToken: hashedVerificationToken,
+			verificationTokenExpiresAt: new Date(
+				Date.now() + VERIFICATION_TOKEN_TTL
+			),
+		};
+
+		// Create user
+		const newUser = await User.create({
+			...req.body,
+			...verificationDetails,
+		});
+
+		if (!newUser || !newUser._id) {
+			return res.status(500).json({ message: "User was not created." });
+		}
+
+		// Send Verification Email
+		await sendVerificationEmail(newUser.email, verificationToken);
+
+		// Send back response
+		res.status(201).json({
+			message: "user successfully created.",
+			status: 201,
+		});
+	} catch (err) {
+		if (err.code === 11000) {
+			return res.status(400).json({ message: "Email already in use" });
+		}
+		throw err;
+	}
 };
 
 const login = async (req, res) => {
