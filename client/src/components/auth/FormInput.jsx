@@ -12,7 +12,7 @@ export default function FormInput({
     additionalContainerClasses = ""
 }) {
     return (
-        <div className={`flex flex-col gap-1.5 ${additionalContainerClasses}`}>
+        <div className={`flex flex-col gap-1.5 w-80 ${additionalContainerClasses}`}>
             {label && (
                 <label
                     htmlFor={id}

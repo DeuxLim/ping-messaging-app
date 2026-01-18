@@ -223,7 +223,7 @@ export default function Login() {
 
                 {/* Back */}
                 <Link to="/auth/login">
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center justify-center text-sm">
                         Already have an account? Log in...
                     </div>
                 </Link>
