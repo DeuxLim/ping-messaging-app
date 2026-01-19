@@ -38,7 +38,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     // -- Avatar values start --
     const chatPhotoUrl = useMemo(() => {
         if (chatData.isGroup) return chatData.chatPhoto;
-        if (chatData.type === "user") return chatData.profilePicture?.url;
+        if (chatData.type === "user") return chatData?.profilePicture?.url;
         if (chatParticipants?.length) return chatParticipants[0]?.profilePicture?.url;
         return null;
     }, [chatData, chatParticipants]);

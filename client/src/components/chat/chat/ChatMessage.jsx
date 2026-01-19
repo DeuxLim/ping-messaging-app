@@ -55,7 +55,7 @@ export default function ChatMessage({ data }) {
                         <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
                             {showAvatar && isEmpty(data.media) && (
                                 <div className="w-7 h-7 rounded-full overflow-hidden">
-                                    <AvatarImage chatPhotoUrl={data.sender.profilePicture?.url} />
+                                    <AvatarImage chatPhotoUrl={data?.sender?.profilePicture?.url} />
                                 </div>
                             )}
                         </div>
@@ -87,7 +87,7 @@ export default function ChatMessage({ data }) {
                                             <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end" key={media.publicId}>
                                                 {showAvatar && (
                                                     <div className="w-7 h-7 rounded-full overflow-hidden">
-                                                        <AvatarImage chatPhotoUrl={data.sender.profilePicture?.url} />
+                                                        <AvatarImage chatPhotoUrl={data?.sender?.profilePicture?.url} />
                                                     </div>
                                                 )}
                                             </div>
@@ -105,7 +105,7 @@ export default function ChatMessage({ data }) {
                                             <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end" key={media.publicId}>
                                                 {showAvatar && (
                                                     <div className="w-7 h-7 rounded-full overflow-hidden">
-                                                        <AvatarImage chatPhotoUrl={data.sender.profilePicture?.url} />
+                                                        <AvatarImage chatPhotoUrl={data?.sender?.profilePicture?.url} />
                                                     </div>
                                                 )}
                                             </div>

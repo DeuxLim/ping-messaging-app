@@ -44,7 +44,7 @@ export default function IconMenu() {
                     onClick={toggle}
                     aria-expanded={isOpen}
                 >
-                    <ChatItemAvatar data={{ chatPhotoUrl: currentUser.profilePicture.url, containerClass: "size-8" }} />
+                    <ChatItemAvatar data={{ chatPhotoUrl: currentUser?.profilePicture?.url, containerClass: "size-8" }} />
                     {isIconMenuExpanded && (
                         <div className="flex flex-col text-xs py-0.5">
                             <div className="text-sm">{currentUser.fullName}</div>
