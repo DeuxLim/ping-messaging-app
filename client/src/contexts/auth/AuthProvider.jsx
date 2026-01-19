@@ -48,7 +48,8 @@ export default function AuthProvider({ children }) {
             }
 
             setAuthenticated(res.user, res.accessToken);
-        } catch {
+        } catch (error) {
+            console.log(error);
             setUnauthenticated();
         }
     }, []);
@@ -78,10 +79,6 @@ export default function AuthProvider({ children }) {
             console.log(error);
         }
     };
-
-    useEffect(() => {
-        refreshToken();
-    }, [refreshToken]);
 
     useEffect(() => {
         fetchAPI.setAuth(token);
