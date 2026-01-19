@@ -23,6 +23,7 @@ import Profile from "../pages/Profile";
 import ChatProvider from "../contexts/chat/ChatProvider";
 import ChatDisplayProvider from "../contexts/chat/chatDisplay/ChatDisplayProvider";
 import ActiveChatProvider from "../contexts/chat/ActiveChat/ActiveChatProvider";
+import VerifyEmail from "../pages/Auth/VerifyEmail";
 
 export const routes = createBrowserRouter([
     {
@@ -32,6 +33,7 @@ export const routes = createBrowserRouter([
             { index: true, element: <Login /> },
             { path: "login", element: <Login /> },
             { path: "register", element: <Register /> },
+            { path: "verify-email", element: <VerifyEmail /> },
             { path: "forgot-password", element: <ForgotPassword /> },
         ]
     },
