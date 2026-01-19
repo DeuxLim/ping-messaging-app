@@ -216,21 +216,8 @@ const refreshTokens = async (req, res) => {
 		maxAge: ttlMs,
 	});
 
-	const userData = {
-		_id: user._id,
-		firstName: user.firstName,
-		lastName: user.lastName,
-		fullName: user.fullName,
-		userName: user.userName,
-		email: user.email,
-		profilePicture: user.profilePicture,
-		bio: user.bio,
-		isOnline: user.isOnline,
-		lastSeen: user.lastSeen,
-	};
-
 	return res.status(200).json({
-		user: userData,
+		user: user,
 		accessToken: newAccessToken,
 	});
 };
@@ -261,9 +248,127 @@ const logout = async (req, res) => {
 	return res.status(200).json({ message: "Logged out successfully" });
 };
 
+const verifyEmail = async (req, res) => {
+	try {
+		const { token } = req.body;
+
+		const hashedCandidateToken = crypto
+			.createHash("sha256")
+			.update(token)
+			.digest("hex");
+
+		const user = await User.findOne({
+			verificationToken: hashedCandidateToken,
+			verificationTokenExpiresAt: { $gt: Date.now() },
+		});
+
+		if (!user) {
+			return res
+				.status(400)
+				.json({ message: "Invalid or expired token" });
+		}
+
+		user.isVerified = true;
+		user.verificationToken = null;
+		user.verificationTokenExpiresAt = null;
+		user.verificationResendCount = 0;
+		user.verificationLastResendAt = null;
+
+		await user.save();
+
+		return res.status(200).json({
+			message: "Email verified successfully.",
+		});
+	} catch (error) {
+		return res.status(400).json({ message: "Something went wrong..." });
+	}
+};
+
+const resendVerification = async (req, res) => {
+	try {
+		const { email } = req.body;
+
+		if (!email) {
+			return res.status(400).json({ message: "Email is required." });
+		}
+
+		const user = await User.findOne({ email }).select(
+			"+verificationResendCount +verificationLastResendAt"
+		);
+
+		// Security: never reveal existence
+		if (!user) {
+			return res.json({
+				message:
+					"If the email exists, a new verification link has been sent.",
+			});
+		}
+
+		if (user.isVerified) {
+			return res.status(400).json({
+				message: "Account already verified.",
+			});
+		}
+
+		const now = Date.now();
+
+		// ----- COOLDOWN CHECK (60s) -----
+		if (user.verificationLastResendAt) {
+			const diff = now - user.verificationLastResendAt.getTime();
+
+			if (diff < 60 * 1000) {
+				const wait = Math.ceil((60 * 1000 - diff) / 1000);
+				return res.status(429).json({
+					message: `Please wait ${wait} seconds before requesting another email.`,
+				});
+			}
+		}
+
+		// ----- MAX ATTEMPTS (3 per hour) -----
+		if (user.verificationResendCount >= 3) {
+			return res.status(429).json({
+				message:
+					"Too many verification attempts. Please try again later.",
+			});
+		}
+
+		// Generate new token
+		const verificationToken = generateVerificationToken();
+
+		const hashedVerificationToken = crypto
+			.createHash("sha256")
+			.update(verificationToken)
+			.digest("hex");
+
+		user.verificationToken = hashedVerificationToken;
+		user.verificationTokenExpiresAt = new Date(
+			Date.now() + VERIFICATION_TOKEN_TTL
+		);
+
+		// Update resend tracking
+		user.verificationResendCount += 1;
+		user.verificationLastResendAt = new Date();
+
+		await user.save();
+
+		// Send email
+		await sendVerificationEmail(user.email, verificationToken);
+
+		return res.json({
+			message: "Verification email sent. Please check your inbox.",
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Failed to resend verification email.",
+		});
+	}
+};
+
 export default {
 	register,
 	login,
 	refreshTokens,
 	logout,
+	verifyEmail,
+	resendVerification,
 };

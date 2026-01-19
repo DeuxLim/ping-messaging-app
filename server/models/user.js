@@ -82,6 +82,15 @@ const userSchema = new mongoose.Schema(
 			type: Date,
 			select: false,
 		},
+		verificationResendCount: {
+			type: Number,
+			default: 0,
+			select: false,
+		},
+		verificationLastResendAt: {
+			type: Date,
+			select: false,
+		},
 	},
 	{ timestamps: true }
 );
