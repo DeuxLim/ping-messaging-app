@@ -154,10 +154,6 @@ export default function Login() {
                         <div className="relative size-4.5 border border-gray-400 text-gray-500 rounded peer-checked:bg-blue-500 peer-checked:border-blue-500 transition-all duration-200"></div>
                         <span className="text-sm text-gray-500">Keep me signed in</span>
                     </label>
-
-                    {/* <div>
-                            
-                        </div> */}
                 </div>
             </div>
         </form>
