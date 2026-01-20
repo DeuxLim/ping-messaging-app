@@ -6,6 +6,7 @@ import StartAuth from "../pages/Auth/StartAuth";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import ForgotPassword from "../pages/Auth/ForgotPassword";
+import ResetPassword from "../pages/Auth/ResetPassword";
 
 /* Chat */
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -35,6 +36,7 @@ export const routes = createBrowserRouter([
             { path: "register", element: <Register /> },
             { path: "verify-email", element: <VerifyEmail /> },
             { path: "forgot-password", element: <ForgotPassword /> },
+            { path: "reset-password", element: <ResetPassword /> },
         ]
     },
     {

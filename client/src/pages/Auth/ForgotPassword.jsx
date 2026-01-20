@@ -1,15 +1,18 @@
 import { useId, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { isEmpty } from "../../utilities/utils";
+import { fetchAPI } from "../../api/fetchApi";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState("idle"); // idle | loading | success | error
+    const [message, setMessage] = useState("");
+
     const elementUserEmailId = useId();
     const navigate = useNavigate();
 
-    function validateForm(){
+    function validateForm() {
         const newErrors = {};
 
         if (!email.trim()) {
@@ -21,77 +24,112 @@ export default function ForgotPassword() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        
+
         const validationErrors = validateForm();
         setErrors(validationErrors);
 
         if (!isEmpty(validationErrors)) return;
 
-        setLoading(true);
+        setStatus("loading");
+        setErrors({});
+        setMessage("");
 
         // simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        const res = await fetchAPI.post('/auth/forgot-password', { email });
 
-        // Dummy data response from backend
-        const response = {
-            error : {
-                auth : "Invalid credentials."
-            },
-            status : 401
-        };
+        console.log(res);
 
-        if(response.error?.auth){
-            setErrors({auth: "Invalid username or password."});
-        }
-
-        setLoading(false);
+        setStatus("success");
+        setMessage("If that email exists, a password reset link has been sent.");
     }
 
     return (
-        <div className="bg-white p-8 max-w-md w-full mx-auto rounded-md shadow-2xl border-2 border-gray-200 flex flex-col gap-6">
-            <button onClick={() => navigate(-1)}>Back</button>
-            <div className="flex flex-col justify-center items-center text-2xl">
-                <h1>Retrieve your account</h1>
-            </div>
-            <form onSubmit={handleSubmit} className="w-">
-                <div className="flex flex-col gap-8 text-lg">
-                    <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-center w-full px-4 min-h-80">
+            <div className="w-full max-w-md rounded-lg bg-white p-6 text-center">
+                {status === "idle" && (
+                    <>
+                        <h1 className="text-xl font-semibold text-gray-800">
+                            Forgot your password?
+                        </h1>
+                        <p className="mt-2 text-sm text-gray-600">
+                            Enter your email and we’ll send you a reset link.
+                        </p>
 
-                        {/* EMAIL */}
-                        <div className="flex flex-col">
-                            <label htmlFor={elementUserEmailId}>Email</label>
-                            <input
-                                type="text"
-                                id={elementUserEmailId}
-                                name="user-email"
-                                className="p-2 border-2 border-gray-300 rounded-md"
-                                placeholder="Enter your email address..."
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            { errors.email ? <p className="text-sm text-right text-red-500">{errors.email}</p> : "" }
-                        </div>
-
-                        { errors.auth && 
-                            <div className="flex justify-center text-red-500">
-                                <p>{errors.auth}</p>
+                        <form onSubmit={handleSubmit} className="mt-6 text-left">
+                            {/* EMAIL */}
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor={elementUserEmailId}
+                                    className="mb-1 text-sm text-gray-700"
+                                >
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    id={elementUserEmailId}
+                                    name="user-email"
+                                    className="rounded border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
+                                    placeholder="Enter your email address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                                {errors.email && (
+                                    <p className="mt-1 text-sm text-red-500">
+                                        {errors.email}
+                                    </p>
+                                )}
                             </div>
-                        }
 
-                        {/* SUBMIT */}
-                        <div className="flex flex-col justify-center items-center">
-                            <button 
-                                type="submit" 
-                                disabled={loading}
-                                className={`bg-green-400 py-2 px-8 rounded-md 
-                                            ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                            {/* SUBMIT */}
+                            <button
+                                type="submit"
+                                disabled={status === "loading"}
+                                className={`mt-4 inline-block w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-400 ${status === "loading"
+                                    ? "cursor-not-allowed opacity-50"
+                                    : ""
+                                    }`}
                             >
-                                {loading ? "Sending request..." : "Submit"}
+                                {status === "loading"
+                                    ? "Sending request…"
+                                    : "Send reset link"}
                             </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
+                        </form>
+
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="mt-4 text-sm text-blue-500 hover:underline"
+                        >
+                            Back to login
+                        </button>
+                    </>
+                )}
+
+                {(status === "success" || status === "error") && (
+                    <>
+                        <h1
+                            className={`text-xl font-semibold ${status === "success"
+                                ? "text-green-600"
+                                : "text-red-600"
+                                }`}
+                        >
+                            {status === "success"
+                                ? "Check your email"
+                                : "Request failed"}
+                        </h1>
+
+                        <p className="mt-2 text-sm text-gray-600">
+                            {message}
+                        </p>
+
+                        <Link
+                            to="/auth/login"
+                            className="mt-4 inline-block w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-400"
+                        >
+                            Go to login
+                        </Link>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
