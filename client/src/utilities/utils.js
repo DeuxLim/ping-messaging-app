@@ -26,7 +26,7 @@ export function formatLastMessageDateTime(isoString) {
 				month: "short",
 				day: "2-digit",
 				year: "numeric",
-		  });
+			});
 }
 
 /**
@@ -48,7 +48,7 @@ export function getOtherParticipants(participants = [], currentUserId) {
 		participantReturn = [participants[0]];
 	} else {
 		participantReturn = participants.filter(
-			(p) => String(p._id) !== String(currentUserId)
+			(p) => String(p._id) !== String(currentUserId),
 		);
 	}
 
@@ -71,6 +71,12 @@ export function isEmpty(value) {
 	return false;
 }
 
+// For email verification (OTP)
 export function generateVerificationToken() {
 	return crypto.randomInt(100000, 1000000).toString();
+}
+
+// For reset password (link token)
+export function generateResetPasswordToken() {
+	return crypto.randomBytes(32).toString("hex");
 }
