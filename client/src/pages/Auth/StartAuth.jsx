@@ -8,6 +8,7 @@ export default function StartAuth() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const isLoggingIn = location.pathname === "/auth/login";
+	const isRegistering = location.pathname === "/auth/register";
 
 	useEffect(() => {
 		if (token || currentUser) {
@@ -24,9 +25,11 @@ export default function StartAuth() {
 					<div className="flex items-center justify-center mr-6">
 						<FaFacebookMessenger className='text-blue-600 text-7xl' />
 					</div>
-					<span className='font-light text-4xl'>
-						Connect with your favorite people.
-					</span>
+					{(isLoggingIn || isRegistering) && (
+						<span className='font-light text-4xl'>
+							Connect with your favorite people.
+						</span>
+					)}
 				</div>
 
 				{/* Auth pages */}
@@ -42,9 +45,9 @@ export default function StartAuth() {
 							<Link to="/auth/register" className="hover:underline">
 								Not on Facebook?
 							</Link>
-							{/* <Link to="/auth/forgot-password">
+							<Link to="/auth/forgot-password">
 								<p className="font-bold hover:underline text-blue-500">Forgot password</p>
-							</Link> */}
+							</Link>
 						</>
 					)
 				}
