@@ -1,8 +1,12 @@
 import {
 	isEmpty,
 	generateVerificationToken,
+	generateResetPasswordToken,
 } from "../../../client/src/utilities/utils.js";
-import { VERIFICATION_TOKEN_TTL } from "../../config/auth.js";
+import {
+	RESET_PASSWORD_TOKEN_TTL,
+	VERIFICATION_TOKEN_TTL,
+} from "../../config/auth.js";
 import {
 	hashToken,
 	signAccessToken,
@@ -12,7 +16,10 @@ import User from "../../models/user.js";
 import authValidation from "../../validations/auth/authValidation.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { sendVerificationEmail } from "../../library/resend.js";
+import {
+	sendResetPasswordEmail,
+	sendVerificationEmail,
+} from "../../library/resend.js";
 
 const register = async (req, res) => {
 	try {
@@ -37,7 +44,7 @@ const register = async (req, res) => {
 		const verificationDetails = {
 			verificationToken: hashedVerificationToken,
 			verificationTokenExpiresAt: new Date(
-				Date.now() + VERIFICATION_TOKEN_TTL
+				Date.now() + VERIFICATION_TOKEN_TTL,
 			),
 		};
 
@@ -79,7 +86,7 @@ const login = async (req, res) => {
 
 	// Check login email
 	let user = await User.findOne({ email }).select(
-		"+refreshToken +refreshTokenExpiresAt +password"
+		"+refreshToken +refreshTokenExpiresAt +password",
 	);
 	if (!user) {
 		return res.status(401).json({
@@ -109,7 +116,7 @@ const login = async (req, res) => {
 			fullName: user.fullName,
 			userName: user.userName,
 		},
-		rememberMe
+		rememberMe,
 	);
 
 	const { exp } = jwt.decode(refreshToken);
@@ -161,7 +168,7 @@ const refreshTokens = async (req, res) => {
 	try {
 		payload = jwt.verify(
 			currentRefreshToken,
-			process.env.REFRESH_TOKEN_SECRET
+			process.env.REFRESH_TOKEN_SECRET,
 		);
 	} catch (err) {
 		return res
@@ -171,7 +178,7 @@ const refreshTokens = async (req, res) => {
 
 	// Get User based on the refreshToken data
 	const user = await User.findOne({ email: payload.email }).select(
-		"+refreshToken +refreshTokenExpiresAt"
+		"+refreshToken +refreshTokenExpiresAt",
 	);
 
 	if (!user) {
@@ -228,7 +235,7 @@ const logout = async (req, res) => {
 		// Find user by hashed refresh token
 		const hashedToken = hashToken(currentRefreshToken);
 		const user = await User.findOne({ refreshToken: hashedToken }).select(
-			"+refreshToken +refreshTokenExpiresAt"
+			"+refreshToken +refreshTokenExpiresAt",
 		);
 
 		if (user) {
@@ -293,7 +300,7 @@ const resendVerification = async (req, res) => {
 		}
 
 		const user = await User.findOne({ email }).select(
-			"+verificationResendCount +verificationLastResendAt"
+			"+verificationResendCount +verificationLastResendAt",
 		);
 
 		// Security: never reveal existence
@@ -342,7 +349,7 @@ const resendVerification = async (req, res) => {
 
 		user.verificationToken = hashedVerificationToken;
 		user.verificationTokenExpiresAt = new Date(
-			Date.now() + VERIFICATION_TOKEN_TTL
+			Date.now() + VERIFICATION_TOKEN_TTL,
 		);
 
 		// Update resend tracking
@@ -364,6 +371,108 @@ const resendVerification = async (req, res) => {
 	}
 };
 
+const forgotPassword = async (req, res) => {
+	try {
+		const { email } = req.body;
+
+		if (!email) {
+			return res.status(500).json({
+				message: "Email is required.",
+			});
+		}
+
+		const user = await User.findOne({ email });
+
+		if (!user) {
+			return res
+				.status(500)
+				.json({ message: "No user found with the given email." });
+		}
+
+		const resetPasswordToken = generateResetPasswordToken();
+
+		const hashedResetPasswordToken = crypto
+			.createHash("sha256")
+			.update(resetPasswordToken)
+			.digest("hex");
+
+		user.resetPasswordToken = hashedResetPasswordToken;
+		user.resetPasswordExpiresAt = new Date(
+			Date.now() + RESET_PASSWORD_TOKEN_TTL,
+		);
+
+		await user.save();
+
+		await sendResetPasswordEmail(user.email, resetPasswordToken);
+
+		return res.status(200).json({
+			message: "Password update email sent.",
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Failed to send password update email.",
+		});
+	}
+};
+
+const resetPassword = async (req, res) => {
+	try {
+		const { token, password } = req.body;
+
+		if (!token || !password) {
+			return res.status(400).json({
+				message: "Token and new password are required.",
+			});
+		}
+
+		if (password.length < 8) {
+			return res.status(400).json({
+				message: "Password must be at least 8 characters long.",
+			});
+		}
+
+		// Hash incoming token to compare with DB
+		const hashedCandidateToken = crypto
+			.createHash("sha256")
+			.update(token)
+			.digest("hex");
+
+		// Find valid reset token
+		const user = await User.findOne({
+			resetPasswordToken: hashedCandidateToken,
+			resetPasswordExpiresAt: { $gt: Date.now() },
+		}).select("+password +refreshToken +refreshTokenExpiresAt");
+
+		if (!user) {
+			return res.status(400).json({
+				message: "Invalid or expired reset token.",
+			});
+		}
+
+		// Update password (your User model should auto-hash)
+		user.password = password;
+
+		// Clear reset token fields
+		user.resetPasswordToken = null;
+		user.resetPasswordExpiresAt = null;
+
+		// OPTIONAL BUT RECOMMENDED: invalidate all sessions
+		user.refreshToken = null;
+		user.refreshTokenExpiresAt = null;
+
+		await user.save();
+
+		return res.status(200).json({
+			message: "Password reset successful. Please log in again.",
+		});
+	} catch (error) {
+		console.error(error);
+		return res.status(500).json({
+			message: "Failed to reset password.",
+		});
+	}
+};
+
 export default {
 	register,
 	login,
@@ -371,4 +480,6 @@ export default {
 	logout,
 	verifyEmail,
 	resendVerification,
+	forgotPassword,
+	resetPassword,
 };

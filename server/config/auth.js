@@ -15,6 +15,7 @@ const parseNumber = (key) => {
 };
 
 export const VERIFICATION_TOKEN_TTL = parseNumber("VERIFICATION_TOKEN_TTL");
+export const RESET_PASSWORD_TOKEN_TTL = parseNumber("RESET_PASSWORD_TOKEN_TTL");
 
 export const ACCESS_TOKEN_TTL = requireEnv("ACCESS_TOKEN_TTL");
 export const ACCESS_TOKEN_SECRET = requireEnv("ACCESS_TOKEN_SECRET");

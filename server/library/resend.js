@@ -64,3 +64,68 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 		throw new Error("Error sending verification email");
 	}
 };
+
+export const sendResetPasswordEmail = async (email, resetPasswordToken) => {
+	const resetPasswordUrl = `${process.env.CLIENT_URL}/auth/reset-password?token=${resetPasswordToken}`;
+
+	try {
+		await resend.emails.send({
+			from: "Acme <onboarding@resend.dev>",
+			to: [email],
+			subject: "Reset your password",
+			html: `
+        <div style="font-family: Arial, sans-serif; background-color: #f9fafb; padding: 40px;">
+          <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 32px; border-radius: 8px;">
+            
+            <h2 style="margin-top: 0; color: #111827;">
+              Reset your password
+            </h2>
+
+            <p style="color: #374151; font-size: 16px;">
+              We received a request to reset your password. Click the button below to set a new one.
+            </p>
+
+            <div style="text-align: center; margin: 32px 0;">
+              <a
+                href="${resetPasswordUrl}"
+                style="
+                  display: inline-block;
+                  padding: 12px 24px;
+                  background-color: #2563eb;
+                  color: #ffffff;
+                  text-decoration: none;
+                  font-weight: 600;
+                  border-radius: 6px;
+                "
+              >
+                Reset Password
+              </a>
+            </div>
+
+            <p style="color: #6b7280; font-size: 14px;">
+              This link will expire in 15 minutes.
+            </p>
+
+            <p style="color: #6b7280; font-size: 14px;">
+              If you did not request a password reset, you can safely ignore this email.
+            </p>
+
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;" />
+
+            <p style="color: #9ca3af; font-size: 12px;">
+              If the button doesn’t work, copy and paste this link into your browser:
+            </p>
+
+            <p style="color: #2563eb; font-size: 12px; word-break: break-all;">
+              ${resetPasswordUrl}
+            </p>
+
+          </div>
+        </div>
+      `,
+		});
+	} catch (error) {
+		console.error(error);
+		throw new Error("Error sending reset password email");
+	}
+};
