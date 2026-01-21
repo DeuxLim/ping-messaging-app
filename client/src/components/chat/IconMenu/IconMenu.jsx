@@ -7,12 +7,18 @@ import useToggle from "../../../hooks/common/useToggle";
 import useDropdownMenu from "../../../hooks/common/useDropdownMenu";
 import { TbLogout } from "react-icons/tb";
 import { Link, useLocation } from "react-router";
+import useSocket from "../../../hooks/useSocket";
+import IconMenuSkeleton from "./IconMenuSkeleton";
 
 export default function IconMenu() {
     const [isIconMenuExpanded, setIsIconMenuExpanded] = useToggle(false);
-    const { currentUser } = useAuth();
-    const { logout } = useAuth();
+    const { currentUser, logout, authStatus } = useAuth();
+    const { socketStatus } = useSocket();
     const { isOpen, toggle, close, buttonRef, menuRef } = useDropdownMenu();
+
+    const isAppReady =
+        authStatus === "authenticated" &&
+        socketStatus === "connected";
 
     const handleLogout = () => {
         logout();
@@ -20,8 +26,12 @@ export default function IconMenu() {
     };
 
     const location = useLocation();
-
     const isChatsPage = location.pathname.startsWith("/chats/");
+
+    // ✅ Skeleton state
+    if (!isAppReady) {
+        return <IconMenuSkeleton expanded={isIconMenuExpanded} />;
+    }
 
     return (
         <div className="flex justify-center items-center flex-col pl-2">

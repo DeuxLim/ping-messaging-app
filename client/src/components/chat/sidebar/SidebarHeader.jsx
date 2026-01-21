@@ -1,7 +1,21 @@
 import { Link } from "react-router"
 import { RiEditBoxLine } from "react-icons/ri";
+import useChat from "../../../hooks/useChat";
+import useAuth from "../../../hooks/useAuth";
+import useSocket from "../../../hooks/useSocket";
+import SidebarHeaderSkeleton from "./SidebarHeaderSkeleton";
 
 export default function SidebarHeader() {
+	const { isLoading } = useChat();
+	const { authStatus } = useAuth();
+	const { socketStatus } = useSocket();
+
+	const isAppReady =
+		authStatus === "authenticated" &&
+		socketStatus === "connected";
+
+	if (!isAppReady || isLoading) return <SidebarHeaderSkeleton />;
+
 	return (
 		<>
 			<header className="flex">
