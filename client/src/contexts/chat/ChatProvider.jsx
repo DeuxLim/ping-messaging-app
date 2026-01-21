@@ -7,7 +7,8 @@ import { isEmpty } from "../../utilities/utils.js";
 
 export default function ChatProvider({ children }) {
     const { token, currentUser } = useAuth();
-    const { socket } = useSocket();
+    const { socket, socketStatus } = useSocket();
+    const isReady = Boolean(token && socket);
 
     // ---- Chat States ----
     const [activeChatData, setActiveChatData] = useState(null);
@@ -18,7 +19,7 @@ export default function ChatProvider({ children }) {
     const [isSearch, setIsSearch] = useState(false);
     const [searchResults, setSearchResults] = useState({ chats: [], users: [] });
     const [onlineUsers, setOnlineUsers] = useState({});
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     /* Utilities */
@@ -100,7 +101,7 @@ export default function ChatProvider({ children }) {
 
     // ---- Socket Presence ----
     useEffect(() => {
-        if (!socket) return;
+        if (!socket || socketStatus !== "connected") return;
 
         socket.on("onlineUsers:list", (userIds) => {
             setOnlineUsers((prev) => {
@@ -178,7 +179,7 @@ export default function ChatProvider({ children }) {
             socket.off("presence:update");
             socket.off("receiveMessage");
         };
-    }, [socket, activeChatData]);
+    }, [socket, activeChatData, socketStatus]);
 
     /* ----- HANDLE MESSAGE SEEN STATUS ----  */
     const activeChatDataRef = useRef(activeChatData);
@@ -187,7 +188,7 @@ export default function ChatProvider({ children }) {
     }, [activeChatData]);
 
     useEffect(() => {
-        if (!socket) return;
+        if (!socket || socketStatus !== "connected") return;
 
         const handleSeenUpdate = ({ chatId, seenMessages }) => {
             // Update chatItems (sidebar) - this should ALWAYS run
@@ -214,12 +215,12 @@ export default function ChatProvider({ children }) {
 
         socket.on("messages:seenUpdate", handleSeenUpdate);
         return () => socket.off("messages:seenUpdate", handleSeenUpdate);
-    }, [socket]);
+    }, [socket, socketStatus]);
     /* ----- HANDLE MESSAGE SEEN STATUS ----  */
 
     // ---- Fetch Chats + Suggested Users ----
     useEffect(() => {
-        if (!token || isSearch) return; // avoid refetch during search
+        if (!isReady || isSearch) return; // avoid refetch during search
         fetchAPI.setAuth(token);
 
         const fetchChatData = async () => {
@@ -248,7 +249,7 @@ export default function ChatProvider({ children }) {
         };
 
         fetchChatData();
-    }, [token, isSearch, socket]);
+    }, [token, isSearch, socket, isReady]);
 
     // ---- Context Value ----
     const values = {

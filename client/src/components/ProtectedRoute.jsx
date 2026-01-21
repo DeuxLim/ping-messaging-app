@@ -1,19 +1,11 @@
 import { Navigate, Outlet } from "react-router";
 import useAuth from "../hooks/useAuth";
-import { useEffect } from "react";
 
 export default function ProtectedRoute() {
-    const { isAuthenticated, authStatus, refreshToken } = useAuth();
-
-    useEffect(() => {
-        refreshToken();
-    }, [refreshToken]);
-
-    if (authStatus === "checking") return null; // add skeleton loading here
-
+    const { authStatus } = useAuth();
 
     // Once ready, decide route
-    return isAuthenticated
+    return authStatus === "authenticated" || authStatus === "checking"
         ? <Outlet />
         : <Navigate to="/auth/login" replace />;
 }
