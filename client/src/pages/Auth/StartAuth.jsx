@@ -4,17 +4,17 @@ import { useEffect } from 'react';
 import { FaFacebookMessenger } from "react-icons/fa6";
 
 export default function StartAuth() {
-	const { token, currentUser } = useAuth();
+	const { authStatus } = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const isLoggingIn = location.pathname === "/auth/login";
 	const isRegistering = location.pathname === "/auth/register";
 
 	useEffect(() => {
-		if (token || currentUser) {
+		if (authStatus === "authenticated") {
 			navigate("/chats");
 		}
-	}, [token, currentUser, navigate]);
+	}, [authStatus, navigate]);
 
 	return (
 		<div className="min-h-screen m-0 bg-white flex flex-col justify-center items-center">

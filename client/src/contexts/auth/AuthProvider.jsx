@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AuthContext from "./AuthContext";
 import { fetchAPI } from "../../api/fetchApi";
 
 export default function AuthProvider({ children }) {
-    const [authStatus, setAuthStatus] = useState("checking");
+    const [authStatus, setAuthStatus] = useState("checking"); // "checking" | "authenticated" | "unauthenticated"
     const [currentUser, setCurrentUser] = useState(null);
     const [token, setToken] = useState(null);
+    const hasBootstrapped = useRef(false);
 
     const setAuthenticated = (user, accessToken) => {
         setCurrentUser(user);
@@ -43,46 +44,41 @@ export default function AuthProvider({ children }) {
                 credentials: "include",
             });
 
-            if (!res?.user || !res?.accessToken) {
+            if (!res?.accessToken) {
                 throw new Error("Invalid refresh response");
             }
 
-            setAuthenticated(res.user, res.accessToken);
+            // set new access token
+            setToken(res.accessToken);
+            fetchAPI.setAuth(res.accessToken);
+
+            // fetch current user
+            const me = await fetchAPI.get("/auth/me", null, {
+                credentials: "include",
+            });
+
+            if (!me?.user) {
+                throw new Error("Failed to fetch user");
+            }
+
+            setAuthenticated(me.user, res.accessToken);
         } catch (error) {
             console.log(error);
             setUnauthenticated();
         }
     }, []);
 
-    const updateUserProfile = async (data) => {
-        try {
-            fetchAPI.setAuth(token);
-            const response = await fetchAPI.put('/users/update-profile', data);
-            if (!response.updateSuccess) {
-                console.log("failed to updated profile picture...");
-            }
-
-            setCurrentUser(response.user);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    const updatePassword = async (data) => {
-        try {
-            fetchAPI.setAuth(token);
-            const response = await fetchAPI.put('/users/update-password', data);
-            if (!response.updateSuccess) {
-                console.log('failed to update profile picture...');
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     useEffect(() => {
         fetchAPI.setAuth(token);
     }, [token]);
+
+    useEffect(() => {
+        // 🔑 run refresh ONLY once on app boot
+        if (hasBootstrapped.current) return;
+        hasBootstrapped.current = true;
+
+        refreshToken();
+    }, [refreshToken]);
 
     const value = {
         currentUser,
@@ -91,14 +87,34 @@ export default function AuthProvider({ children }) {
         login,
         logout,
         refreshToken,
-        isAuthenticated: Boolean(currentUser && token),
-        updateUserProfile,
-        updatePassword,
+        updateUserProfile: async (data) => {
+            try {
+                fetchAPI.setAuth(token);
+                const response = await fetchAPI.put("/users/update-profile", data);
+                if (!response.updateSuccess) {
+                    console.log("failed to update profile...");
+                }
+                setCurrentUser(response.user);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        updatePassword: async (data) => {
+            try {
+                fetchAPI.setAuth(token);
+                const response = await fetchAPI.put("/users/update-password", data);
+                if (!response.updateSuccess) {
+                    console.log("failed to update password...");
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
     };
 
     return (
         <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
-    )
+    );
 }
