@@ -4,10 +4,18 @@ import useAuth from "../../hooks/useAuth";
 import { useState } from "react";
 import { fetchAPI } from "../../api/fetchApi";
 import { isEmpty } from "../../utilities/utils";
+import useSocket from "../../hooks/useSocket";
+import useChat from "../../hooks/useChat";
 
 export default function MainWindow() {
     const { isChatSettingsOpen, isDesktop } = useChatDisplay();
-    const { currentUser } = useAuth();
+    const { currentUser, authStatus } = useAuth();
+    const { isLoading } = useChat();
+    const { socketStatus } = useSocket();
+
+    const isAppReady =
+        authStatus === "authenticated" &&
+        socketStatus === "connected";
 
     const [resendMessage, setResendMessage] = useState(null);
     const [resendSuccess, setResendSuccess] = useState(null);
@@ -36,6 +44,8 @@ export default function MainWindow() {
             setIsResending(false);
         }
     };
+
+    if (!isAppReady || isLoading) return "";
 
     return (
         <>
