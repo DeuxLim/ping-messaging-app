@@ -4,6 +4,8 @@ import {
 	generateResetPasswordToken,
 } from "../../../client/src/utilities/utils.js";
 import {
+	ACCESS_TOKEN_SECRET,
+	REFRESH_TOKEN_SECRET,
 	RESET_PASSWORD_TOKEN_TTL,
 	VERIFICATION_TOKEN_TTL,
 } from "../../config/auth.js";
@@ -156,6 +158,48 @@ const login = async (req, res) => {
 	});
 };
 
+const me = async (req, res) => {
+	try {
+		const authHeader = req.headers.authorization;
+
+		if (!authHeader || !authHeader.startsWith("Bearer ")) {
+			return res.status(401).json({
+				error: "Missing or invalid Authorization header",
+			});
+		}
+
+		const token = authHeader.split(" ")[1];
+
+		let payload;
+		try {
+			payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
+		} catch (error) {
+			return res.status(403).json({
+				error: "Invalid or expired access token",
+			});
+		}
+
+		const user = await User.findById(payload.id).select(
+			"_id firstName lastName fullName userName email profilePicture bio isOnline lastSeen",
+		);
+
+		if (!user) {
+			return res.status(404).json({
+				error: "User not found",
+			});
+		}
+
+		return res.status(200).json({
+			user,
+		});
+	} catch (error) {
+		console.error("ME endpoint error:", error);
+		return res.status(500).json({
+			error: "Failed to fetch current user",
+		});
+	}
+};
+
 const refreshTokens = async (req, res) => {
 	// Get refreshToken from request httpCookie
 	const currentRefreshToken = req.cookies.refreshToken;
@@ -166,10 +210,7 @@ const refreshTokens = async (req, res) => {
 	// Verify refresh token
 	let payload;
 	try {
-		payload = jwt.verify(
-			currentRefreshToken,
-			process.env.REFRESH_TOKEN_SECRET,
-		);
+		payload = jwt.verify(currentRefreshToken, REFRESH_TOKEN_SECRET);
 	} catch (err) {
 		return res
 			.status(403)
@@ -477,6 +518,7 @@ export default {
 	register,
 	login,
 	refreshTokens,
+	me,
 	logout,
 	verifyEmail,
 	resendVerification,
