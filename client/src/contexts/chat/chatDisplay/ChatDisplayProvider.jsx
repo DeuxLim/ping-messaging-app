@@ -11,12 +11,12 @@ export default function ChatDisplayProvider({ children }) {
 	const { setActiveChatData } = useChat();
 	const [selectionEnabled, setSelectionEnabled] = useState(false);
 	const [isChatSettingsOpen, setIsChatSettingsOpen] = useState(false);
-	const { socket } = useSocket();
+	const { socket, socketStatus } = useSocket();
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!socket) return;
-		
+		if (!socket || socketStatus !== "connected") return;
+
 		socket.on("typing:update", ({ chatId, userId, status }) => {
 
 			setTypingChats(prev => {
@@ -30,7 +30,7 @@ export default function ChatDisplayProvider({ children }) {
 		});
 
 		return () => socket.off("typing:update");
-	}, [socket]);
+	}, [socket, socketStatus]);
 
 	// ---- Responsive Layout ----
 	useEffect(() => {

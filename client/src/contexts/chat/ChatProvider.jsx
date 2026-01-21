@@ -19,7 +19,7 @@ export default function ChatProvider({ children }) {
     const [isSearch, setIsSearch] = useState(false);
     const [searchResults, setSearchResults] = useState({ chats: [], users: [] });
     const [onlineUsers, setOnlineUsers] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
     /* Utilities */
