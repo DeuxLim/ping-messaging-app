@@ -35,15 +35,14 @@ const suggested = async (req, res) => {
 		const chattedUserIds = existingChats.flatMap((chat) =>
 			chat.participants
 				.filter((id) => id.toString() !== currentUserId)
-				.map((id) => id.toString())
+				.map((id) => id.toString()),
 		);
 
 		// Find users NOT in that list
 		const suggestedUsers = await User.find({})
 			.select(
-				"fullName firstName lastName userName profilePicture bio isOnline lastSeen"
+				"fullName firstName lastName userName profilePicture bio isOnline lastSeen",
 			)
-			.limit(10)
 			.sort({ createdAt: -1 });
 
 		res.status(200).json(suggestedUsers);
@@ -72,15 +71,21 @@ const updateProfile = async (req, res) => {
 		// ---------------- Profile Picture ----------------
 		// Upload ONLY if base64 string (new image)
 		if (profilePicture && typeof profilePicture === "string") {
+			if (profilePicture.length > 10_000_000) {
+				return res.status(413).json({
+					updateSuccess: false,
+					message: "Image is too large. Max size is 10MB.",
+				});
+			}
+
 			// Get current user to remove old image
-			const existingUser = await User.findById(currentUserId).select(
-				"profilePicture"
-			);
+			const existingUser =
+				await User.findById(currentUserId).select("profilePicture");
 
 			// Delete old Cloudinary image if exists
 			if (existingUser?.profilePicture?.public_id) {
 				await cloudinary.uploader.destroy(
-					existingUser.profilePicture.public_id
+					existingUser.profilePicture.public_id,
 				);
 			}
 
@@ -90,7 +95,7 @@ const updateProfile = async (req, res) => {
 				{
 					folder: "user_profiles",
 					resource_type: "image",
-				}
+				},
 			);
 
 			updatedFields.profilePicture = {
@@ -114,7 +119,7 @@ const updateProfile = async (req, res) => {
 			{
 				new: true,
 				runValidators: true,
-			}
+			},
 		);
 
 		return res.status(200).json({
@@ -151,7 +156,9 @@ const updatePassword = async (req, res) => {
 		}
 
 		// ---------------- Fetch user ----------------
-		const user = await User.findById(userId).select("+password +refreshToken +refreshTokenExpiresAt");
+		const user = await User.findById(userId).select(
+			"+password +refreshToken +refreshTokenExpiresAt",
+		);
 
 		if (!user) {
 			return res.status(404).json({

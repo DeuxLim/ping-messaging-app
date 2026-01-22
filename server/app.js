@@ -9,12 +9,15 @@ connectDB();
 
 const app = express();
 
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
 /* Middlewares */
 app.use(
 	cors({
 		origin: process.env.CLIENT_URL,
 		credentials: true,
-	})
+	}),
 );
 
 if (process.env.DEV_DEBUG === "true") {

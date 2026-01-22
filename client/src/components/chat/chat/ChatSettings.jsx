@@ -353,7 +353,7 @@ export default function ChatSettings() {
                                         >
                                             <div className='flex gap-2 items-center w-full justify-start h-12'>
                                                 <div className='size-10 rounded-full overflow-hidden flex justify-center items-center'>
-                                                    <AvatarImage />
+                                                    <AvatarImage chatPhotoUrl={participant?.profilePicture?.url} />
                                                 </div>
                                                 <div>
                                                     <div className='font-medium'>

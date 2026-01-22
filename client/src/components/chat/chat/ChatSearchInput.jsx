@@ -184,7 +184,7 @@ export default function ChatSearchInput() {
                         {/* Floating list, only when focused */}
                         {isFocused && (
                             <div
-                                className="absolute bg-white shadow-2xl border border-gray-200 rounded-lg z-50 mt-1 p-4 flex flex-col gap-2"
+                                className="absolute bg-white max-h-96 shadow-2xl border border-gray-200 rounded-lg z-50 mt-1 p-4 flex flex-col gap-2 overflow-auto"
                                 style={{
                                     left: chipWidth,
                                     width: "260px"
