@@ -179,9 +179,7 @@ const me = async (req, res) => {
 			});
 		}
 
-		const user = await User.findById(payload.id).select(
-			"_id firstName lastName fullName userName email profilePicture bio isOnline lastSeen",
-		);
+		const user = await User.findById(payload.id);
 
 		if (!user) {
 			return res.status(404).json({
