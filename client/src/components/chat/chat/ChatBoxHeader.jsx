@@ -47,7 +47,7 @@ export default function ChatBoxHeader() {
 
 	// --- Event Handlers ---
 	const handleBackClick = () => {
-		navigate("/", { replace: true })
+		navigate("/chats", { replace: true })
 	};
 
 	const handleChatMenuClick = () => {

@@ -4,7 +4,7 @@ import SocketContext from "./SocketContext";
 import useAuth from "../../hooks/useAuth";
 
 export default function SocketProvider({ children }) {
-	const { authStatus } = useAuth();
+	const { authStatus, currentUser } = useAuth();
 	const [socket, setSocket] = useState(null);
 	const [socketStatus, setSocketStatus] = useState("idle"); // idle | connecting | connected | error
 
@@ -31,7 +31,7 @@ export default function SocketProvider({ children }) {
 			});
 
 			setSocket(newSocket);
-			newSocket.emit("user:online");
+			newSocket.emit("user:online", currentUser._id);
 		} catch (error) {
 			console.log(error);
 			setSocketStatus("error");
@@ -42,7 +42,7 @@ export default function SocketProvider({ children }) {
 			setSocket(null);
 			setSocketStatus("idle");
 		};
-	}, [authStatus]);
+	}, [authStatus, currentUser]);
 
 	const data = {
 		socket,
