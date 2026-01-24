@@ -30,7 +30,7 @@ export default function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetchAPI.post("/auth/logout", null, { credentials: "include" });
+            await fetchAPI.post("/auth/logout", null);
         } finally {
             setUnauthenticated();
         }
@@ -40,9 +40,7 @@ export default function AuthProvider({ children }) {
         setAuthStatus("checking");
 
         try {
-            const res = await fetchAPI.post("/auth/refresh", null, {
-                credentials: "include",
-            });
+            const res = await fetchAPI.post("/auth/refresh", null);
 
             if (!res?.accessToken) {
                 throw new Error("Invalid refresh response");
@@ -50,12 +48,9 @@ export default function AuthProvider({ children }) {
 
             // set new access token
             setToken(res.accessToken);
-            fetchAPI.setAuth(res.accessToken);
 
             // fetch current user
-            const me = await fetchAPI.get("/auth/me", null, {
-                credentials: "include",
-            });
+            const me = await fetchAPI.get("/auth/me", null);
 
             if (!me?.user) {
                 throw new Error("Failed to fetch user");
@@ -89,7 +84,6 @@ export default function AuthProvider({ children }) {
         refreshToken,
         updateUserProfile: async (data) => {
             try {
-                fetchAPI.setAuth(token);
                 const response = await fetchAPI.put("/users/update-profile", data);
                 if (!response.updateSuccess) {
                     console.log("failed to update profile...");
@@ -101,7 +95,6 @@ export default function AuthProvider({ children }) {
         },
         updatePassword: async (data) => {
             try {
-                fetchAPI.setAuth(token);
                 const response = await fetchAPI.put("/users/update-password", data);
                 if (!response.updateSuccess) {
                     console.log("failed to update password...");

@@ -10,6 +10,7 @@ async function fetchClient(
 		body,
 		headers = {},
 		timeout = 10000,
+		retry = true,
 		...otherOptions
 	} = {},
 ) {
@@ -47,6 +48,38 @@ async function fetchClient(
 
 		const response = await fetch(`${BASE_URL}${endpoint}`, config);
 		clearTimeout(timeoutId);
+
+		// 🔴 HERE: intercept expired access token
+		if ((response.status === 401 || response.status === 403) && retry) {
+			try {
+				const refreshRes = await fetch(`${BASE_URL}/auth/refresh`, {
+					method: "POST",
+					credentials: "include",
+				});
+
+				if (!refreshRes.ok) throw new Error("Refresh failed");
+
+				const data = await refreshRes.json();
+				if (!data.accessToken) throw new Error("No access token");
+
+				// 🔐 Update global token
+				authToken = data.accessToken;
+
+				// 🔁 Retry original request once
+				return fetchClient(endpoint, {
+					method,
+					body,
+					headers,
+					timeout,
+					retry: false, // prevent infinite loop
+					...otherOptions,
+				});
+			} catch (err) {
+				authToken = null;
+				console.log(err);
+				throw new Error("Session expired. Please log in again.");
+			}
+		}
 
 		// Handle non-200 status
 		if (!response.ok) {

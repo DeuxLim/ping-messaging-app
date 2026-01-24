@@ -33,8 +33,6 @@ export default function ChatInput() {
 					: trimmedMessage;
 
 			try {
-				fetchAPI.setAuth(token);
-
 				let chatIdToUse = activeChatData.type === "temp" ? null : activeChatData?._id;
 
 				// If no chat exists, create one first

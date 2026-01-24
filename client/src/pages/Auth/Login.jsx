@@ -48,8 +48,7 @@ export default function Login() {
 
         try {
             const responseJson = await fetchAPI.post('/auth/login',
-                { email, password, rememberMe },
-                { credentials: 'include' }
+                { email, password, rememberMe }
             );
 
             if (responseJson.error) {

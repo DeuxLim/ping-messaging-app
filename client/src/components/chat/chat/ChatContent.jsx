@@ -36,7 +36,6 @@ export default function ChatContent() {
                 setError(false);
                 setActiveChatMessages([]);
 
-                fetchAPI.setAuth(token);
                 const res = await fetchAPI.get(`/chats/${chatId}`);
 
                 if (!isMounted) return;

@@ -62,7 +62,6 @@ export default function NewChatLayout() {
 					return;
 				}
 
-				fetchAPI.setAuth(token);
 				const res = await fetchAPI.get(`/chats/${chatData._id}`);
 
 				if (res?.error) {

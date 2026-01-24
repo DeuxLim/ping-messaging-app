@@ -221,7 +221,6 @@ export default function ChatProvider({ children }) {
     // ---- Fetch Chats + Suggested Users ----
     useEffect(() => {
         if (!isReady || isSearch) return; // avoid refetch during search
-        fetchAPI.setAuth(token);
 
         const fetchChatData = async () => {
             setIsLoading(true);
