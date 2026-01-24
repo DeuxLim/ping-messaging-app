@@ -133,8 +133,9 @@ const login = async (req, res) => {
 	const ttlMs = exp * 1000 - Date.now(); // how many ms until expiration
 	res.cookie("refreshToken", refreshToken, {
 		httpOnly: true,
-		secure: true,
-		sameSite: "strict",
+		secure: true, // REQUIRED for SameSite=None
+		sameSite: "none", // 👈 REQUIRED for cross-site cookies
+		path: "/", // 👈 IMPORTANT
 		maxAge: ttlMs,
 	});
 
@@ -258,7 +259,8 @@ const refreshTokens = async (req, res) => {
 	res.cookie("refreshToken", newRefreshToken, {
 		httpOnly: true,
 		secure: true,
-		sameSite: "strict",
+		sameSite: "none", // 👈 REQUIRED
+		path: "/", // 👈 IMPORTANT
 		maxAge: ttlMs,
 	});
 
@@ -288,7 +290,8 @@ const logout = async (req, res) => {
 	res.clearCookie("refreshToken", {
 		httpOnly: true,
 		secure: true,
-		sameSite: "strict",
+		sameSite: "none", // 👈 MUST MATCH how it was set
+		path: "/", // 👈 MUST MATCH how it was set
 	});
 
 	return res.status(200).json({ message: "Logged out successfully" });
