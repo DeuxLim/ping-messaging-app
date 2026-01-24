@@ -18,7 +18,10 @@ const io = new Server(httpServer, {
 socketHandler(io);
 
 /* Listen for requests */
-httpServer.listen(5001);
+const PORT = process.env.PORT || 5001;
+httpServer.listen(PORT, () => {
+	console.log(`🚀 Server running on port ${PORT}`);
+});
 
 /* Check for errors */
 httpServer.on("error", (err) => {
