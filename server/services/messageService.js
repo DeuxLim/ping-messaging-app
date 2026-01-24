@@ -25,9 +25,9 @@ export const addMessageToChat = async ({
 				const uploadResponse = await cloudinary.uploader.upload(
 					attachment.base64,
 					{
-						folder: `chat_media_uploads/${chatId}`,
+						folder: `${process.env.CLOUDINARY_FOLDER}/chat_media_uploads/${chatId}`,
 						resource_type: "auto",
-					}
+					},
 				);
 
 				let mediaType;
@@ -42,7 +42,7 @@ export const addMessageToChat = async ({
 					publicId: uploadResponse.public_id,
 					type: mediaType,
 				};
-			})
+			}),
 		);
 	}
 
@@ -87,7 +87,7 @@ export const addMessageToChat = async ({
 	// FIX: Map → Object
 	if (messageObject.chat?.nicknames instanceof Map) {
 		messageObject.chat.nicknames = Object.fromEntries(
-			messageObject.chat.nicknames
+			messageObject.chat.nicknames,
 		);
 	}
 
@@ -172,7 +172,7 @@ export const updateChat = async ({
 			{
 				new: true,
 				runValidators: true,
-			}
+			},
 		);
 
 		const initiatorUserCollection = await User.findById(initiator);
@@ -190,7 +190,7 @@ export const updateChat = async ({
 		// Save system message (update)
 		const systemMessageTemplate = getSystemTemplate(
 			systemAction,
-			perspective
+			perspective,
 		);
 
 		const params = {

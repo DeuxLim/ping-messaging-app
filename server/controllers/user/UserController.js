@@ -93,7 +93,7 @@ const updateProfile = async (req, res) => {
 			const uploadResponse = await cloudinary.uploader.upload(
 				profilePicture,
 				{
-					folder: "user_profiles",
+					folder: `${process.env.CLOUDINARY_FOLDER}/user_profiles`,
 					resource_type: "image",
 				},
 			);

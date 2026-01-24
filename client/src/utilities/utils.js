@@ -1,5 +1,3 @@
-import crypto from "crypto";
-
 /**
  * Format a timestamp into a human-readable string.
  * - If the date is today → returns "HH:MM AM/PM"
@@ -69,14 +67,4 @@ export function isEmpty(value) {
 	if (Array.isArray(value)) return value.length === 0;
 	if (typeof value === "object") return Object.keys(value).length === 0;
 	return false;
-}
-
-// For email verification (OTP)
-export function generateVerificationToken() {
-	return crypto.randomInt(100000, 1000000).toString();
-}
-
-// For reset password (link token)
-export function generateResetPasswordToken() {
-	return crypto.randomBytes(32).toString("hex");
 }

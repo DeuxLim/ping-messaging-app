@@ -1,9 +1,4 @@
 import {
-	isEmpty,
-	generateVerificationToken,
-	generateResetPasswordToken,
-} from "../../../client/src/utilities/utils.js";
-import {
 	ACCESS_TOKEN_SECRET,
 	REFRESH_TOKEN_SECRET,
 	RESET_PASSWORD_TOKEN_TTL,
@@ -13,6 +8,8 @@ import {
 	hashToken,
 	signAccessToken,
 	signRefreshToken,
+	generateVerificationToken,
+	generateResetPasswordToken,
 } from "../../helpers/authHelper.js";
 import User from "../../models/user.js";
 import authValidation from "../../validations/auth/authValidation.js";
@@ -22,6 +19,7 @@ import {
 	sendResetPasswordEmail,
 	sendVerificationEmail,
 } from "../../library/resend.js";
+import { isEmpty } from "../../helpers/helper.js";
 
 const register = async (req, res) => {
 	try {
