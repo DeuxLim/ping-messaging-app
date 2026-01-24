@@ -10,7 +10,7 @@ import ResetPassword from "../pages/Auth/ResetPassword";
 
 /* Chat */
 import ProtectedRoute from "../components/ProtectedRoute";
-import Start from "../components/chat/start/start";
+import Start from "../components/chat/start/Start";
 import MainWindow from "../components/chat/MainWindow";
 import ChatLayout from "../components/chat/chat/ChatLayout";
 import NewChatLayout from "../components/chat/chat/NewChatLayout";
