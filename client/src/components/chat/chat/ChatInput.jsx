@@ -9,6 +9,7 @@ import { FaRegImage } from "react-icons/fa6";
 import { isEmpty } from "../../../utilities/utils";
 import { RxCross2 } from "react-icons/rx";
 import { LuCopyPlus } from "react-icons/lu";
+import { HiPaperAirplane } from "react-icons/hi2";
 
 export default function ChatInput() {
 	const [message, setMessage] = useState("");
@@ -25,7 +26,11 @@ export default function ChatInput() {
 		async (e) => {
 			e.preventDefault();
 			const trimmedMessage = message.trim();
-			if (!trimmedMessage && isEmpty(selectedMediaAttachments)) return;
+
+			const finalMessage =
+				!trimmedMessage && isEmpty(selectedMediaAttachments)
+					? "👍"
+					: trimmedMessage;
 
 			try {
 				fetchAPI.setAuth(token);
@@ -47,8 +52,8 @@ export default function ChatInput() {
 				const payload = {
 					chatId: chatIdToUse,
 					senderId: currentUser._id,
-					text: trimmedMessage,
-					media : selectedMediaAttachments,
+					text: finalMessage,
+					media: selectedMediaAttachments,
 				};
 
 				// Send message through socket
@@ -226,7 +231,7 @@ export default function ChatInput() {
 					type="submit"
 					className="size-10 rounded-full flex items-center justify-center text-blue-500 text-xl hover:bg-gray-100"
 				>
-					<FaThumbsUp />
+					{isEmpty(message) ? <FaThumbsUp /> : <HiPaperAirplane />}
 				</button>
 			</form>
 		</footer>

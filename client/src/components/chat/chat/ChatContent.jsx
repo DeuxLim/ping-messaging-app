@@ -124,7 +124,6 @@ export default function ChatContent() {
 
     return (
         <section className="flex-1 overflow-y-auto hide-scrollbar mb-4 h-full">
-            {isLoading && <div>Loading...</div>}
             {error && <div>Something went wrong...</div>}
 
             <ChatDetailsPanel />
@@ -154,6 +153,12 @@ export default function ChatContent() {
                 })}
                 <div ref={messagesEndRef} />
             </div>
+
+            {isLoading && (
+                <div class="flex items-center justify-center">
+                    <div class="size-8 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+                </div>
+            )}
 
             {
                 typingUsers.map((user, index) => (
