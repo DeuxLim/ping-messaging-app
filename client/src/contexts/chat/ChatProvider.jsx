@@ -123,8 +123,6 @@ export default function ChatProvider({ children }) {
         // 3. update chatItems (move chat to top, update preview)
         // 4. remove messaged user from suggested list
         socket.on("receiveMessage", ({ tempId, msg }) => {
-            console.log("receiveMessage:", tempId, msg);
-
             setActiveChatMessages((prev) => {
                 // only update if current chat matches
                 if (!activeChatData?._id || msg?.chat?._id !== activeChatData?._id) {
@@ -210,7 +208,12 @@ export default function ChatProvider({ children }) {
     }, [socket, activeChatData, socketStatus]);
 
     const addOptimisticMessage = (message) => {
-        setActiveChatMessages((prev) => [...prev, message]);
+        setActiveChatMessages(prev => [...prev, message]);
+
+        setActiveChatData(prev => {
+            if (!prev) return prev;
+            return { ...prev, lastMessage: message };
+        });
     };
 
     const replaceOptimisticMessage = (tempId, msg) => {

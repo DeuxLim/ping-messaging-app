@@ -41,7 +41,7 @@ export default function ChatMessage({ data }) {
     const showAvatar = !nextMsg || !sameSenderAsNext || longGapToNext;
 
     const sentMessageStatus = (() => {
-        if (data.status === "sending") return "sending…";
+        if (data.status === "sending") return "sending";
         if (data.status === "failed") return "failed";
         if (data.isSeen) return "seen";
         return "sent";
