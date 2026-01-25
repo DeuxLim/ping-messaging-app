@@ -104,18 +104,20 @@ export default function ChatProvider({ children }) {
         if (!socket || socketStatus !== "connected") return;
 
         socket.on("onlineUsers:list", (userIds) => {
-            setOnlineUsers((prev) => {
-                const updated = { ...prev };
-                userIds.forEach((id) => (updated[id] = "online"));
-                return updated;
+            const next = {};
+            userIds.forEach(id => {
+                next[id] = "online";
             });
+            setOnlineUsers(next);
         });
 
         socket.on("presence:update", ({ userId, status }) => {
-            setOnlineUsers((prev) => ({
-                ...prev,
-                [userId]: status,
-            }));
+            setOnlineUsers(prev => {
+                const next = { ...prev };
+                if (status === "online") next[userId] = "online";
+                else delete next[userId];
+                return next;
+            });
         });
 
         // 1. append to activeChatMessages

@@ -23,6 +23,7 @@ export default function SocketProvider({ children }) {
 
 			newSocket.on("connect", () => {
 				setSocketStatus("connected");
+				newSocket.emit("user:online", currentUser._id);
 			});
 
 			newSocket.on("connect_error", (err) => {
@@ -31,7 +32,6 @@ export default function SocketProvider({ children }) {
 			});
 
 			setSocket(newSocket);
-			newSocket.emit("user:online", currentUser._id);
 		} catch (error) {
 			console.log(error);
 			setSocketStatus("error");

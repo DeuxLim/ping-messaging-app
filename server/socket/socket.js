@@ -15,21 +15,15 @@ export const socketHandler = (io) => {
 			if (!userId) return;
 
 			socket.userId = userId;
+			socket.join(`user:${userId}`);
 
-			// Join a private user room (for personal updates)
-			const userRoom = `user:${userId}`;
-			socket.join(userRoom);
-
-			const wasOffline = !isUserOnline(userId);
 			addUser(userId, socket.id);
 
-			// Send the initial online users list
-			socket.emit("onlineUsers:list", getOnlineUserIds());
+			await User.findByIdAndUpdate(userId, { isOnline: true });
 
-			if (wasOffline) {
-				await User.findByIdAndUpdate(userId, { isOnline: true });
-				io.emit("presence:update", { userId, status: "online" });
-			}
+			// broadcast authoritative state
+			io.emit("presence:update", { userId, status: "online" });
+			io.emit("onlineUsers:list", getOnlineUserIds());
 		});
 
 		/** ─────────────── CHAT ROOM MANAGEMENT ─────────────── **/
