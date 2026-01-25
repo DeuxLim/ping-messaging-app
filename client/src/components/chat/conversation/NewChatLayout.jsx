@@ -55,20 +55,28 @@ export default function NewChatLayout() {
 						isGroup: selectedChatUsersWithCurrentUser.length > 2,
 						participants: selectedChatUsersWithCurrentUser,
 						chatName: null,
+						chatPhoto: null,
+						admins: [],
+						nicknames: {},
 						lastMessage: null,
+						mutedBy: [],
+						archivedBy: [],
+						deletedFor: [],
+						unreadCount: 0,
 						type: "temp",
 					});
-					//Group Chat Creation Functionality with Backend.
 					return;
 				}
 
 				const res = await fetchAPI.get(`/chats/${chatData._id}`);
 
-				if (res?.error) {
-					setActiveChatMessages([]);
-				} else {
-					setActiveChatMessages(res);
-				}
+				const messages = Array.isArray(res)
+					? res
+					: Array.isArray(res?.messages)
+						? res.messages
+						: [];
+
+				setActiveChatMessages(messages);
 
 				if (isMounted) {
 					setActiveChat(chatData);
@@ -97,7 +105,7 @@ export default function NewChatLayout() {
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center h-full text-gray-500 text-sm">
-				Loading chat data...
+				Loading chat...
 			</div>
 		);
 	}

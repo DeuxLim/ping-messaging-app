@@ -96,7 +96,7 @@ export default function ChatProvider({ children }) {
     );
     const clearActiveChat = useCallback(() => {
         setActiveChatData(null);
-        setActiveChatMessages(null);
+        setActiveChatMessages([]);
     }, [setActiveChatData, setActiveChatMessages]);
 
     // ---- Socket Presence ----
@@ -126,16 +126,18 @@ export default function ChatProvider({ children }) {
         // 4. remove messaged user from suggested list
         socket.on("receiveMessage", ({ tempId, msg }) => {
             setActiveChatMessages((prev) => {
-                // only update if current chat matches
-                if (!activeChatData?._id || msg?.chat?._id !== activeChatData?._id) {
-                    return prev;
+                const safePrev = Array.isArray(prev) ? prev : [];
+
+                const activeChatId = activeChatDataRef.current?._id;
+                if (!activeChatId || msg?.chat?._id !== activeChatId) {
+                    return safePrev;
                 }
 
                 // 1) Try replacing optimistic message (sender case)
                 if (tempId) {
                     let replaced = false;
 
-                    const updated = prev.map((m) => {
+                    const updated = safePrev.map((m) => {
                         if (m._id === tempId) {
                             replaced = true;
                             return { ...msg, status: "sent" };
@@ -148,11 +150,11 @@ export default function ChatProvider({ children }) {
                 }
 
                 // 2) Prevent duplicates
-                const exists = prev.some((m) => m._id === msg._id);
-                if (exists) return prev;
+                const exists = safePrev.some((m) => m._id === msg._id);
+                if (exists) return safePrev;
 
                 // 3) Append new message (receiver or fallback)
-                return [...prev, msg];
+                return [...safePrev, msg];
             });
 
             // --- Update active chat lastMessage ---
@@ -210,7 +212,10 @@ export default function ChatProvider({ children }) {
     }, [socket, activeChatData, socketStatus]);
 
     const addOptimisticMessage = (message) => {
-        setActiveChatMessages(prev => [...prev, message]);
+        setActiveChatMessages(prev => {
+            const safePrev = Array.isArray(prev) ? prev : [];
+            return [...safePrev, message];
+        });
 
         setActiveChatData(prev => {
             if (!prev) return prev;
