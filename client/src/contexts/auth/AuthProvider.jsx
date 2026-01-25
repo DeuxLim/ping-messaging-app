@@ -37,8 +37,6 @@ export default function AuthProvider({ children }) {
     };
 
     const refreshToken = useCallback(async () => {
-        setAuthStatus("checking");
-
         try {
             const res = await fetchAPI.post("/auth/refresh", null);
 
@@ -47,6 +45,7 @@ export default function AuthProvider({ children }) {
             }
 
             // set new access token
+            fetchAPI.setAuth(res.accessToken);
             setToken(res.accessToken);
 
             // fetch current user
