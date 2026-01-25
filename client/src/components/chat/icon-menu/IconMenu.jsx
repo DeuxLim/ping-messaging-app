@@ -101,7 +101,7 @@ export default function IconMenu() {
                 </div>
 
                 {/* Toggle Menu */}
-                <button onClick={setIsIconMenuExpanded} className="size-9 rounded-full bg-gray-200 flex justify-center items-center">
+                <button onClick={setIsIconMenuExpanded} className="size-9 rounded-full bg-gray-200 md:flex justify-center items-center hidden">
                     <BiFoodMenu className="text-xl" />
                 </button>
             </div>
