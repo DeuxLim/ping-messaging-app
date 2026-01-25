@@ -181,6 +181,24 @@ export default function ChatProvider({ children }) {
         };
     }, [socket, activeChatData, socketStatus]);
 
+    const addOptimisticMessage = (message) => {
+        setActiveChatMessages((prev) => [...prev, message]);
+    };
+
+    const replaceOptimisticMessage = (tempId, realMessage) => {
+        setActiveChatMessages((prev) =>
+            prev.map((m) => (m._id === tempId ? realMessage : m))
+        );
+    };
+
+    const markMessageFailed = (tempId) => {
+        setActiveChatMessages((prev) =>
+            prev.map((m) =>
+                m._id === tempId ? { ...m, status: "failed" } : m
+            )
+        );
+    };
+
     /* ----- HANDLE MESSAGE SEEN STATUS ----  */
     const activeChatDataRef = useRef(activeChatData);
     useEffect(() => {
@@ -255,6 +273,9 @@ export default function ChatProvider({ children }) {
         // chat states
         activeChatData,
         activeChatMessages,
+        addOptimisticMessage,
+        replaceOptimisticMessage,
+        markMessageFailed,
         setActiveChatMessages,
         setActiveChat,
         setActiveChatData,

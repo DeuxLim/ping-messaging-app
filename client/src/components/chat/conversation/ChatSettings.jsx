@@ -9,7 +9,7 @@ import CenterPopUpModal from '../../common/CenterPopUpModal';
 import { RiEdit2Fill } from "react-icons/ri";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoMdCheckmark } from "react-icons/io";
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useChatDisplay from '../../../hooks/useChatDisplay';
 import { MdModeEdit } from "react-icons/md";
 import useSocket from "../../../hooks/useSocket";
@@ -87,8 +87,14 @@ export default function ChatSettings() {
         setIsChatSettingsOpen(false);
     };
 
+    useEffect(() => {
+        if (!isDesktop) {
+            setIsChatSettingsOpen(false);
+        }
+    }, [isDesktop, setIsChatSettingsOpen]);
+
     return (
-        <div className={`h-full shadow-sm overflow-hidden bg-white rounded-xl p-2 min-w-80 w-full ${isChatSettingsOpen && isDesktop ? "max-w-[400px]" : ""}`}>
+        <div className={`h-full shadow-sm overflow-hidden bg-white rounded-xl p-2 min-w-80 w-full ${isChatSettingsOpen ? "max-w-[400px]" : ""}`}>
             <div className="flex justify-center items-center flex-col gap-4">
 
                 <div className='flex justify-center items-start w-full relative'>
