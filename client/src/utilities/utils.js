@@ -68,3 +68,16 @@ export function isEmpty(value) {
 	if (typeof value === "object") return Object.keys(value).length === 0;
 	return false;
 }
+
+export const isEmojiOnly = (text) => {
+	if (!text) return false;
+
+	// remove whitespace
+	const cleaned = text.trim();
+
+	// emoji unicode regex
+	const emojiRegex =
+		/^(?:\p{Emoji_Presentation}|\p{Extended_Pictographic}|\s)+$/u;
+
+	return emojiRegex.test(cleaned);
+};

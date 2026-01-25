@@ -1,13 +1,15 @@
 import useToggle from "../../../hooks/common/useToggle";
 import useAuth from "../../../hooks/useAuth";
 import useChat from "../../../hooks/useChat";
-import { formatLastMessageDateTime, isEmpty } from "../../../utilities/utils";
+import { formatLastMessageDateTime, isEmpty, isEmojiOnly } from "../../../utilities/utils";
 import AvatarImage from "../global/AvatarImage";
 
 export default function ChatMessage({ data }) {
     const { currentUser } = useAuth();
     const { activeChatData, activeChatMessages } = useChat();
     const [messageClicked, setMessageClicked] = useToggle(false);
+
+    const emojiOnly = isEmojiOnly(data.text);
 
     const isSender = data.sender?._id === currentUser?._id;
     const isLastMessage =
@@ -64,12 +66,10 @@ export default function ChatMessage({ data }) {
                             <div
                                 id={`msg-${data?._id}`}
                                 data-seen={data.isSeen}
-                                className={`
-                                border border-gray-200 px-3 py-1.5 bg-gray-200 break-words 
-                                ${isNewGroup ?
-                                        "rounded-tl-3xl rounded-tr-3xl rounded-bl-sm rounded-br-3xl"
-                                        : "rounded-tl-md rounded-tr-2xl rounded-bl-md rounded-br-2xl"}
-                            `}>
+                                className={emojiOnly
+                                    ? "text-5xl leading-none select-none"
+                                    : `border border-gray-200 px-3 py-1.5 bg-gray-200 break-words 
+                                            ${isNewGroup ? "rounded-tl-3xl rounded-tr-3xl rounded-bl-sm rounded-br-3xl" : "rounded-tl-md rounded-tr-2xl rounded-bl-md rounded-br-2xl"}`}>
                                 {data.text}
                             </div>
                         </div>
@@ -143,10 +143,11 @@ export default function ChatMessage({ data }) {
                         id={`msg-${data?._id}`}
                         data-seen={data.isSeen}
                         className={
-                            `bg-blue-500 text-white px-4 py-1.5 max-w-2/3 break-words 
-                            ${isNewGroup && longTimeGapFromLast ?
-                                "rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-sm"
-                                : "rounded-tl-2xl rounded-tr-md rounded-bl-2xl rounded-br-md"}`
+                            emojiOnly
+                                ? "text-5xl leading-none select-none"
+                                : `bg-blue-500 text-white px-4 py-1.5 max-w-2/3 break-words ${isNewGroup && longTimeGapFromLast
+                                    ? "rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-sm"
+                                    : "rounded-tl-2xl rounded-tr-md rounded-bl-2xl rounded-br-md"}`
                         }
                     >
                         {data.text}

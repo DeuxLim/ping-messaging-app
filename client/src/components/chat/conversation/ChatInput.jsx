@@ -229,7 +229,7 @@ export default function ChatInput() {
 					type="submit"
 					className="size-10 rounded-full flex items-center justify-center text-blue-500 text-xl hover:bg-gray-100"
 				>
-					{isEmpty(message) ? <FaThumbsUp /> : <HiPaperAirplane />}
+					{isEmpty(message) && isEmpty(selectedMediaAttachments) ? <FaThumbsUp /> : <HiPaperAirplane />}
 				</button>
 			</form>
 		</footer>
