@@ -8,6 +8,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 			from: "Acme <onboarding@resend.dev>",
 			to: [email],
 			subject: "Verify your email address",
+			reply_to: "support@messenger-clone.com",
 			html: `
         <div style="font-family: Arial, sans-serif; background-color: #f9fafb; padding: 40px;">
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 32px; border-radius: 8px;">
@@ -73,6 +74,7 @@ export const sendResetPasswordEmail = async (email, resetPasswordToken) => {
 			from: "Acme <onboarding@resend.dev>",
 			to: [email],
 			subject: "Reset your password",
+			reply_to: "support@messenger-clone.com",
 			html: `
         <div style="font-family: Arial, sans-serif; background-color: #f9fafb; padding: 40px;">
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 32px; border-radius: 8px;">
