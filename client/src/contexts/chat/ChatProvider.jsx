@@ -118,59 +118,87 @@ export default function ChatProvider({ children }) {
             }));
         });
 
-        socket.on("receiveMessage", (msg) => {
-            // --- Update chat messages on the chat window
-            setActiveChatMessages(prev => {
+        // 1. append to activeChatMessages
+        // 2. update activeChatData.lastMessage
+        // 3. update chatItems (move chat to top, update preview)
+        // 4. remove messaged user from suggested list
+        socket.on("receiveMessage", ({ tempId, msg }) => {
+            console.log("receiveMessage:", tempId, msg);
+
+            setActiveChatMessages((prev) => {
                 // only update if current chat matches
                 if (!activeChatData?._id || msg?.chat?._id !== activeChatData?._id) {
-                    return prev; // ignore message from other chat
+                    return prev;
                 }
+
+                // 1) Try replacing optimistic message (sender case)
+                if (tempId) {
+                    let replaced = false;
+
+                    const updated = prev.map((m) => {
+                        if (m._id === tempId) {
+                            replaced = true;
+                            return { ...msg, status: "sent" };
+                        }
+                        return m;
+                    });
+
+                    if (replaced) return updated;
+                    // else → receiver path, fall through to append
+                }
+
+                // 2) Prevent duplicates
+                const exists = prev.some((m) => m._id === msg._id);
+                if (exists) return prev;
+
+                // 3) Append new message (receiver or fallback)
                 return [...prev, msg];
             });
 
-            setActiveChatData(prev => {
+            // --- Update active chat lastMessage ---
+            setActiveChatData((prev) => {
+                if (!prev || prev._id !== msg?.chat?._id) return prev;
                 return { ...prev, lastMessage: msg };
             });
 
-            // --- Update chat list and move the latest chat to top ---
-            setChatItems(prev => {
-                const exists = prev.some(chat => chat?._id === msg?.chat?._id);
+            // --- Update chat list + move chat to top ---
+            setChatItems((prev) => {
+                const exists = prev.some((chat) => chat?._id === msg?.chat?._id);
                 let updatedChats;
 
                 if (exists) {
-                    // update existing chat and move it to top
-                    const updated = prev.map(chat =>
-                        chat?._id === msg?.chat?._id ? { ...msg?.chat } : chat
+                    const updated = prev.map((chat) =>
+                        chat?._id === msg?.chat?._id ? { ...msg.chat } : chat
                     );
-                    const movedChat = updated.find(chat => chat?._id === msg?.chat?._id);
+
+                    const movedChat = updated.find(
+                        (chat) => chat?._id === msg?.chat?._id
+                    );
+
                     updatedChats = [
                         movedChat,
-                        ...updated.filter(chat => chat?._id !== msg?.chat?._id),
+                        ...updated.filter((chat) => chat?._id !== msg?.chat?._id),
                     ];
                 } else {
-                    // new chat, add to top
                     updatedChats = [msg.chat, ...prev];
                 }
 
                 return updatedChats;
             });
 
-            // --- Remove messaged user (the other participant) from suggested users ---
-            setUserItems(prev => {
+            // --- Remove messaged user from suggested users ---
+            setUserItems((prev) => {
                 if (!msg?.chat || !Array.isArray(msg?.chat?.participants)) return prev;
 
-                // Identify the other user (not the sender)
-                const otherUser = msg?.chat?.participants.find(
-                    p => String(p?._id) !== String(msg.sender?._id)
+                const otherUser = msg.chat.participants.find(
+                    (p) => String(p?._id) !== String(msg.sender?._id)
                 );
 
                 if (!otherUser) return prev;
 
-                const filtered = prev.filter(
-                    user => String(user?._id) !== String(otherUser?._id)
+                return prev.filter(
+                    (user) => String(user?._id) !== String(otherUser?._id)
                 );
-
-                return filtered;
             });
         });
 
@@ -185,10 +213,20 @@ export default function ChatProvider({ children }) {
         setActiveChatMessages((prev) => [...prev, message]);
     };
 
-    const replaceOptimisticMessage = (tempId, realMessage) => {
-        setActiveChatMessages((prev) =>
-            prev.map((m) => (m._id === tempId ? realMessage : m))
-        );
+    const replaceOptimisticMessage = (tempId, msg) => {
+        setActiveChatMessages((prev) => {
+            let replaced = false;
+
+            const updated = prev.map((m) => {
+                if (m._id === tempId) {
+                    replaced = true;
+                    return { ...msg, status: "sent" };
+                }
+                return m;
+            });
+
+            return replaced ? updated : prev;
+        });
     };
 
     const markMessageFailed = (tempId) => {

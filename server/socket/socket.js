@@ -42,27 +42,33 @@ export const socketHandler = (io) => {
 		});
 
 		/** ─────────────── MESSAGES ─────────────── **/
-		socket.on("sendMessage", async ({ chatId, senderId, text, media }) => {
-			if (!chatId || !senderId || !text) return;
+		socket.on(
+			"sendMessage",
+			async ({ chatId, senderId, text, media, tempId }) => {
+				if (!chatId || !senderId || !text) return;
 
-			const newMessage = await addMessageToChat({
-				chatId,
-				senderId,
-				text,
-				media,
-			});
+				const newMessage = await addMessageToChat({
+					chatId,
+					senderId,
+					text,
+					media,
+				});
 
-			const room = `chat:${chatId}`;
-			socket.join(room);
-			io.to(room).emit("receiveMessage", newMessage);
-		});
+				const room = `chat:${chatId}`;
+
+				io.to(room).emit("receiveMessage", {
+					tempId,
+					msg: newMessage,
+				});
+			},
+		);
 
 		socket.on("message:seen", async ({ chatId, seenBy, seenMessages }) => {
 			if (!chatId || !seenBy || seenMessages.length === 0) return;
 
 			await Message.updateMany(
 				{ _id: { $in: seenMessages } },
-				{ $set: { isSeen: true } }
+				{ $set: { isSeen: true } },
 			);
 
 			io.to(`chat:${chatId}`).emit("messages:seenUpdate", {
@@ -94,7 +100,7 @@ export const socketHandler = (io) => {
 				});
 
 				io.to(`chat:${chatId}`).emit("receiveMessage", systemMessage);
-			}
+			},
 		);
 
 		socket.on(
@@ -117,7 +123,7 @@ export const socketHandler = (io) => {
 				});
 
 				io.to(`chat:${chatId}`).emit("receiveMessage", systemMessage);
-			}
+			},
 		);
 		/** ─────────────── Chat updates ─────────────── **/
 

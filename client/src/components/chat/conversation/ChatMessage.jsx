@@ -40,7 +40,12 @@ export default function ChatMessage({ data }) {
     const longGapToNext = minutesDiffToNext > MESSAGE_GROUPING_INTERVAL;
     const showAvatar = !nextMsg || !sameSenderAsNext || longGapToNext;
 
-    const sentMessageStatus = data.isSeen ? "seen" : "sent";
+    const sentMessageStatus = (() => {
+        if (data.status === "sending") return "sending…";
+        if (data.status === "failed") return "failed";
+        if (data.isSeen) return "seen";
+        return "sent";
+    })();
 
     // --- Message bubbles ---
     if (!isSender) {

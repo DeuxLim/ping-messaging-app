@@ -13,7 +13,7 @@ import { HiPaperAirplane } from "react-icons/hi2";
 
 export default function ChatInput() {
 	const [message, setMessage] = useState("");
-	const { activeChatData } = useChat();
+	const { activeChatData, addOptimisticMessage } = useChat();
 	const { currentUser } = useAuth();
 	const { socket } = useSocket();
 	const { chatId = null } = useParams();
@@ -47,15 +47,36 @@ export default function ChatInput() {
 					navigate(`/chats/${chatIdToUse}`, { replace: true });
 				}
 
-				const payload = {
+				const tempId = `temp-${crypto.randomUUID()}`;
+				const now = new Date().toISOString();
+
+				const optimisticMessage = {
+					_id: tempId,
+					chatId: chatIdToUse,
+					sender: {
+						_id: currentUser._id,
+						firstName: currentUser.firstName,
+						lastName: currentUser.lastName,
+						profilePicture: currentUser.profilePicture,
+					},
+					text: finalMessage,
+					media: selectedMediaAttachments,
+					createdAt: now,
+					isSeen: false,
+					status: "sending",
+					type: "user",
+				};
+
+				addOptimisticMessage(optimisticMessage);
+
+				// Send message through socket
+				socket?.emit("sendMessage", {
+					tempId,
 					chatId: chatIdToUse,
 					senderId: currentUser._id,
 					text: finalMessage,
 					media: selectedMediaAttachments,
-				};
-
-				// Send message through socket
-				socket?.emit("sendMessage", payload);
+				});
 
 				setMessage("");
 				setSelectedMediaAttachments([]);
@@ -63,7 +84,7 @@ export default function ChatInput() {
 				console.error("Message send failed:", err);
 			}
 		},
-		[message, chatId, currentUser?._id, navigate, socket, activeChatData, selectedMediaAttachments]
+		[message, chatId, currentUser, navigate, socket, activeChatData, selectedMediaAttachments, addOptimisticMessage]
 	);
 
 	// ---- Typing Indicator ----
