@@ -151,33 +151,33 @@ export default function ChatContent() {
                     );
                 })}
                 <div ref={messagesEndRef} />
-            </div>
 
-            {isLoading && (
-                <div className="flex items-center justify-center">
-                    <div className="size-8 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
-                </div>
-            )}
-
-            {
-                typingUsers.map((user, index) => (
-                    <div className="p-3" key={index}>
-                        <div className="flex text-sm mt-0.5">
-                            <div className="flex gap-2 items-center max-w-[75%]">
-                                <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
-                                    <div className="w-7 h-7 rounded-full overflow-hidden">
-                                        <AvatarImage chatPhotoUrl={user?.profilePicture?.url} />
+                {
+                    typingUsers.map((user, index) => (
+                        <div className="h-full flex justify-start items-end" key={index}>
+                            <div className="flex text-sm mt-0.5">
+                                <div className="flex gap-2 items-center max-w-[75%]">
+                                    <div className="w-7 h-7 flex-shrink-0 flex justify-center items-end">
+                                        <div className="w-7 h-7 rounded-full overflow-hidden">
+                                            <AvatarImage chatPhotoUrl={user?.profilePicture?.url} />
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="px-3 py-1.5 bg-white text-sm text-gray-400">
-                                    typing...
+                                    <div className="px-3 py-1.5 bg-white text-sm text-gray-400">
+                                        typing...
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    ))
+                }
+                {isLoading && (
+                    <div className="flex items-center justify-center h-full">
+                        <div className="size-8 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
                     </div>
-                ))
-            }
+                )}
+            </div>
+
         </section>
     );
 }
