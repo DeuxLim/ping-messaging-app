@@ -6,10 +6,10 @@ import useActiveChat from "../../../hooks/useActiveChat";
 import { useEffect, useState, useMemo, memo } from "react";
 import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
-import ChatItemAvatar from "./ChatItem/ChatItemAvatar";
-import ChatItemName from "./ChatItem/ChatItemName";
-import ChatItemContentPreview from "./ChatItem/ChatItemContentPreview";
-import ChatItemMeta from "./ChatItem/ChatItemMeta";
+import ChatItemAvatar from "./chat-item/ChatItemAvatar";
+import ChatItemName from "./chat-item/ChatItemName";
+import ChatItemContentPreview from "./chat-item/ChatItemContentPreview";
+import ChatItemMeta from "./chat-item/ChatItemMeta";
 import AvatarImage from "./AvatarImage";
 
 function ChatItem({ chatData, variant, isSelecting = false }) {

@@ -14,7 +14,7 @@ import { HiPaperAirplane } from "react-icons/hi2";
 export default function ChatInput() {
 	const [message, setMessage] = useState("");
 	const { activeChatData } = useChat();
-	const { currentUser, token } = useAuth();
+	const { currentUser } = useAuth();
 	const { socket } = useSocket();
 	const { chatId = null } = useParams();
 	const navigate = useNavigate();
@@ -63,7 +63,7 @@ export default function ChatInput() {
 				console.error("Message send failed:", err);
 			}
 		},
-		[message, chatId, currentUser?._id, navigate, socket, token, activeChatData, selectedMediaAttachments]
+		[message, chatId, currentUser?._id, navigate, socket, activeChatData, selectedMediaAttachments]
 	);
 
 	// ---- Typing Indicator ----

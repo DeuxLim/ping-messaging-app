@@ -12,10 +12,10 @@ import ResetPassword from "../pages/Auth/ResetPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Start from "../components/chat/start/Start";
 import MainWindow from "../components/chat/MainWindow";
-import ChatLayout from "../components/chat/chat/ChatLayout";
-import NewChatLayout from "../components/chat/chat/NewChatLayout";
-import ChatWindow from "../components/chat/chat/ChatWindow";
-import ActiveChatWrapper from "../components/chat/chat/ActiveChatWrapper";
+import ChatLayout from "../components/chat/conversation/ChatLayout";
+import NewChatLayout from "../components/chat/conversation/NewChatLayout";
+import ChatWindow from "../components/chat/conversation/ChatWindow";
+import ActiveChatWrapper from "../components/chat/conversation/ActiveChatWrapper";
 
 /* Settings */
 import Profile from "../pages/Profile";

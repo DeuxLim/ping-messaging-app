@@ -1,5 +1,5 @@
 import { BiFoodMenu } from "react-icons/bi";
-import ChatItemAvatar from "../global/ChatItem/ChatItemAvatar";
+import ChatItemAvatar from "../global/chat-item/ChatItemAvatar";
 import { TbMessageCircleFilled } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
 import useAuth from "../../../hooks/useAuth";

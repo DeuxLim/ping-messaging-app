@@ -1,8 +1,8 @@
 import { Outlet, useLocation } from "react-router";
 import Sidebar from "../components/chat/Sidebar";
 import useChatDisplay from "../hooks/useChatDisplay";
-import ChatSettings from "../components/chat/chat/ChatSettings";
-import IconMenu from "../components/chat/IconMenu/IconMenu";
+import ChatSettings from "../components/chat/conversation/ChatSettings";
+import IconMenu from "../components/chat/icon-menu/IconMenu";
 import useAuth from "../hooks/useAuth";
 import { useState } from "react";
 import { fetchAPI } from "../api/fetchApi";

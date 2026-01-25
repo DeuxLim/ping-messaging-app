@@ -154,8 +154,8 @@ export default function ChatContent() {
             </div>
 
             {isLoading && (
-                <div class="flex items-center justify-center">
-                    <div class="size-8 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+                <div className="flex items-center justify-center">
+                    <div className="size-8 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
                 </div>
             )}
 
