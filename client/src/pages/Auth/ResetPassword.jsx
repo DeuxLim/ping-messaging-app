@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
-import { fetchAPI } from "../../api/fetchAPI";
+import { resetPasswordService } from "../../services/auth.service";
 
 export default function ResetPassword() {
     const [searchParams] = useSearchParams();
@@ -35,18 +35,12 @@ export default function ResetPassword() {
         try {
             setStatus("loading");
 
-            const res = await fetchAPI.post("/auth/reset-password", {
-                token,
-                password,
-            });
-
-            if (res.error) {
-                throw new Error(res.error.message || "Reset failed.");
-            }
+            await resetPasswordService({ token, password });
 
             setStatus("success");
             setMessage("Your password has been reset successfully.");
         } catch (err) {
+            console.error(err);
             setStatus("error");
             setMessage(err.message || "Reset failed.");
         }

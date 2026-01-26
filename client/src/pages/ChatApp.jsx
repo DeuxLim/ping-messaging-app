@@ -3,10 +3,10 @@ import Sidebar from "../components/chat/Sidebar";
 import ChatSettings from "../components/chat/conversation/ChatSettings";
 import IconMenu from "../components/chat/icon-menu/IconMenu";
 import { useState } from "react";
-import { fetchAPI } from "../api/fetchAPI";
 import { isEmpty } from "../utilities/utils";
 import useAuth from "../contexts/auth/useAuth";
 import useChatDisplay from "../contexts/chat/chatDisplay/useChatDisplay";
+import { resendVerificationService } from "../services/auth.service";
 
 export default function ChatApp() {
     const { sidebarVisible, isDesktop, isChatSettingsOpen } = useChatDisplay();
@@ -26,17 +26,14 @@ export default function ChatApp() {
         setResendSuccess(null);
 
         try {
-            const res = await fetchAPI.post("/auth/resend-verification", {
-                email: currentUser.email,
-            });
+            const { message } = await resendVerificationService(currentUser.email);
 
             setResendSuccess(true);
-            setResendMessage(res.data?.message || "Verification email sent.");
+            setResendMessage(message);
         } catch (err) {
+            console.error(err);
             setResendSuccess(false);
-            setResendMessage(
-                err.response?.data?.message || "Failed to resend verification email."
-            );
+            setResendMessage("Failed to resend verification email.");
         } finally {
             setIsResending(false);
         }

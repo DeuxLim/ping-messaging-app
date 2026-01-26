@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
-import { fetchAPI } from "../../api/fetchAPI";
+import { verifyEmailService } from "../../services/auth.service";
 
 export default function VerifyEmail() {
     const [searchParams] = useSearchParams();
@@ -18,15 +18,12 @@ export default function VerifyEmail() {
 
         const verifyEmail = async () => {
             try {
-                const res = await fetchAPI.post("/auth/verify-email", { token });
-
-                if (res.error) {
-                    throw new Error(res.error.message || "Verification failed.");
-                }
+                await verifyEmailService(token);
 
                 setStatus("success");
                 setMessage("Your email has been verified. Please log in again.");
             } catch (err) {
+                console.error(err);
                 setStatus("error");
                 setMessage(err.message || "Verification failed.");
             }

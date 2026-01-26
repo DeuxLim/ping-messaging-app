@@ -1,10 +1,10 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { fetchAPI } from "../../api/fetchAPI.js";
 import FormInput from "../../components/auth/FormInput.jsx";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import { isEmpty } from "../../utilities/utils.js";
+import { registerService } from "../../services/auth.service.js";
 
 export default function Login() {
     const [firstName, setFirstName] = useState("");
@@ -69,31 +69,32 @@ export default function Login() {
 
         const validationErrors = validateForm();
         setErrors(validationErrors);
-
         if (!isEmpty(validationErrors)) return;
 
         setLoading(true);
+        setErrors({});
 
         try {
-            const response = await fetchAPI.post('/auth/register', {
+            await registerService({
                 firstName,
                 lastName,
                 userName,
                 email,
                 password,
-                confirmPassword
+                confirmPassword,
             });
 
-            if (response.error && !isEmpty(response.error)) {
-                setErrors(response.error);
-            }
-
-            setLoading(false);
             navigate("/auth/login", { replace: true });
-        } catch (error) {
-            console.log(error);
+        } catch (err) {
+            console.error(err);
+
+            if (err.fieldErrors) {
+                setErrors(err.fieldErrors); // backend field errors
+            } else {
+                setErrors({ general: err.message || "Something went wrong..." });
+            }
+        } finally {
             setLoading(false);
-            setErrors({ general: "Something Went Wrong..." });
         }
     }
 

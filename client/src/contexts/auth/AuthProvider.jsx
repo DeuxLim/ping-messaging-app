@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AuthContext from "./AuthContext";
 import { fetchAPI } from "../../api/fetchAPI";
+import { logoutService, refreshSessionService } from "../../services/auth.service";
 
 export default function AuthProvider({ children }) {
     const [authStatus, setAuthStatus] = useState("checking"); // "checking" | "authenticated" | "unauthenticated"
@@ -30,7 +31,7 @@ export default function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetchAPI.post("/auth/logout", null);
+            await logoutService();
         } finally {
             setUnauthenticated();
         }
@@ -38,26 +39,10 @@ export default function AuthProvider({ children }) {
 
     const refreshToken = useCallback(async () => {
         try {
-            const res = await fetchAPI.post("/auth/refresh", null);
-
-            if (!res?.accessToken) {
-                throw new Error("Invalid refresh response");
-            }
-
-            // set new access token
-            fetchAPI.setAuth(res.accessToken);
-            setToken(res.accessToken);
-
-            // fetch current user
-            const me = await fetchAPI.get("/auth/me", null);
-
-            if (!me?.user) {
-                throw new Error("Failed to fetch user");
-            }
-
-            setAuthenticated(me.user, res.accessToken);
-        } catch (error) {
-            console.log(error);
+            const { user, accessToken } = await refreshSessionService();
+            setAuthenticated(user, accessToken);
+        } catch (err) {
+            console.error("Refresh failed:", err);
             setUnauthenticated();
         }
     }, []);

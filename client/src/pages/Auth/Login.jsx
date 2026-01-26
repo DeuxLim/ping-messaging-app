@@ -1,11 +1,11 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { fetchAPI } from "../../api/fetchAPI";
 import FormInput from "../../components/auth/FormInput";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import { isEmpty } from "../../utilities/utils";
 import useAuth from "../../contexts/auth/useAuth";
+import { loginService } from "../../services/auth.service";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -45,28 +45,20 @@ export default function Login() {
         if (!isEmpty(validationErrors)) return;
 
         setLoading(true);
+        setErrors({});
 
         try {
-            const responseJson = await fetchAPI.post('/auth/login',
-                { email, password, rememberMe }
-            );
+            const { user, accessToken } = await loginService({
+                email,
+                password,
+                rememberMe,
+            });
 
-            if (responseJson.error) {
-                const message = responseJson.error.general || responseJson.error.message || "Login failed";
-                setErrors({ general: message });
-                return;
-            }
-
-            if (!responseJson.user || !responseJson.accessToken) {
-                setErrors({ general: "Something went wrong..." });
-                return;
-            }
-
-            login(responseJson.user, responseJson.accessToken);
+            login(user, accessToken); // context state only
             navigate("/chats");
-        } catch (error) {
-            console.log(error);
-            setErrors({ general: "Login failed" });
+        } catch (err) {
+            console.error(err);
+            setErrors({ general: err.message || "Login failed" });
         } finally {
             setLoading(false);
         }

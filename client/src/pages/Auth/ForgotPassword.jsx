@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { isEmpty } from "../../utilities/utils";
-import { fetchAPI } from "../../api/fetchAPI";
+import { forgotPasswordService } from "../../services/auth.service";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -27,20 +27,24 @@ export default function ForgotPassword() {
 
         const validationErrors = validateForm();
         setErrors(validationErrors);
-
         if (!isEmpty(validationErrors)) return;
 
         setStatus("loading");
         setErrors({});
         setMessage("");
 
-        // simulate API call
-        const res = await fetchAPI.post('/auth/forgot-password', { email });
+        try {
+            await forgotPasswordService(email);
 
-        console.log(res);
-
-        setStatus("success");
-        setMessage("If that email exists, a password reset link has been sent.");
+            setStatus("success");
+            setMessage(
+                "If that email exists, a password reset link has been sent."
+            );
+        } catch (err) {
+            console.error(err);
+            setStatus("error");
+            setMessage("Something went wrong. Please try again.");
+        }
     }
 
     return (
