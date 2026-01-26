@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import useAuth from "../hooks/useAuth";
 import { FiEdit } from "react-icons/fi";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoCameraOutline } from "react-icons/io5";
 import { useNavigate } from "react-router";
 import defaultUserImage from "../assets/images/default-user.png"
+import useAuth from "../contexts/auth/useAuth";
 
 export default function Profile() {
 	const {

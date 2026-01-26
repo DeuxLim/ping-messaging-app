@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
-import { fetchAPI } from "../../api/fetchApi";
+import { fetchAPI } from "../../api/fetchAPI";
 
 export default function VerifyEmail() {
     const [searchParams] = useSearchParams();

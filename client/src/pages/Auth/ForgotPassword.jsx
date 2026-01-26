@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { isEmpty } from "../../utilities/utils";
-import { fetchAPI } from "../../api/fetchApi";
+import { fetchAPI } from "../../api/fetchAPI";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");

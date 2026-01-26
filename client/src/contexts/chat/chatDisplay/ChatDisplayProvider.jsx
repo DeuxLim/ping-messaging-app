@@ -1,8 +1,8 @@
-import ChatDisplayContext from "./ChatDisplayContext";
-import useChat from "../../../hooks/useChat";
-import useSocket from "../../../hooks/useSocket";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import useChat from "../useChat";
+import useSocket from "../../socket/useSocket";
+import ChatDisplayContext from "./ChatDisplayContext";
 
 export default function ChatDisplayProvider({ children }) {
 	const [typingChats, setTypingChats] = useState({});

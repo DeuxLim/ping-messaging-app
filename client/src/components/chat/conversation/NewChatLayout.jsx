@@ -1,12 +1,11 @@
 import { Outlet, useNavigate } from "react-router";
-import useChat from "../../../hooks/useChat"
-import ChatItem from "../global/ChatItem";
 import { useEffect, useState } from "react";
 import { getOtherParticipants, isEmpty } from "../../../utilities/utils";
 import ChatSearchInput from "./ChatSearchInput";
-import useActiveChat from "../../../hooks/useActiveChat";
-import { fetchAPI } from "../../../api/fetchApi";
-import useAuth from "../../../hooks/useAuth";
+import { fetchAPI } from "../../../api/fetchAPI";
+import useAuth from "../../../contexts/auth/useAuth";
+import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
+import useChat from "../../../contexts/chat/useChat";
 
 export default function NewChatLayout() {
 	const { token, currentUser } = useAuth();

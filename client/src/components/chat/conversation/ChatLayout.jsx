@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useParams } from "react-router";
-import useAuth from "../../../hooks/useAuth";
-import useChat from "../../../hooks/useChat";
 import { isEmpty } from "../../../utilities/utils";
 
 import ChatBoxHeader from "./ChatBoxHeader";
+import useAuth from "../../../contexts/auth/useAuth";
+import useChat from "../../../contexts/chat/useChat";
 
 export default function ChatLayout() {
     const { token } = useAuth();

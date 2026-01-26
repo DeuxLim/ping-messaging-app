@@ -1,6 +1,6 @@
+import useAuth from "../../../contexts/auth/useAuth";
+import useChat from "../../../contexts/chat/useChat";
 import useToggle from "../../../hooks/common/useToggle";
-import useAuth from "../../../hooks/useAuth";
-import useChat from "../../../hooks/useChat";
 import { formatLastMessageDateTime, isEmpty, isEmojiOnly } from "../../../utilities/utils";
 import AvatarImage from "../global/AvatarImage";
 

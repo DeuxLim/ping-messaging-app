@@ -1,6 +1,6 @@
 import { TbSettings, TbLogout2 } from "react-icons/tb";
-import useAuth from "../../../hooks/useAuth";
 import useDropdownMenu from "../../../hooks/common/useDropdownMenu";
+import useAuth from "../../../contexts/auth/useAuth";
 
 export default function SidebarFooter() {
     const { logout } = useAuth();

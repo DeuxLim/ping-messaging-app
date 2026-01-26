@@ -2,13 +2,13 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 
 import useDebounceSearch from "../../../hooks/common/useDebounceSearch";
-import useActiveChat from "../../../hooks/useActiveChat";
-import useAuth from "../../../hooks/useAuth";
-import useChat from "../../../hooks/useChat";
 import { getOtherParticipant, isEmpty } from "../../../utilities/utils";
 import { RxCross2 } from "react-icons/rx";
 import ChatItem from "../global/ChatItem";
 import { useNavigate } from "react-router";
+import useAuth from "../../../contexts/auth/useAuth";
+import useChat from "../../../contexts/chat/useChat";
+import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
 
 export default function ChatSearchInput() {
     const { currentUser } = useAuth();

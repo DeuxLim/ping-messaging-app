@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
-import useAuth from '../../hooks/useAuth';
 import { useEffect } from 'react';
 import { FaFacebookMessenger } from "react-icons/fa6";
+import useAuth from '../../contexts/auth/useAuth';
 
 export default function StartAuth() {
 	const { authStatus, currentUser } = useAuth();

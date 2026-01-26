@@ -1,10 +1,10 @@
-import { fetchAPI } from "../../../api/fetchApi";
+import { fetchAPI } from "../../../api/fetchAPI";
 import { TbSearch } from "react-icons/tb";
-import useChat from "../../../hooks/useChat";
 import useDebounceSearch from "../../../hooks/common/useDebounceSearch";
-import useAuth from "../../../hooks/useAuth";
-import useSocket from "../../../hooks/useSocket";
 import SidebarSearchSkeleton from "./SidebarSearchSkeleton";
+import useChat from "../../../contexts/chat/useChat";
+import useAuth from "../../../contexts/auth/useAuth";
+import useSocket from "../../../contexts/socket/useSocket";
 
 export default function SidebarSearch() {
     const { updateChatSearchResults, isLoading } = useChat();

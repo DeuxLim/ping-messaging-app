@@ -22,7 +22,7 @@ import Profile from "../pages/Profile";
 
 /* Context */
 import ChatProvider from "../contexts/chat/ChatProvider";
-import ChatDisplayProvider from "../contexts/chat/chatDisplay/ChatDisplayProvider";
+import ChatDisplayProvider from "../contexts/chat/ChatDisplay/ChatDisplayProvider";
 import ActiveChatProvider from "../contexts/chat/ActiveChat/ActiveChatProvider";
 import VerifyEmail from "../pages/Auth/VerifyEmail";
 

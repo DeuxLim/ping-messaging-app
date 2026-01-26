@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { fetchAPI } from "./../../api/fetchApi.js";
+import { fetchAPI } from "../../api/fetchAPI.js";
 import FormInput from "../../components/auth/FormInput.jsx";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";

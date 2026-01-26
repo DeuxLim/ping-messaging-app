@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import ChatContext from "./ChatContext.js";
-import useAuth from "../../hooks/useAuth";
-import useSocket from "../../hooks/useSocket.js";
-import { fetchAPI } from "../../api/fetchApi.js";
+import { fetchAPI } from "../../api/fetchAPI.js";
 import { isEmpty } from "../../utilities/utils.js";
+import useAuth from "../auth/useAuth.js";
+import useSocket from "../socket/useSocket.js";
 
 export default function ChatProvider({ children }) {
     const { token, currentUser } = useAuth();

@@ -1,15 +1,15 @@
 import { IoVideocam, IoCall } from "react-icons/io5";
 import { IoMdArrowBack } from "react-icons/io";
 import { HiDotsCircleHorizontal } from "react-icons/hi";
-import useChat from "../../../hooks/useChat";
-import useAuth from "../../../hooks/useAuth";
 import AvatarWithStatus from "../global/AvatarWithStatus";
 import { getOtherParticipant, isEmpty } from "../../../utilities/utils";
 import { useNavigate } from "react-router";
-import useChatDisplay from "../../../hooks/useChatDisplay";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
 import AvatarImage from "../global/AvatarImage";
 import { useMemo } from "react";
+import useChat from "../../../contexts/chat/useChat";
+import useAuth from "../../../contexts/auth/useAuth";
+import useChatDisplay from "../../../contexts/chat/chatDisplay/useChatDisplay";
 
 export default function ChatBoxHeader() {
 	const { activeChatData, isUserOnline } = useChat();
@@ -81,7 +81,7 @@ export default function ChatBoxHeader() {
 				<div className="flex flex-1 items-center gap-3 overflow-hidden h-full">
 					{/* Display Photo */}
 					<div className={`flex justify-center items-center relative h-10 w-15`}>
-						{chatParticipants?.slice(0,2).map((p, index) => {
+						{chatParticipants?.slice(0, 2).map((p, index) => {
 							const displayPhotos = isGroup ? (
 								<div key={p?._id}>
 									<div

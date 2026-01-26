@@ -1,8 +1,4 @@
 import { useNavigate } from "react-router";
-import useAuth from "../../../hooks/useAuth";
-import useChat from "../../../hooks/useChat";
-import useChatDisplay from "../../../hooks/useChatDisplay";
-import useActiveChat from "../../../hooks/useActiveChat";
 import { useEffect, useState, useMemo, memo } from "react";
 import { formatLastMessageDateTime } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
@@ -11,6 +7,10 @@ import ChatItemName from "./chat-item/ChatItemName";
 import ChatItemContentPreview from "./chat-item/ChatItemContentPreview";
 import ChatItemMeta from "./chat-item/ChatItemMeta";
 import AvatarImage from "./AvatarImage";
+import useChat from "../../../contexts/chat/useChat";
+import useChatDisplay from "../../../contexts/chat/chatDisplay/useChatDisplay";
+import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
+import useAuth from "../../../contexts/auth/useAuth";
 
 function ChatItem({ chatData, variant, isSelecting = false }) {
     const { isUserOnline, activeChatData, isSearch } = useChat();

@@ -1,12 +1,12 @@
 import { Outlet, useLocation } from "react-router";
 import Sidebar from "../components/chat/Sidebar";
-import useChatDisplay from "../hooks/useChatDisplay";
 import ChatSettings from "../components/chat/conversation/ChatSettings";
 import IconMenu from "../components/chat/icon-menu/IconMenu";
-import useAuth from "../hooks/useAuth";
 import { useState } from "react";
-import { fetchAPI } from "../api/fetchApi";
+import { fetchAPI } from "../api/fetchAPI";
 import { isEmpty } from "../utilities/utils";
+import useAuth from "../contexts/auth/useAuth";
+import useChatDisplay from "../contexts/chat/chatDisplay/useChatDisplay";
 
 export default function ChatApp() {
     const { sidebarVisible, isDesktop, isChatSettingsOpen } = useChatDisplay();

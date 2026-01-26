@@ -1,11 +1,11 @@
 import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import useAuth from "../../hooks/useAuth";
-import { fetchAPI } from "./../../api/fetchApi";
+import { fetchAPI } from "../../api/fetchAPI";
 import FormInput from "../../components/auth/FormInput";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import { isEmpty } from "../../utilities/utils";
+import useAuth from "../../contexts/auth/useAuth";
 
 export default function Login() {
     const [email, setEmail] = useState("");

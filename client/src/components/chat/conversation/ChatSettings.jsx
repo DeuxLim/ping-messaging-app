@@ -1,6 +1,4 @@
-import useChat from '../../../hooks/useChat';
 import { getOtherParticipant, getOtherParticipants } from '../../../utilities/utils';
-import useAuth from '../../../hooks/useAuth';
 import useOtherParticipants from '../../../hooks/chat/useOtherParticipants';
 import AvatarImage from '../global/AvatarImage';
 import { RxCaretRight, RxCaretDown } from "react-icons/rx";
@@ -10,9 +8,11 @@ import { RiEdit2Fill } from "react-icons/ri";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoMdCheckmark } from "react-icons/io";
 import { useEffect, useMemo, useState } from 'react';
-import useChatDisplay from '../../../hooks/useChatDisplay';
 import { MdModeEdit } from "react-icons/md";
-import useSocket from "../../../hooks/useSocket";
+import useChat from '../../../contexts/chat/useChat';
+import useAuth from '../../../contexts/auth/useAuth';
+import useChatDisplay from '../../../contexts/chat/chatDisplay/useChatDisplay';
+import useSocket from '../../../contexts/socket/useSocket';
 
 export default function ChatSettings() {
     const { activeChatData, isUserOnline } = useChat();

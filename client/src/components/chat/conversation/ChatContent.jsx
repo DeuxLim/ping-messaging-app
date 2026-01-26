@@ -1,13 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { fetchAPI } from "../../../api/fetchApi";
-import useAuth from "../../../hooks/useAuth";
-import useChat from "../../../hooks/useChat";
+import { fetchAPI } from "../../../api/fetchAPI";
 import { useParams } from "react-router";
 import ChatMessage from "./ChatMessage";
-import useChatDisplay from "../../../hooks/useChatDisplay";
 import AvatarImage from "../global/AvatarImage";
-import useSocket from "../../../hooks/useSocket";
 import ChatDetailsPanel from "./ChatDetailsPanel";
+import useAuth from "../../../contexts/auth/useAuth";
+import useChat from "../../../contexts/chat/useChat";
+import useChatDisplay from "../../../contexts/chat/chatDisplay/useChatDisplay";
+import useSocket from "../../../contexts/socket/useSocket";
 
 export default function ChatContent() {
     const { token, currentUser } = useAuth();

@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
-import useChat from "../../../hooks/useChat";
-import useAuth from "../../../hooks/useAuth";
-import useSocket from "../../../hooks/useSocket";
-import { fetchAPI } from "../../../api/fetchApi";
+import useChat from "../../../contexts/chat/useChat";
+import useAuth from "../../../contexts/auth/useAuth";
+import useSocket from "../../../contexts/socket/useSocket";
+import { fetchAPI } from "../../../api/fetchAPI";
 import { FaThumbsUp } from "react-icons/fa6";
 import { FaRegImage } from "react-icons/fa6";
 import { isEmpty } from "../../../utilities/utils";

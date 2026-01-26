@@ -1,9 +1,9 @@
 import ChatItem from "../global/ChatItem";
-import useChat from "../../../hooks/useChat";
 import CenteredMessage from "../../common/CenteredMessage";
 import { useMemo } from "react";
-import useActiveChat from "../../../hooks/useActiveChat";
 import SidebarChatsSkeleton from "./SidebarChatsSkeleton";
+import useChat from "../../../contexts/chat/useChat";
+import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
 
 export default function SidebarChats() {
     const {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AuthContext from "./AuthContext";
-import { fetchAPI } from "../../api/fetchApi";
+import { fetchAPI } from "../../api/fetchAPI";
 
 export default function AuthProvider({ children }) {
     const [authStatus, setAuthStatus] = useState("checking"); // "checking" | "authenticated" | "unauthenticated"

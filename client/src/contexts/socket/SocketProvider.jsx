@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import SocketContext from "./SocketContext";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../auth/useAuth";
 
 export default function SocketProvider({ children }) {
 	const { authStatus, currentUser } = useAuth();

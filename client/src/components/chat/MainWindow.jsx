@@ -1,8 +1,8 @@
 import { Outlet } from "react-router";
-import useChatDisplay from "../../hooks/useChatDisplay";
-import useAuth from "../../hooks/useAuth";
-import useSocket from "../../hooks/useSocket";
-import useChat from "../../hooks/useChat";
+import useChatDisplay from "../../contexts/chat/chatDisplay/useChatDisplay";
+import useAuth from "../../contexts/auth/useAuth";
+import useChat from "../../contexts/chat/useChat";
+import useSocket from "../../contexts/socket/useSocket";
 
 export default function MainWindow() {
     const { isChatSettingsOpen, isDesktop } = useChatDisplay();

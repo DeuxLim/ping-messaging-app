@@ -2,13 +2,13 @@ import { BiFoodMenu } from "react-icons/bi";
 import ChatItemAvatar from "../global/chat-item/ChatItemAvatar";
 import { TbMessageCircleFilled } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
-import useAuth from "../../../hooks/useAuth";
 import useToggle from "../../../hooks/common/useToggle";
 import useDropdownMenu from "../../../hooks/common/useDropdownMenu";
 import { TbLogout } from "react-icons/tb";
 import { Link, useLocation } from "react-router";
-import useSocket from "../../../hooks/useSocket";
 import IconMenuSkeleton from "./IconMenuSkeleton";
+import useAuth from "../../../contexts/auth/useAuth";
+import useSocket from "../../../contexts/socket/useSocket";
 
 export default function IconMenu() {
     const [isIconMenuExpanded, setIsIconMenuExpanded] = useToggle(false);
