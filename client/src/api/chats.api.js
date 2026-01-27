@@ -1,5 +1,5 @@
 import { fetchAPI } from "./fetchAPI";
 
-export const getUserChats = () => {
+export const getUserChatsAPI = () => {
 	return fetchAPI.get("/chats");
 };

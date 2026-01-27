@@ -1,11 +1,11 @@
 import { joinChats } from "../../realtime/presenceSocket";
-import { getUserChats } from "../api/chats.api";
-import { getSuggestedUsers } from "../api/users.api";
+import { getUserChatsAPI } from "../api/chats.api";
+import { getSuggestedUsersAPI } from "../api/users.api";
 
 export const loadChatOverview = async () => {
 	const [chats, users] = await Promise.all([
-		getUserChats(),
-		getSuggestedUsers(),
+		getUserChatsAPI(),
+		getSuggestedUsersAPI(),
 	]);
 
 	joinChats(chats.map((c) => c._id));
