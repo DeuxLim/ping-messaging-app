@@ -1,56 +1,45 @@
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import SocketContext from "./SocketContext";
 import useAuth from "../auth/useAuth";
+import { connectSocket, disconnectSocket, getSocket } from "../../services/socket.service";
+import { announceOnline } from "../../../realtime/presenceSocket";
 
 export default function SocketProvider({ children }) {
-	const { authStatus, currentUser } = useAuth();
-	const [socket, setSocket] = useState(null);
-	const [socketStatus, setSocketStatus] = useState("idle"); // idle | connecting | connected | error
+	const { authStatus, accessToken, currentUser } = useAuth();
+	const [socketStatus, setSocketStatus] = useState("idle");
 
 	useEffect(() => {
 		if (authStatus !== "authenticated") {
-			setSocket(null);
+			disconnectSocket();
 			setSocketStatus("idle");
 			return;
 		}
 
 		setSocketStatus("connecting");
 
-		let newSocket = null;
 		try {
-			newSocket = io(import.meta.env.VITE_API_URL, { withCredentials: true });
+			const socket = connectSocket(accessToken);
 
-			newSocket.on("connect", () => {
+			socket.on("connect", () => {
 				setSocketStatus("connected");
-				newSocket.emit("user:online", currentUser._id);
+				announceOnline(currentUser._id);
 			});
 
-			newSocket.on("connect_error", (err) => {
-				console.log("Socket connect_error:", err.message);
+			socket.on("connect_error", () => {
 				setSocketStatus("error");
 			});
 
-			setSocket(newSocket);
-		} catch (error) {
-			console.log(error);
+		} catch {
 			setSocketStatus("error");
 		}
 
 		return () => {
-			newSocket?.disconnect();
-			setSocket(null);
+			disconnectSocket();
 			setSocketStatus("idle");
 		};
-	}, [authStatus, currentUser]);
-
-	const data = {
-		socket,
-		socketStatus
-	};
+	}, [authStatus, accessToken, currentUser?._id]);
 
 	return (
-		<SocketContext.Provider value={data}>
+		<SocketContext.Provider value={{ socket: getSocket(), socketStatus }}>
 			{children}
 		</SocketContext.Provider>
 	);
