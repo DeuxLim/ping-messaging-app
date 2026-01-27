@@ -1,6 +1,13 @@
 import { getSocket } from "../src/services/socket.service";
 
-export const joinChats = (userId) => {
+export const joinChats = (chatIds) => {
+	const socket = getSocket();
+	if (!socket || !chatIds?.length) return;
+
+	socket.emit("user:joinAll", chatIds);
+};
+
+export const announceOnline = (userId) => {
 	const socket = getSocket();
 	if (!socket) return;
 
