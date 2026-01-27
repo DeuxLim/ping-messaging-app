@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import ChatContext from "./ChatContext.js";
-import { fetchAPI } from "../../api/fetchAPI.js";
 import { isEmpty } from "../../utilities/utils.js";
 import useAuth from "../auth/useAuth.js";
 import useSocket from "../socket/useSocket.js";
+import { loadChatOverview } from "../../services/chats.service.js";
 
 export default function ChatProvider({ children }) {
     const { token, currentUser } = useAuth();
@@ -286,25 +286,17 @@ export default function ChatProvider({ children }) {
 
     // ---- Fetch Chats + Suggested Users ----
     useEffect(() => {
-        if (!isReady || isSearch) return; // avoid refetch during search
+        if (!isReady || isSearch) return;
 
         const fetchChatData = async () => {
             setIsLoading(true);
             setError(null);
 
             try {
-                const [chatsResponse, usersResponse] = await Promise.all([
-                    fetchAPI.get("/chats"),
-                    fetchAPI.get("/users/suggested"),
-                ]);
+                const { chats, users } = await loadChatOverview();
 
-                setChatItems(chatsResponse || []);
-                const chatIds = chatsResponse.map((chat) => {
-                    return chat._id;
-                });
-                socket.emit("user:joinAll", chatIds);
-
-                setUserItems(usersResponse || []);
+                setChatItems(chats);
+                setUserItems(users);
             } catch (err) {
                 console.error("Error fetching chats:", err);
                 setError("Failed to load chats. Please try again.");
@@ -314,7 +306,7 @@ export default function ChatProvider({ children }) {
         };
 
         fetchChatData();
-    }, [token, isSearch, socket, isReady]);
+    }, [isReady, isSearch]);
 
     // ---- Context Value ----
     const values = {
