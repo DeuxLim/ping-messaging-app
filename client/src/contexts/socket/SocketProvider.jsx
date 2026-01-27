@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import useAuth from "../auth/useAuth";
 import { connectSocket, disconnectSocket, getSocket } from "../../services/socket.service";
-import { announceOnline } from "../../../realtime/presenceSocket";
 import SocketContext from "./SocketContext";
+import { announceOnline } from "../../realtime/presenceSocket";
 
 export default function SocketProvider({ children }) {
 	const { authStatus, accessToken, currentUser } = useAuth();

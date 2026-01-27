@@ -1,6 +1,6 @@
-import { joinChats } from "../../realtime/presenceSocket";
 import { getUserChatsAPI } from "../api/chats.api";
 import { getSuggestedUsersAPI } from "../api/users.api";
+import { joinChats } from "../realtime/presenceSocket";
 
 export const loadChatOverview = async () => {
 	const [chats, users] = await Promise.all([

@@ -1,4 +1,4 @@
-import { getSocket } from "../src/services/socket.service";
+import { getSocket } from "../services/socket.service";
 
 export const joinChats = (chatIds) => {
 	const socket = getSocket();
