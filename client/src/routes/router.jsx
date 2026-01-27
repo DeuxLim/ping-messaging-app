@@ -21,7 +21,6 @@ import Profile from "../pages/Profile";
 
 /* Context */
 import ChatProvider from "../contexts/chat/ChatProvider";
-import ChatDisplayProvider from "../contexts/chat/ChatDisplay/ChatDisplayProvider.jsx";
 import ActiveChatProvider from "../contexts/chat/ActiveChat/ActiveChatProvider";
 import VerifyEmail from "../pages/Auth/VerifyEmail";
 
