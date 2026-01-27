@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import AuthContext from "./AuthContext";
 import { fetchAPI } from "../../api/fetchAPI";
 import { logoutService, refreshSessionService } from "../../services/auth.service";
+import { updatePassword, updateProfile } from "../../services/user.service";
 
 export default function AuthProvider({ children }) {
     const [authStatus, setAuthStatus] = useState("checking"); // "checking" | "authenticated" | "unauthenticated"
@@ -68,10 +69,7 @@ export default function AuthProvider({ children }) {
         refreshToken,
         updateUserProfile: async (data) => {
             try {
-                const response = await fetchAPI.put("/users/update-profile", data);
-                if (!response.updateSuccess) {
-                    console.log("failed to update profile...");
-                }
+                const response = await updateProfile(data);
                 setCurrentUser(response.user);
             } catch (error) {
                 console.log(error);
@@ -79,10 +77,9 @@ export default function AuthProvider({ children }) {
         },
         updatePassword: async (data) => {
             try {
-                const response = await fetchAPI.put("/users/update-password", data);
-                if (!response.updateSuccess) {
-                    console.log("failed to update password...");
-                }
+                const response = await updatePassword(data);
+
+                return response;
             } catch (error) {
                 console.log(error);
             }
