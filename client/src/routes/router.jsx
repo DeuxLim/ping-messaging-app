@@ -15,14 +15,13 @@ import MainWindow from "../components/chat/MainWindow";
 import ChatLayout from "../components/chat/conversation/ChatLayout";
 import NewChatLayout from "../components/chat/conversation/NewChatLayout";
 import ChatWindow from "../components/chat/conversation/ChatWindow";
-import ActiveChatWrapper from "../components/chat/conversation/ActiveChatWrapper";
 
 /* Settings */
 import Profile from "../pages/Profile";
 
 /* Context */
 import ChatProvider from "../contexts/chat/ChatProvider";
-import ChatDisplayProvider from "../contexts/chat/ChatDisplay/ChatDisplayProvider";
+import ChatDisplayProvider from "../contexts/chat/ChatDisplay/ChatDisplayProvider.jsx";
 import ActiveChatProvider from "../contexts/chat/ActiveChat/ActiveChatProvider";
 import VerifyEmail from "../pages/Auth/VerifyEmail";
 
