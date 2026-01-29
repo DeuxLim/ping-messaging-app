@@ -22,6 +22,7 @@ import Profile from "../pages/Profile";
 /* Context */
 import ChatProvider from "../contexts/chat/ChatProvider";
 import ActiveChatProvider from "../contexts/chat/ActiveChat/ActiveChatProvider";
+import ChatDisplayProvider from "../contexts/chat/ChatDisplay/ChatDisplayProvider";
 import VerifyEmail from "../pages/Auth/VerifyEmail";
 
 export const routes = createBrowserRouter([
