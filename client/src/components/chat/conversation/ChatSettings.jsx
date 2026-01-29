@@ -11,7 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MdModeEdit } from "react-icons/md";
 import useChat from '../../../contexts/chat/useChat';
 import useAuth from '../../../contexts/auth/useAuth';
-import useChatDisplay from '../../../contexts/chat/chatDisplay/useChatDisplay';
+import useChatDisplay from '../../../contexts/chat/ChatDisplay/useChatDisplay';
 import useSocket from '../../../contexts/socket/useSocket';
 
 export default function ChatSettings() {
