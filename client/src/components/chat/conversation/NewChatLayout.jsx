@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { getOtherParticipants, isEmpty } from "../../../utilities/utils";
 import ChatSearchInput from "./ChatSearchInput";
-import { fetchApi } from "../../../api/_fetchApi";
+import { fetchAPI } from "../../../api/fetchAPI";
 import useAuth from "../../../contexts/auth/useAuth";
 import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
 import useChat from "../../../contexts/chat/useChat";
@@ -67,7 +67,7 @@ export default function NewChatLayout() {
 					return;
 				}
 
-				const res = await fetchApi.get(`/chats/${chatData._id}`);
+				const res = await fetchAPI.get(`/chats/${chatData._id}`);
 
 				const messages = Array.isArray(res)
 					? res

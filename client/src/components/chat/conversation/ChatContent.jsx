@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { fetchApi } from "../../../api/_fetchApi";
+import { fetchAPI } from "../../../api/fetchAPI";
 import { useParams } from "react-router";
 import ChatMessage from "./ChatMessage";
 import AvatarImage from "../global/AvatarImage";
@@ -36,7 +36,7 @@ export default function ChatContent() {
                 setError(false);
                 setActiveChatMessages([]);
 
-                const res = await fetchApi.get(`/chats/${chatId}`);
+                const res = await fetchAPI.get(`/chats/${chatId}`);
 
                 if (!isMounted) return;
                 if (res?.error) setActiveChatMessages([]);
