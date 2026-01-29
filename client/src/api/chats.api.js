@@ -1,4 +1,4 @@
-import { fetchApi } from "./fetchApi";
+import { fetchApi } from "./_fetchApi";
 
 export const getUserChatsAPI = () => {
 	return fetchApi.get("/chats");

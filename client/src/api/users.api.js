@@ -1,4 +1,4 @@
-import { fetchApi } from "./fetchApi";
+import { fetchApi } from "./_fetchApi";
 
 export const getSuggestedUsersAPI = () => {
 	return fetchApi.get("/users/suggested");

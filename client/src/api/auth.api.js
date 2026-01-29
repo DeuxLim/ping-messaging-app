@@ -1,4 +1,4 @@
-import { fetchApi } from "./fetchApi";
+import { fetchApi } from "./_fetchApi";
 
 export const loginAPI = (payload) => {
 	return fetchApi.post("/auth/login", payload);

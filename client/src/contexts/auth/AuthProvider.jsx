@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AuthContext from "./AuthContext";
-import { fetchApi } from "../../api/fetchApi";
+import { fetchApi } from "../../api/_fetchApi";
 import { logoutService, refreshSessionService } from "../../services/auth.service";
 import { updatePassword, updateProfile } from "../../services/user.service";
 

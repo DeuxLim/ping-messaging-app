@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { fetchApi } from "../../../api/fetchApi";
+import { fetchApi } from "../../../api/_fetchApi";
 import { useParams } from "react-router";
 import ChatMessage from "./ChatMessage";
 import AvatarImage from "../global/AvatarImage";

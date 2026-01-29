@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import useChat from "../../../contexts/chat/useChat";
 import useAuth from "../../../contexts/auth/useAuth";
 import useSocket from "../../../contexts/socket/useSocket";
-import { fetchApi } from "../../../api/fetchApi";
+import { fetchApi } from "../../../api/_fetchApi";
 import { FaThumbsUp } from "react-icons/fa6";
 import { FaRegImage } from "react-icons/fa6";
 import { isEmpty } from "../../../utilities/utils";

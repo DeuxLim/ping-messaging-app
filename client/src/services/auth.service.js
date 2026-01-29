@@ -1,4 +1,4 @@
-import { fetchApi } from "../api/fetchApi";
+import { fetchApi } from "../api/_fetchApi";
 import {
 	forgotPasswordAPI,
 	getMeAPI,

@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { getOtherParticipants, isEmpty } from "../../../utilities/utils";
 import ChatSearchInput from "./ChatSearchInput";
-import { fetchApi } from "../../../api/fetchApi";
+import { fetchApi } from "../../../api/_fetchApi";
 import useAuth from "../../../contexts/auth/useAuth";
 import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
 import useChat from "../../../contexts/chat/useChat";
