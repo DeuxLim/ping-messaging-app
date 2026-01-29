@@ -5,7 +5,7 @@ import IconMenu from "../components/chat/icon-menu/IconMenu";
 import { useState } from "react";
 import { isEmpty } from "../utilities/utils";
 import useAuth from "../contexts/auth/useAuth";
-import useChatDisplay from "../contexts/chat/ChatDisplay/useChatDisplay";
+import useChatDisplay from "../contexts/chat/ChatDisplayTest/useChatDisplay";
 import { resendVerificationService } from "../services/auth.service";
 
 export default function ChatApp() {

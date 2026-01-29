@@ -8,7 +8,7 @@ import ChatItemContentPreview from "./chat-item/ChatItemContentPreview";
 import ChatItemMeta from "./chat-item/ChatItemMeta";
 import AvatarImage from "./AvatarImage";
 import useChat from "../../../contexts/chat/useChat";
-import useChatDisplay from "../../../contexts/chat/ChatDisplay/useChatDisplay";
+import useChatDisplay from "../../../contexts/chat/ChatDisplayTest/useChatDisplay";
 import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
 import useAuth from "../../../contexts/auth/useAuth";
 
