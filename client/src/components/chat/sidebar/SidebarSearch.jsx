@@ -1,10 +1,10 @@
-import { fetchAPI } from "../../../api/fetchAPI";
 import { TbSearch } from "react-icons/tb";
 import useDebounceSearch from "../../../hooks/common/useDebounceSearch";
 import SidebarSearchSkeleton from "./SidebarSearchSkeleton";
 import useChat from "../../../contexts/chat/useChat";
 import useAuth from "../../../contexts/auth/useAuth";
 import useSocket from "../../../contexts/socket/useSocket";
+import { searchChatAndUsers } from "../../../services/chats.service";
 
 export default function SidebarSearch() {
     const { updateChatSearchResults, isLoading } = useChat();
@@ -23,7 +23,7 @@ export default function SidebarSearch() {
         }
 
         try {
-            const response = await fetchAPI.get(`/chats/search?q=${encodeURIComponent(searchQuery)}`);
+            const response = await searchChatAndUsers(searchQuery);;
             updateChatSearchResults({
                 chats: [...response.existingChats, ...response.groupChats],
                 users: response.newUsers,
