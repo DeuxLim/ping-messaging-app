@@ -126,11 +126,11 @@ function uploadFile(endpoint, file, additionalData = {}) {
 		formData.append(key, value);
 	});
 
-	return fetchAPI.post(endpoint, formData);
+	return fetchApi.post(endpoint, formData);
 }
 
 // Shortcut helpers
-export const fetchAPI = {
+export const fetchApi = {
 	get: (endpoint, options = {}) =>
 		fetchClient(endpoint, { ...options, method: "GET" }),
 	post: (endpoint, body, options = {}) =>

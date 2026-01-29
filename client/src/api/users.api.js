@@ -1,13 +1,13 @@
-import { fetchAPI } from "./fetchAPI";
+import { fetchApi } from "./fetchApi";
 
 export const getSuggestedUsersAPI = () => {
-	return fetchAPI.get("/users/suggested");
+	return fetchApi.get("/users/suggested");
 };
 
 export const updateProfileAPI = (data) => {
-	return fetchAPI.put("/users/update-profile", data);
+	return fetchApi.put("/users/update-profile", data);
 };
 
 export const updatePasswordAPI = (data) => {
-	return fetchAPI.put("/users/update-password", data);
+	return fetchApi.put("/users/update-password", data);
 };

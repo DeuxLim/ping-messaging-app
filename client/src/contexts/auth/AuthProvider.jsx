@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AuthContext from "./AuthContext";
-import { fetchAPI } from "../../api/fetchAPI";
+import { fetchApi } from "../../api/fetchApi";
 import { logoutService, refreshSessionService } from "../../services/auth.service";
 import { updatePassword, updateProfile } from "../../services/user.service";
 
@@ -49,7 +49,7 @@ export default function AuthProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        fetchAPI.setAuth(token);
+        fetchApi.setAuth(token);
     }, [token]);
 
     useEffect(() => {

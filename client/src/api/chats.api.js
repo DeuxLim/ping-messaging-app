@@ -1,9 +1,9 @@
-import { fetchAPI } from "./fetchAPI";
+import { fetchApi } from "./fetchApi";
 
 export const getUserChatsAPI = () => {
-	return fetchAPI.get("/chats");
+	return fetchApi.get("/chats");
 };
 
 export const searchChatsAndUsersAPI = (searchQuery) => {
-	return fetchAPI.get(`/chats/search?q=${searchQuery}`);
+	return fetchApi.get(`/chats/search?q=${searchQuery}`);
 };

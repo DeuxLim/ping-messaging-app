@@ -1,4 +1,4 @@
-import { fetchAPI } from "../api/fetchAPI";
+import { fetchApi } from "../api/fetchApi";
 import {
 	forgotPasswordAPI,
 	getMeAPI,
@@ -25,7 +25,7 @@ export const loginService = async ({ email, password, rememberMe }) => {
 	}
 
 	// inject token into HTTP client
-	fetchAPI.setAuth(res.accessToken);
+	fetchApi.setAuth(res.accessToken);
 
 	return {
 		user: res.user,
@@ -41,7 +41,7 @@ export const logoutService = async () => {
 		console.warn("Logout API failed:", err);
 	} finally {
 		// client-side cleanup always runs
-		fetchAPI.clearAuth();
+		fetchApi.clearAuth();
 	}
 };
 
@@ -53,7 +53,7 @@ export const refreshSessionService = async () => {
 	}
 
 	// inject new token into HTTP client
-	fetchAPI.setAuth(res.accessToken);
+	fetchApi.setAuth(res.accessToken);
 
 	const me = await getMeAPI();
 
