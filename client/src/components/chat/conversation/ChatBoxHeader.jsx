@@ -9,7 +9,7 @@ import AvatarImage from "../global/AvatarImage";
 import { useMemo } from "react";
 import useChat from "../../../contexts/chat/useChat";
 import useAuth from "../../../contexts/auth/useAuth";
-import useChatDisplay from "../../../contexts/chat/ChatDisplayTest/useChatDisplay";
+import useChatDisplay from "../../../contexts/chat/ChatDisplay/useChatDisplay";
 
 export default function ChatBoxHeader() {
 	const { activeChatData, isUserOnline } = useChat();

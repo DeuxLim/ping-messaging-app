@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import useChatDisplay from "../../contexts/chat/ChatDisplayTest/useChatDisplay";
+import useChatDisplay from "../../contexts/chat/ChatDisplay/useChatDisplay";
 import useAuth from "../../contexts/auth/useAuth";
 import useChat from "../../contexts/chat/useChat";
 import useSocket from "../../contexts/socket/useSocket";

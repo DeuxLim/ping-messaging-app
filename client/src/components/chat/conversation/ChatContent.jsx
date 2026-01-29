@@ -6,7 +6,7 @@ import AvatarImage from "../global/AvatarImage";
 import ChatDetailsPanel from "./ChatDetailsPanel";
 import useAuth from "../../../contexts/auth/useAuth";
 import useChat from "../../../contexts/chat/useChat";
-import useChatDisplay from "../../../contexts/chat/ChatDisplayTest/useChatDisplay";
+import useChatDisplay from "../../../contexts/chat/ChatDisplay/useChatDisplay";
 import useSocket from "../../../contexts/socket/useSocket";
 
 export default function ChatContent() {
