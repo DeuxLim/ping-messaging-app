@@ -24,15 +24,6 @@ export default function ChatBoxHeader() {
 		return isUserOnline(targetId) ? "online" : "offline";
 	}, [activeChatData, chatParticipants, isUserOnline]);
 
-	// --- Guard: ensure valid data before rendering ---
-	if (!activeChatData || !activeChatData.participants?.length) {
-		return (
-			<header className="h-21 border-b border-gray-300 flex items-center justify-center text-gray-500 text-sm">
-				Loading chat...
-			</header>
-		);
-	}
-
 	const isGroup = !!activeChatData.isGroup;
 	const otherUser = !isGroup
 		? getOtherParticipant(activeChatData.participants, currentUser?._id)
