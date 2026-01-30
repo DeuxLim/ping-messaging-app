@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { fetchAPI } from "../../../api/fetchAPI";
 import { useParams } from "react-router";
 import ChatMessage from "./ChatMessage";
 import AvatarImage from "../global/AvatarImage";
@@ -8,6 +7,7 @@ import useAuth from "../../../contexts/auth/useAuth";
 import useChat from "../../../contexts/chat/useChat";
 import useChatDisplay from "../../../contexts/chat/ChatDisplay/useChatDisplay";
 import useSocket from "../../../contexts/socket/useSocket";
+import { getChatMessages } from "../../../services/chats.service";
 
 export default function ChatContent() {
     const { token, currentUser } = useAuth();
@@ -36,11 +36,11 @@ export default function ChatContent() {
                 setError(false);
                 setActiveChatMessages([]);
 
-                const res = await fetchAPI.get(`/chats/${chatId}`);
+                const messages = await getChatMessages(chatId);
 
                 if (!isMounted) return;
-                if (res?.error) setActiveChatMessages([]);
-                else setActiveChatMessages(res);
+                setActiveChatMessages(messages);
+
             } catch (err) {
                 if (isMounted) setError(true);
                 console.error("Chat fetch error:", err);
@@ -52,9 +52,9 @@ export default function ChatContent() {
         fetchMessages();
 
         return () => {
-            isMounted = false; // cleanup on unmount
+            isMounted = false;
         };
-    }, [token, chatId, setActiveChatMessages]);
+    }, [chatId, token, setActiveChatMessages]);
 
     // Scroll to bottom when messages change
     useLayoutEffect(() => {
