@@ -25,8 +25,8 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     const chatParticipants = useMemo(() => {
         return chatData?.type === "chat"
             ? otherParticipants
-            : chatData?.type === "temp" ? chatData?.participants : [chatData];
-    }, [otherParticipants, chatData]);
+            : chatData?.type === "temp" ? chatData?.participants.filter((p) => p._id !== currentUser._id) : [chatData];
+    }, [otherParticipants, chatData, currentUser]);
 
     const isLastMsgSeen = chatData?.lastMessage?.isSeen;
     const existingChat = chatData?.participants ? true : false;
