@@ -56,7 +56,7 @@ export default function ChatProvider({ children }) {
 
 
     // ---- Select Chat ----
-    const setActiveChat = useCallback(
+    const normalizeAndSetActiveChat = useCallback(
         (data) => {
             if (isEmpty(data)) return;
 
@@ -317,7 +317,7 @@ export default function ChatProvider({ children }) {
         replaceOptimisticMessage,
         markMessageFailed,
         setActiveChatMessages,
-        setActiveChat,
+        normalizeAndSetActiveChat,
         setActiveChatData,
         selectedMediaAttachments,
         setSelectedMediaAttachments,

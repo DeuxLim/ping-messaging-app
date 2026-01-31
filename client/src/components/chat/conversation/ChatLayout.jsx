@@ -8,7 +8,7 @@ import useChat from "../../../contexts/chat/useChat";
 
 export default function ChatLayout() {
     const { token } = useAuth();
-    const { setActiveChat, activeChatData, usersAndChatsList, clearActiveChat } = useChat();
+    const { normalizeAndSetActiveChat, activeChatData, usersAndChatsList, clearActiveChat } = useChat();
     const { chatId } = useParams();
     const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ export default function ChatLayout() {
                 // find chat or user entry by ID
                 const chatData = usersAndChatsList.find((item) => item._id === chatId);
 
-                if (isMounted) setActiveChat(chatData);
+                if (isMounted) normalizeAndSetActiveChat(chatData);
             } catch (err) {
                 console.error("ChatLayout error:", err);
                 if (isMounted) navigate("/chats", { replace: true });
@@ -39,7 +39,7 @@ export default function ChatLayout() {
         return () => {
             isMounted = false;
         };
-    }, [chatId, navigate, setActiveChat, token, usersAndChatsList, clearActiveChat]);
+    }, [chatId, navigate, normalizeAndSetActiveChat, token, usersAndChatsList, clearActiveChat]);
 
     if (loading || isEmpty(activeChatData)) {
         return (

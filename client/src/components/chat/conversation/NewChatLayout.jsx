@@ -9,7 +9,7 @@ import { getMessages } from "../../../services/chats.service";
 
 export default function NewChatLayout() {
 	const { token, currentUser } = useAuth();
-	const { usersAndChatsList, activeChatData, setActiveChatData, clearActiveChat, setActiveChat, setActiveChatMessages } = useChat();
+	const { usersAndChatsList, activeChatData, setActiveChatData, clearActiveChat, normalizeAndSetActiveChat, setActiveChatMessages } = useChat();
 	const { setFilteredList, selectedChats, setSelectedChats } = useActiveChat();
 	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
@@ -72,7 +72,7 @@ export default function NewChatLayout() {
 				setActiveChatMessages(res);
 
 				if (isMounted) {
-					setActiveChat(chatData);
+					normalizeAndSetActiveChat(chatData);
 				}
 			} catch (err) {
 				console.error("ChatLayout error:", err);
@@ -85,7 +85,7 @@ export default function NewChatLayout() {
 		if (!isEmpty(selectedChats)) {
 			loadChat();
 		}
-	}, [usersAndChatsList, setFilteredList, selectedChats, clearActiveChat, navigate, setActiveChat, setActiveChatMessages, token, currentUser, setActiveChatData]);
+	}, [usersAndChatsList, setFilteredList, selectedChats, clearActiveChat, navigate, normalizeAndSetActiveChat, setActiveChatMessages, token, currentUser, setActiveChatData]);
 
 	// cleanup only
 	useEffect(() => {
