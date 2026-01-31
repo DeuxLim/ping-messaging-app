@@ -3,13 +3,13 @@ import { useNavigate, useParams } from "react-router";
 import useChat from "../../../contexts/chat/useChat";
 import useAuth from "../../../contexts/auth/useAuth";
 import useSocket from "../../../contexts/socket/useSocket";
-import { fetchAPI } from "../../../api/fetchAPI";
 import { FaThumbsUp } from "react-icons/fa6";
 import { FaRegImage } from "react-icons/fa6";
 import { isEmpty } from "../../../utilities/utils";
 import { RxCross2 } from "react-icons/rx";
 import { LuCopyPlus } from "react-icons/lu";
 import { HiPaperAirplane } from "react-icons/hi2";
+import { createChat } from "../../../services/chats.service";
 
 export default function ChatInput() {
 	const [message, setMessage] = useState("");
@@ -37,9 +37,8 @@ export default function ChatInput() {
 
 				// If no chat exists, create one first
 				if (!chatIdToUse) {
-					const res = await fetchAPI.post(`/chats`, { id: chatId, participants: activeChatData.participants, chatName: activeChatData.chatName });
+					const res = await createChat({ id: chatId, participants: activeChatData.participants, chatName: activeChatData.chatName });
 					if (res?.error || !res?.data?.chat?._id) {
-						console.error("Chat creation failed:", res?.error || res);
 						navigate("/chats", { replace: true });
 						return;
 					}

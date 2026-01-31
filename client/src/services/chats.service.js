@@ -1,5 +1,7 @@
 import {
+	createChatAPI,
 	getChatMessagesAPI,
+	getMessagesAPI,
 	getUserChatsAPI,
 	searchChatsAndUsersAPI,
 } from "../api/chats.api";
@@ -33,4 +35,22 @@ export const getChatMessages = async (chatId) => {
 	}
 
 	return res;
+};
+
+export const createChat = async ({ id, participants, chatName }) => {
+	const res = await createChatAPI({ id, participants, chatName });
+
+	return res;
+};
+
+export const getMessages = async (chatId) => {
+	const res = await getMessagesAPI(chatId);
+
+	const messages = Array.isArray(res)
+		? res
+		: Array.isArray(res?.messages)
+			? res.messages
+			: [];
+
+	return messages;
 };
