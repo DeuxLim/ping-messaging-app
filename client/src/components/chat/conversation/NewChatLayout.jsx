@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getOtherParticipants, isEmpty } from "../../../utilities/utils";
 import ChatSearchInput from "./ChatSearchInput";
 import useAuth from "../../../contexts/auth/useAuth";
@@ -13,8 +13,12 @@ export default function NewChatLayout() {
 	const { setFilteredList, selectedChats, setSelectedChats } = useActiveChat();
 	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
+	const oldSelectedChats = useRef(null);
 
 	useEffect(() => {
+		// Avoid reloading chat completely if the selected chat hasn't change.
+		if (oldSelectedChats.current === selectedChats) return;
+
 		clearActiveChat();
 
 		let isMounted = true;
@@ -79,6 +83,7 @@ export default function NewChatLayout() {
 				if (isMounted) navigate("/chats", { replace: true });
 			} finally {
 				if (isMounted) setIsLoading(false);
+				oldSelectedChats.current = selectedChats;
 			}
 		};
 
