@@ -14,7 +14,6 @@ import useAuth from "../../../contexts/auth/useAuth";
 
 function ChatItem({ chatData, variant, isSelecting = false }) {
     const { isUserOnline, activeChatData, isSearch } = useChat();
-    const { setSelectionEnabled } = useChatDisplay();
     const { setSelectedChats, selectedChats } = useActiveChat();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
@@ -83,7 +82,6 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
         if (!isSelecting || (selectedChats.length === 1 && selectedChats.isGroup)) {
             navigate(`/chats/${chatData._id}`);
         } else {
-            setSelectionEnabled(isSelecting);
             setSelectedChats(prev => [...prev, chatData]);
         }
     };

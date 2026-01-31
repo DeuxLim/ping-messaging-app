@@ -9,7 +9,6 @@ export default function ChatDisplayProvider({ children }) {
 	const [sidebarVisible, setSidebarVisible] = useState(true);
 	const [isDesktop, setIsDesktop] = useState(false);
 	const { setActiveChatData } = useChat();
-	const [selectionEnabled, setSelectionEnabled] = useState(false);
 	const [isChatSettingsOpen, setIsChatSettingsOpen] = useState(false);
 	const { socket, socketStatus } = useSocket();
 	const navigate = useNavigate();
@@ -50,7 +49,6 @@ export default function ChatDisplayProvider({ children }) {
 		typingChats, setTypingChats,
 		sidebarVisible, setSidebarVisible,
 		isDesktop, setIsDesktop,
-		selectionEnabled, setSelectionEnabled,
 		isChatSettingsOpen, setIsChatSettingsOpen
 	};
 
