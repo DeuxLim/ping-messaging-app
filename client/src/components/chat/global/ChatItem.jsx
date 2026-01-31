@@ -20,34 +20,34 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
 
 
     // -- Global values start --
-    const otherParticipants = useOtherParticipants(chatData, currentUser._id);
+    const otherParticipants = useOtherParticipants(chatData, currentUser?._id);
 
     const chatParticipants = useMemo(() => {
-        return chatData.type === "chat"
+        return chatData?.type === "chat"
             ? otherParticipants
-            : chatData.type === "temp" ? chatData.participants : [chatData];
+            : chatData?.type === "temp" ? chatData?.participants : [chatData];
     }, [otherParticipants, chatData]);
 
-    const isLastMsgSeen = chatData.lastMessage?.isSeen;
-    const existingChat = chatData.participants ? true : false;
+    const isLastMsgSeen = chatData?.lastMessage?.isSeen;
+    const existingChat = chatData?.participants ? true : false;
     const isActiveChat = activeChatData?._id === chatData?._id && !isSelecting && !isSearch;
     // -- Global values end ----
 
 
     // -- Avatar values start --
     const chatPhotoUrl = useMemo(() => {
-        if (chatData.isGroup) return chatData.chatPhoto;
-        if (chatData.type === "user") return chatData?.profilePicture?.url;
+        if (chatData?.isGroup) return chatData.chatPhoto;
+        if (chatData?.type === "user") return chatData?.profilePicture?.url;
         if (chatParticipants?.length) return chatParticipants[0]?.profilePicture?.url;
         return null;
     }, [chatData, chatParticipants]);
 
     const userStatus = useMemo(() => {
         const targetId =
-            chatData.type === "user"
-                ? chatData._id
-                : chatData.type === "chat"
-                    ? chatData.isGroup ? chatParticipants : chatParticipants[0]?._id
+            chatData?.type === "user"
+                ? chatData?._id
+                : chatData?.type === "chat"
+                    ? chatData?.isGroup ? chatParticipants : chatParticipants[0]?._id
                     : null;
 
         return isUserOnline(targetId) ? "online" : "offline";
@@ -57,8 +57,8 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
 
     // -- Chat name values start --
     const chatName = useMemo(() => {
-        if (chatData.isGroup) return chatData.chatName ? chatData.chatName : chatData.participants.map(u => u.firstName).join(", ");
-        if (chatData.type === "user") return chatData.fullName;
+        if (chatData?.isGroup) return chatData.chatName ? chatData.chatName : chatData?.participants.map(u => u.firstName).join(", ");
+        if (chatData?.type === "user") return chatData.fullName;
         if (chatParticipants?.length) return chatData?.nicknames[chatParticipants[0]?._id] || chatParticipants[0]?.fullName || "Unknown User";
         return "Unknown User";
     }, [chatData, chatParticipants]);
@@ -68,8 +68,8 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     // -- Message Preview values start --
     const { typingChats } = useChatDisplay();
     const [lastMessageDateTime, setLastMessageDateTime] = useState("");
-    const lastMessageSender = (chatParticipants.find(p => p._id === chatData.lastMessage?.sender?._id))?.firstName;
-    const unread = chatData.type == "system" ? `${chatData.unreadCount} chat updates` : chatData.unreadCount > 0 && `${chatData.lastMessage?.sender?.firstName} sent ${chatData.unreadCount} message${chatData.unreadCount > 1 ? "s" : ""}`;
+    const lastMessageSender = (chatParticipants.find(p => p?._id === chatData?.lastMessage?.sender?._id))?.firstName;
+    const unread = chatData?.type == "system" ? `${chatData?.unreadCount} chat updates` : chatData?.unreadCount > 0 && `${chatData?.lastMessage?.sender?.firstName} sent ${chatData?.unreadCount} message${chatData?.unreadCount > 1 ? "s" : ""}`;
     useEffect(() => {
         setLastMessageDateTime(formatLastMessageDateTime(chatData?.lastMessage?.createdAt));
     }, [chatData?.lastMessage?.createdAt]);
@@ -79,8 +79,8 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     // --- Handlers ---
     const handleChatSelect = () => {
         // Navigate to chat if user is not selecting OR the first selected chat is a group
-        if (!isSelecting || (selectedChats.length === 1 && selectedChats.isGroup)) {
-            navigate(`/chats/${chatData._id}`);
+        if (!isSelecting || (selectedChats.length === 1 && selectedChats?.isGroup)) {
+            navigate(`/chats/${chatData?._id}`);
         } else {
             setSelectedChats(prev => [...prev, chatData]);
         }
@@ -91,14 +91,15 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     // --- UI ---
     return (
         <div
-            className={`flex gap-2.5 items-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors ${isActiveChat ? `bg-gray-100` : ``}`}
+            className={`flex gap-2.5 items-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors 
+                        ${(isActiveChat) ? `bg-gray-100` : ``}`}
             onClick={handleChatSelect}
         >
 
             {/* Display Photo */}
             <div className="flex justify-center items-center relative size-12">
                 {chatParticipants?.slice(0, 2).map((p, index) => {
-                    const displayPhotos = chatData.isGroup ? (
+                    const displayPhotos = chatData?.isGroup ? (
                         <div
                             key={p?._id}
                             className={`absolute ${index === 1 ? 'right-3.5 top-3' : 'left-3.5 bottom-3'}`}
@@ -108,7 +109,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
                             </div>
                         </div>
                     ) : (
-                        <ChatItemAvatar key={p._id} data={{ chatPhotoUrl, userStatus }} />
+                        <ChatItemAvatar key={p?._id} data={{ chatPhotoUrl, userStatus }} />
                     );
 
                     return displayPhotos;
@@ -129,8 +130,8 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
                 {/* Chat Name */}
                 {variant !== "preview" && <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName, existingChat }} />}
                 {variant === "preview" && (() => {
-                    const names = activeChatData.participants
-                        .filter(u => u._id !== currentUser._id)
+                    const names = activeChatData?.participants
+                        .filter(u => u?._id !== currentUser?._id)
                         .map(u => u.firstName);
 
                     let usersDisplayName = "";

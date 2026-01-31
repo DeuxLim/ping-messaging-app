@@ -32,7 +32,7 @@ export default function SidebarChats() {
     }, [usersAndChatsList, isSearch, searchResults]);
 
     const tempChatPreview =
-        selectedChats.length > 1 && (
+        selectedChats.length > 0 && (
             <ChatItem
                 key={activeChatData?._id}
                 chatData={activeChatData}
