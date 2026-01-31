@@ -173,7 +173,7 @@ export default function ChatContent() {
                 }
                 {isLoading && (
                     <div className="flex items-center justify-center h-full">
-                        <div className="size-8 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+                        <div className="size-8 animate-spin rounded-full border-2 border-gray-400 border-t-transparent"></div>
                     </div>
                 )}
             </div>
