@@ -148,11 +148,12 @@ const login = async (req, res) => {
 		bio: user.bio,
 		isOnline: user.isOnline,
 		lastSeen: user.lastSeen,
+		isVerified: user.isVerified,
 	};
 
 	// Send back response
 	res.status(200).json({
-		user: userData,
+		user,
 		accessToken,
 	});
 };
