@@ -42,7 +42,7 @@ const findOrCreateChat = async (req, res) => {
 			const existingChat = await Chat.findById(id)
 				.populate(
 					"participants",
-					"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+					"_id fullName userName firstName lastName email isOnline lastSeen profilePicture",
 				)
 				.populate("lastMessage");
 
@@ -68,7 +68,7 @@ const findOrCreateChat = async (req, res) => {
 			})
 				.populate(
 					"participants",
-					"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+					"_id fullName userName firstName lastName email isOnline lastSeen profilePicture",
 				)
 				.populate("lastMessage");
 
@@ -114,7 +114,7 @@ const findOrCreateChat = async (req, res) => {
 		const populatedChat = await Chat.findById(newChat._id)
 			.populate(
 				"participants",
-				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture"
+				"_id fullName userName firstName lastName email isOnline lastSeen profilePicture",
 			)
 			.populate("lastMessage");
 
@@ -157,14 +157,14 @@ const getUserChats = async (req, res) => {
 				chat: chat._id,
 				sender: { $ne: currentUser._id },
 				isSeen: false,
-				type: "user"
+				type: "user",
 			});
 
 			return {
 				...chat,
 				unreadCount,
 			};
-		})
+		}),
 	);
 
 	return res.status(200).json(chatsWithUnreadCount);
@@ -176,15 +176,13 @@ const getChatMessages = async (req, res) => {
 			.populate("chat")
 			.populate("sender");
 
-		if (messages.length === 0) {
-			return res.status(200).json({
-				error: "No messages found for this chat.",
-			});
-		}
-
+		// ✅ No messages is a valid state
 		return res.status(200).json(messages);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
+		return res.status(500).json({
+			error: "Failed to fetch chat messages",
+		});
 	}
 };
 
@@ -231,11 +229,11 @@ const searchChat = async (req, res) => {
 			});
 
 		const filteredChats = chats.filter(
-			(chat) => chat.participants.length > 0 && chat.lastMessage !== null
+			(chat) => chat.participants.length > 0 && chat.lastMessage !== null,
 		);
 
 		const existingChatUserIds = filteredChats.flatMap((chat) =>
-			chat.participants.map((participant) => participant._id.toString())
+			chat.participants.map((participant) => participant._id.toString()),
 		);
 
 		// Get all users with no existing chat
@@ -281,7 +279,7 @@ const updateChat = async (req, res) => {
 			{
 				new: true,
 				runValidators: true,
-			}
+			},
 		);
 
 		return res.status(200).json({

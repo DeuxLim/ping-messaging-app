@@ -30,11 +30,8 @@ export const getChatMessages = async (chatId) => {
 
 	const res = await getChatMessagesAPI(chatId);
 
-	if (res?.error) {
-		throw new Error("Failed to fetch chat messages");
-	}
-
-	return res;
+	// Expect array ALWAYS
+	return Array.isArray(res) ? res : [];
 };
 
 export const createChat = async ({ id, participants, chatName }) => {
