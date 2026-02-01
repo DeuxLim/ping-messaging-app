@@ -56,48 +56,50 @@ export default function ChatProvider({ children }) {
 
 
     // ---- Select Chat ----
-    const normalizeAndSetActiveChat = useCallback(
-        (data) => {
-            if (isEmpty(data)) return;
+    const normalizeAndSetActiveChat = useCallback((data) => {
+        if (isEmpty(data)) return;
 
-            const chatData = Array.isArray(data.participants) && data.participants.length > 0
-                ? {
-                    _id: data._id,
-                    isGroup: !!data.isGroup,
-                    participants: data.participants,
-                    chatName: data.chatName || null,
-                    chatPhoto: data.chatPhoto || null,
-                    admins: data.admins || [],
-                    nicknames: data.nicknames || {},
-                    lastMessage: data.lastMessage || null,
-                    mutedBy: data.mutedBy || [],
-                    archivedBy: data.archivedBy || [],
-                    deletedFor: data.deletedFor || [],
-                    updatedBy: data.updatedBy || null,
-                    type: data.type || null,
-                    unreadCount: data.unreadCount || 0
-                }
-                : {
-                    _id: null,
-                    isGroup: false,
-                    participants: [data, currentUser],
-                    chatName: null,
-                    chatPhoto: null,
-                    admins: [],
-                    nicknames: {},
-                    lastMessage: null,
-                    mutedBy: [],
-                    archivedBy: [],
-                    deletedFor: [],
-                    updatedBy: null,
-                    type: null,
-                    unreadCount: 0
-                };
+        const baseChat = {
+            _id: null,
+            chatName: null,
+            chatPhoto: null,
+            admins: [],
+            nicknames: {},
+            lastMessage: null,
+            mutedBy: [],
+            archivedBy: [],
+            deletedFor: [],
+            updatedBy: null,
+            unreadCount: 0,
+        };
 
-            setActiveChatData(chatData);
-        },
-        [currentUser]
-    );
+        let chatData;
+
+        if (data.type === "user" || data.type === "temp") {
+            chatData = {
+                ...baseChat,
+                isGroup: data.type === "temp"
+                    ? data.participants?.length > 2
+                    : false,
+                participants:
+                    data.type === "user"
+                        ? [data, currentUser]
+                        : data.participants,
+                type: data.type === "user" ? null : "temp",
+            };
+        } else {
+            chatData = {
+                ...baseChat,
+                ...data,
+                _id: data._id, // guaranteed non-null
+                isGroup: !!data.isGroup,
+                type: "chat",
+            };
+        }
+
+        setActiveChatData(chatData);
+    }, [currentUser]);
+
     const clearActiveChat = useCallback(() => {
         setActiveChatData(null);
         setActiveChatMessages([]);
