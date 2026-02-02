@@ -141,7 +141,7 @@ export default function ChatProvider({ children }) {
         // 2. update activeChatData.lastMessage
         // 3. update chatItems (move chat to top, update preview)
         // 4. remove messaged user from suggested list
-        socket.on("receiveMessage", ({ tempId, msg }) => {
+        socket.on("receiveMessage", ({ tempMessageId, msg }) => {
             setActiveChatMessages((prev) => {
                 const safePrev = Array.isArray(prev) ? prev : [];
 
@@ -151,11 +151,11 @@ export default function ChatProvider({ children }) {
                 }
 
                 // 1) Try replacing optimistic message (sender case)
-                if (tempId) {
+                if (tempMessageId) {
                     let replaced = false;
 
                     const updated = safePrev.map((m) => {
-                        if (m._id === tempId) {
+                        if (m._id === tempMessageId) {
                             replaced = true;
                             return { ...msg, status: "sent" };
                         }

@@ -38,7 +38,7 @@ export const socketHandler = (io) => {
 		/** ─────────────── MESSAGES ─────────────── **/
 		socket.on(
 			"sendMessage",
-			async ({ chatId, senderId, text, media, tempId }) => {
+			async ({ chatId, senderId, text, media, tempMessageId }) => {
 				if (!chatId || !senderId || !text) return;
 
 				const newMessage = await addMessageToChat({
@@ -51,7 +51,7 @@ export const socketHandler = (io) => {
 				const room = `chat:${chatId}`;
 
 				io.to(room).emit("receiveMessage", {
-					tempId,
+					tempMessageId,
 					msg: newMessage,
 				});
 			},
