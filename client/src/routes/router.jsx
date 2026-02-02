@@ -13,7 +13,6 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Start from "../components/chat/start/Start";
 import MainWindow from "../components/chat/MainWindow";
 import ChatLayout from "../components/chat/conversation/ChatLayout";
-import NewChatLayout from "../components/chat/conversation/NewChatLayout";
 import ChatWindow from "../components/chat/conversation/ChatWindow";
 
 /* Settings */
@@ -70,7 +69,7 @@ export const routes = createBrowserRouter([
                             },
                             {
                                 path: "new",
-                                element: <NewChatLayout />,
+                                element: <ChatLayout />,
                                 children: [
                                     { index: true, element: <ChatWindow /> }
                                 ]
