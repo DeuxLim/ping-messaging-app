@@ -9,7 +9,7 @@ import { getMessages } from "../../../services/chats.service";
 
 export default function NewChatLayout() {
 	const { token, currentUser } = useAuth();
-	const { usersAndChatsList, activeChatData, clearActiveChat, normalizeAndSetActiveChat, setActiveChatMessages } = useChat();
+	const { usersAndChatsList, activeChatData, clearActiveChat, setNormalizedActiveChat, setActiveChatMessages } = useChat();
 	const { setFilteredList, selectedChats, setSelectedChats } = useActiveChat();
 	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
@@ -53,7 +53,7 @@ export default function NewChatLayout() {
 				});
 
 				if (!chatData) {
-					normalizeAndSetActiveChat({
+					setNormalizedActiveChat({
 						isGroup: selectedChatUsersWithCurrentUser.length > 2,
 						participants: selectedChatUsersWithCurrentUser,
 						type: "temp",
@@ -66,7 +66,7 @@ export default function NewChatLayout() {
 				setActiveChatMessages(res);
 
 				if (isMounted) {
-					normalizeAndSetActiveChat(chatData);
+					setNormalizedActiveChat(chatData);
 				}
 			} catch (err) {
 				console.error("ChatLayout error:", err);
@@ -80,7 +80,7 @@ export default function NewChatLayout() {
 		if (!isEmpty(selectedChats)) {
 			loadChat();
 		}
-	}, [usersAndChatsList, setFilteredList, selectedChats, clearActiveChat, navigate, normalizeAndSetActiveChat, setActiveChatMessages, token, currentUser]);
+	}, [usersAndChatsList, setFilteredList, selectedChats, clearActiveChat, navigate, setNormalizedActiveChat, setActiveChatMessages, token, currentUser]);
 
 	// cleanup only
 	useEffect(() => {

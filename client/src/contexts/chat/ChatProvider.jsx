@@ -54,10 +54,8 @@ export default function ChatProvider({ children }) {
         return [...chats, ...users];
     }, [chatItems, userItems]);
 
-
-    // ---- Select Chat ----
-    const normalizeAndSetActiveChat = useCallback((data) => {
-        if (isEmpty(data)) return;
+    const normalizeChat = (data, currentUser) => {
+        if (isEmpty(data)) return null;
 
         const baseChat = {
             _id: null,
@@ -73,31 +71,44 @@ export default function ChatProvider({ children }) {
             unreadCount: 0,
         };
 
-        let chatData;
-
-        if (data.type === "user" || data.type === "temp") {
-            chatData = {
+        if (data.type === "user") {
+            return {
                 ...baseChat,
-                isGroup: data.type === "temp"
-                    ? data.participants?.length > 2
-                    : false,
-                participants:
-                    data.type === "user"
-                        ? [data, currentUser]
-                        : data.participants,
-                type: data.type === "user" ? null : "temp",
-            };
-        } else {
-            chatData = {
-                ...baseChat,
-                ...data,
-                _id: data._id, // guaranteed non-null
-                isGroup: !!data.isGroup,
-                type: "chat",
+                isGroup: false,
+                participants: [data, currentUser],
+                type: null,
             };
         }
 
-        setActiveChatData(chatData);
+        if (data.type === "temp") {
+            return {
+                ...baseChat,
+                ...data,
+                isGroup: data.participants?.length > 2,
+                type: "temp",
+            };
+        }
+
+        // type === "chat"
+        if (!data._id) {
+            throw new Error("Invalid chat: chat must have an _id");
+        }
+
+        return {
+            ...baseChat,
+            ...data,
+            isGroup: !!data.isGroup,
+            type: "chat",
+        };
+    };
+
+
+    // ---- Select Chat ----
+    const setNormalizedActiveChat = useCallback((data) => {
+        const normalized = normalizeChat(data, currentUser);
+        if (!normalized) return;
+
+        setActiveChatData(normalized);
     }, [currentUser]);
 
     const clearActiveChat = useCallback(() => {
@@ -323,7 +334,8 @@ export default function ChatProvider({ children }) {
         replaceOptimisticMessage,
         markMessageFailed,
         setActiveChatMessages,
-        normalizeAndSetActiveChat,
+        setNormalizedActiveChat,
+        normalizeChat,
         setActiveChatData,
         selectedMediaAttachments,
         setSelectedMediaAttachments,
