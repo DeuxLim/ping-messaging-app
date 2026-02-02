@@ -159,11 +159,15 @@ export default function ChatMessage({ data }) {
                     </div>
                 </div>
 
-                {((sentMessageStatus !== "sent" || sentMessageStatus !== "seen" || messageClicked || isLastMessage) && isEmpty(data.media)) && (
-                    <div className="flex justify-end items-center text-xs text-gray-400 mt-0.5">
-                        <span>{sentMessageStatus}</span>
-                    </div>
-                )}
+                {(
+                    sentMessageStatus === "sending" ||
+                    messageClicked ||
+                    isLastMessage
+                ) && (
+                        <div className="flex justify-end items-center text-xs text-gray-400 mt-0.5">
+                            <span>{sentMessageStatus}</span>
+                        </div>
+                    )}
             </div>
 
             {/* Photo and Video */}
@@ -195,11 +199,15 @@ export default function ChatMessage({ data }) {
                         });
                     })()}
 
-                    {(sentMessageStatus !== "sent" || sentMessageStatus !== "seen" || messageClicked || isLastMessage) && (
-                        <div className="flex justify-end items-center text-xs text-gray-400 mt-0.5">
-                            <span>{sentMessageStatus}</span>
-                        </div>
-                    )}
+                    {(
+                        sentMessageStatus === "sending" ||
+                        messageClicked ||
+                        isLastMessage
+                    ) && (
+                            <div className="flex justify-end items-center text-xs text-gray-400 mt-0.5">
+                                <span>{sentMessageStatus}</span>
+                            </div>
+                        )}
                 </div>
             )}
         </>
