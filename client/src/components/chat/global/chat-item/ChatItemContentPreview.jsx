@@ -20,7 +20,9 @@ export default function ChatItemContentPreview({ data }) {
                 <div className="flex gap-1">
                     <div className="flex items-center gap-2 text-xs text-gray-600 min-w-0">
                         <span className={`truncate flex-1 ${!isLastMsgSeen && chatData.lastMessage?.sender?._id !== currentUser._id ? "font-bold" : ""}`}>
-                            {chatData.lastMessage?.sender?._id === currentUser._id ? (
+                            {chatData.lastMessage?.status === "sending" ? (
+                                "sending..."
+                            ) : chatData.lastMessage?.sender?._id === currentUser._id ? (
                                 `you: ${chatData.lastMessage?.text || ""}`
                             ) : chatData.unreadCount > 0 && !isLastMsgSeen ? (
                                 unread
