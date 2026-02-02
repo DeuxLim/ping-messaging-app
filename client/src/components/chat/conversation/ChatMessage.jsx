@@ -159,7 +159,7 @@ export default function ChatMessage({ data }) {
                     </div>
                 </div>
 
-                {((isLastMessage || messageClicked) && isEmpty(data.media)) && (
+                {((sentMessageStatus !== "sent" || sentMessageStatus !== "seen" || messageClicked || isLastMessage) && isEmpty(data.media)) && (
                     <div className="flex justify-end items-center text-xs text-gray-400 mt-0.5">
                         <span>{sentMessageStatus}</span>
                     </div>
@@ -195,7 +195,7 @@ export default function ChatMessage({ data }) {
                         });
                     })()}
 
-                    {(isLastMessage || messageClicked) && (
+                    {(sentMessageStatus !== "sent" || sentMessageStatus !== "seen" || messageClicked || isLastMessage) && (
                         <div className="flex justify-end items-center text-xs text-gray-400 mt-0.5">
                             <span>{sentMessageStatus}</span>
                         </div>
