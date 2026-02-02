@@ -24,16 +24,16 @@ export default function ChatBoxHeader() {
 		return isUserOnline(targetId) ? "online" : "offline";
 	}, [activeChatData, chatParticipants, isUserOnline]);
 
-	const isGroup = !!activeChatData.isGroup;
+	const isGroup = !!activeChatData?.isGroup;
 	const otherUser = !isGroup
-		? getOtherParticipant(activeChatData.participants, currentUser?._id)
+		? getOtherParticipant(activeChatData?.participants, currentUser?._id)
 		: null;
 
 	const chatName = isGroup
-		? activeChatData.chatName ? activeChatData.chatName : activeChatData.participants.map((u) => {
+		? activeChatData?.chatName ? activeChatData?.chatName : activeChatData?.participants.map((u) => {
 			return u.firstName
 		}).join(", ")
-		: !isEmpty(activeChatData.nicknames[otherUser._id]) ? activeChatData.nicknames[otherUser._id] : otherUser?.fullName ? `${otherUser?.fullName}`.trim()
+		: !isEmpty(activeChatData?.nicknames[otherUser._id]) ? activeChatData?.nicknames[otherUser._id] : otherUser?.fullName ? `${otherUser?.fullName}`.trim()
 			: `${otherUser?.firstName ?? ""} ${otherUser?.lastName ?? ""}`.trim();
 
 	// --- Event Handlers ---
@@ -95,7 +95,7 @@ export default function ChatBoxHeader() {
 							) : (
 								<div key={p?._id}>
 									<AvatarWithStatus
-										chatPhotoUrl={isGroup ? activeChatData.chatPhotoUrl : otherUser?.profilePicture?.url}
+										chatPhotoUrl={isGroup ? activeChatData?.chatPhotoUrl : otherUser?.profilePicture?.url}
 										userStatus={userStatus === "online" ? "online" : "offline"}
 										containerClass="size-10"
 									/>
