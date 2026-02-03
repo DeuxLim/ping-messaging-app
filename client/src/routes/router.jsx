@@ -73,7 +73,11 @@ export const routes = createBrowserRouter([
                                 children: [
                                     { index: true, element: <ChatWindow /> }
                                 ]
-                            }
+                            },
+                            {
+                                path: "*",
+                                element: <Navigate to="" replace />,
+                            },
                         ]
                     }
                 ]
