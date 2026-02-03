@@ -13,7 +13,7 @@ import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
 import useAuth from "../../../contexts/auth/useAuth";
 
 function ChatItem({ chatData, variant, isSelecting = false }) {
-    const { isUserOnline, activeChatData, isSearch } = useChat();
+    const { isUserOnline, activeChatData, isSearch, updateChatSearchResults } = useChat();
     const { setSelectedChats, selectedChats } = useActiveChat();
     const { currentUser } = useAuth();
     const navigate = useNavigate();
@@ -80,6 +80,11 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     const handleChatSelect = () => {
         // Navigate to chat if user is not selecting OR the first selected chat is a group
         if (!isSelecting || (selectedChats?.length === 1 && selectedChats?.isGroup)) {
+            updateChatSearchResults({
+                chats: [],
+                users: [],
+                isSearch: false,
+            });
             navigate(`/chats/${chatData?._id}`);
         } else {
             setSelectedChats(prev => {
@@ -138,7 +143,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
             {/* Chat Data UI - main content area */}
             <div className="flex-1 min-w-0 flex flex-col gap-1">
                 {/* Chat Name */}
-                {variant !== "preview" && <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName, existingChat }} />}
+                {variant !== "preview" && <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName, existingChat, isSelecting }} />}
                 {variant === "preview" && (() => {
                     let usersDisplayName = "";
                     if (!isEmpty(activeChatData?.participants)) {

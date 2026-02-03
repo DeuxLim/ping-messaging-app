@@ -13,5 +13,7 @@ export default function useDebounceSearch(callback, delay = 400) {
 		debounceRef.current = setTimeout(() => callback(value), delay);
 	};
 
-	return { query, handleChange };
+	const reset = () => setQuery("");
+
+	return { query, handleChange, reset };
 }

@@ -5,9 +5,10 @@ import useChat from "../../../contexts/chat/useChat";
 import useAuth from "../../../contexts/auth/useAuth";
 import useSocket from "../../../contexts/socket/useSocket";
 import { searchChatAndUsers } from "../../../services/chats.service";
+import { useEffect, useRef } from "react";
 
 export default function SidebarSearch() {
-    const { updateChatSearchResults, isLoading } = useChat();
+    const { updateChatSearchResults, isLoading, activeChatData } = useChat();
     const { authStatus } = useAuth();
     const { socketStatus } = useSocket();
 
@@ -23,7 +24,7 @@ export default function SidebarSearch() {
         }
 
         try {
-            const response = await searchChatAndUsers(searchQuery);;
+            const response = await searchChatAndUsers(searchQuery);
             updateChatSearchResults({
                 chats: [...response.existingChats, ...response.groupChats],
                 users: response.newUsers,
@@ -34,7 +35,22 @@ export default function SidebarSearch() {
         }
     };
 
-    const { query, handleChange } = useDebounceSearch(handleChatSearch, 400);
+    const { query, handleChange, reset } = useDebounceSearch(handleChatSearch, 400);
+
+
+    // Clear Search Input
+    const hasClearedRef = useRef(false);
+    useEffect(() => {
+        if (!activeChatData) return;
+        if (hasClearedRef.current) return;
+        hasClearedRef.current = true;
+        reset();
+    }, [activeChatData, reset, updateChatSearchResults]);
+
+    // reset guard when chat changes again
+    useEffect(() => {
+        hasClearedRef.current = false;
+    }, [activeChatData?._id]);
 
     if (!isAppReady || isLoading) return <SidebarSearchSkeleton />;
 
