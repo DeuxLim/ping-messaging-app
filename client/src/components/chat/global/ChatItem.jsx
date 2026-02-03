@@ -82,7 +82,11 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
         if (!isSelecting || (selectedChats?.length === 1 && selectedChats?.isGroup)) {
             navigate(`/chats/${chatData?._id}`);
         } else {
-            setSelectedChats(prev => [...prev, chatData]);
+            setSelectedChats(prev => {
+                // Avoid Duplicates
+                if (prev.some(chat => chat._id === chatData._id)) return prev;
+                return [...prev, chatData];
+            });
         }
     };
 
