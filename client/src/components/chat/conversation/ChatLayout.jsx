@@ -1,58 +1,154 @@
-import { useEffect, useState } from "react";
-import { Outlet, useNavigate, useParams } from "react-router";
-import { isEmpty } from "../../../utilities/utils";
+import { useCallback, useEffect, useRef } from "react";
+import { Navigate, Outlet, useMatch, useParams } from "react-router";
+
+import { getOtherParticipants, isEmpty } from "../../../utilities/utils";
+import { getMessages } from "../../../services/chats.service";
 
 import ChatBoxHeader from "./ChatBoxHeader";
+import ChatSearchInput from "./ChatSearchInput";
+
 import useAuth from "../../../contexts/auth/useAuth";
 import useChat from "../../../contexts/chat/useChat";
+import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
 
 export default function ChatLayout() {
-    const { token } = useAuth();
-    const { setNormalizedActiveChat, activeChatData, usersAndChatsList, clearActiveChat } = useChat();
-    const { chatId } = useParams();
-    const navigate = useNavigate();
+	const { currentUser } = useAuth();
+	const {
+		usersAndChatsList,
+		activeChatData,
+		clearActiveChat,
+		clearActiveChatMessages,
+		setActiveChatMessages,
+		setNormalizedActiveChat,
+	} = useChat();
 
-    const [loading, setLoading] = useState(true);
+	const { selectedChats, setSelectedChats } = useActiveChat();
 
-    useEffect(() => {
-        if (!chatId || !usersAndChatsList?.length) return;
+	const { chatId } = useParams();
+	const isSelectingChat = !!useMatch("/chats/new");
 
-        let isMounted = true;
+	const prevSelectedChatsRef = useRef(null);
 
-        const loadChat = async () => {
-            try {
-                setLoading(true);
-                // find chat or user entry by ID
-                const chatData = usersAndChatsList.find((item) => item._id === chatId);
+	const chatExists = usersAndChatsList.some(chat => chat._id === chatId);
 
-                if (isMounted) setNormalizedActiveChat(chatData);
-            } catch (err) {
-                console.error("ChatLayout error:", err);
-                if (isMounted) navigate("/chats", { replace: true });
-            } finally {
-                if (isMounted) setLoading(false);
-            }
-        };
+	/* ---------------- Helpers ---------------- */
 
-        loadChat();
+	const findExistingOneToOneChat = useCallback(
+		(participants) => {
+			return usersAndChatsList.find(chat => {
+				if (chat.type !== "chat" || chat.isGroup) return false;
+				if (!Array.isArray(chat.participants)) return false;
 
-        return () => {
-            isMounted = false;
-        };
-    }, [chatId, navigate, setNormalizedActiveChat, token, usersAndChatsList, clearActiveChat]);
+				const chatIds = chat.participants.map(u => u._id).sort();
+				const selectedIds = participants.map(u => u._id).sort();
 
-    if (loading || isEmpty(activeChatData)) {
-        return (
-            <div className="flex items-center justify-center h-full text-gray-500 text-sm">
-                Loading chat...
-            </div>
-        );
-    }
+				return (
+					chatIds.length === selectedIds.length &&
+					chatIds.every((id, i) => id === selectedIds[i])
+				);
+			});
+		},
+		[usersAndChatsList]
+	);
 
-    return (
-        <div className="flex flex-col h-full">
-            <ChatBoxHeader />
-            <Outlet />
-        </div>
-    );
+	const handleNewChat = useCallback(async () => {
+		if (isEmpty(selectedChats)) return;
+
+		const selectedUsers = selectedChats.map(item =>
+			item.type === "chat"
+				? getOtherParticipants(item.participants, currentUser._id)[0]
+				: item
+		);
+
+		const participants = [...selectedUsers, currentUser];
+		const existingChat = findExistingOneToOneChat(participants);
+
+		if (!existingChat) {
+			setNormalizedActiveChat({
+				type: "temp",
+				isGroup: participants.length > 2,
+				participants,
+			});
+			return;
+		}
+
+		const messages = await getMessages(existingChat._id);
+		setActiveChatMessages(messages);
+	}, [
+		selectedChats,
+		currentUser,
+		findExistingOneToOneChat,
+		setNormalizedActiveChat,
+		setActiveChatMessages,
+	]);
+
+	const handleExistingChat = useCallback(() => {
+		const chat = usersAndChatsList.find(chat => chat._id === chatId);
+		if (chat) setNormalizedActiveChat(chat);
+	}, [usersAndChatsList, chatId, setNormalizedActiveChat]);
+
+	/* ---------------- Main Loader ---------------- */
+
+	const loadChat = useCallback(async () => {
+		try {
+			if (isSelectingChat) {
+				await handleNewChat();
+			} else {
+				handleExistingChat();
+			}
+		} catch (err) {
+			console.error("ChatLayout error:", err);
+		} finally {
+			prevSelectedChatsRef.current = selectedChats;
+		}
+	}, [
+		isSelectingChat,
+		selectedChats,
+		handleNewChat,
+		handleExistingChat,
+	]);
+
+	/* ---------------- Effects ---------------- */
+
+	// Load / reload chat
+	useEffect(() => {
+		if (
+			isSelectingChat &&
+			prevSelectedChatsRef.current === selectedChats
+		) return;
+
+		loadChat();
+	}, [loadChat, isSelectingChat, selectedChats]);
+
+	// Clear when no selection in /chats/new
+	useEffect(() => {
+		if (!isSelectingChat || !isEmpty(selectedChats)) return;
+
+		clearActiveChat();
+		clearActiveChatMessages();
+	}, [isSelectingChat, selectedChats, clearActiveChat, clearActiveChatMessages]);
+
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			setSelectedChats([]);
+			clearActiveChat();
+			clearActiveChatMessages();
+		};
+	}, [setSelectedChats, clearActiveChat, clearActiveChatMessages]);
+
+	/* ---------------- Guards ---------------- */
+
+	if (!chatExists && !isSelectingChat) {
+		return <Navigate to="/chats" replace />;
+	}
+
+	/* ---------------- UI ---------------- */
+
+	return (
+		<div className="flex flex-col h-full">
+			{isSelectingChat ? <ChatSearchInput /> : <ChatBoxHeader />}
+			{!isEmpty(activeChatData) && <Outlet />}
+		</div>
+	);
 }

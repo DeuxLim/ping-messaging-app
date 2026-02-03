@@ -54,6 +54,26 @@ export default function ChatProvider({ children }) {
         return [...chats, ...users];
     }, [chatItems, userItems]);
 
+    const createEmptyTempChat = (participants = []) => {
+        return {
+            _id: null,
+            chatName: null,
+            chatPhoto: null,
+            admins: [],
+            nicknames: {},
+            lastMessage: null,
+            mutedBy: [],
+            archivedBy: [],
+            deletedFor: [],
+            updatedBy: null,
+            unreadCount: 0,
+            isGroup: participants.length > 2,
+            participants,
+            type: "temp",
+            clientTempChatId: `temp-chat-${crypto.randomUUID()}`,
+        };
+    };
+
     const normalizeChat = (data, currentUser) => {
         if (isEmpty(data)) return null;
 
@@ -76,7 +96,8 @@ export default function ChatProvider({ children }) {
                 ...baseChat,
                 isGroup: false,
                 participants: [data, currentUser],
-                type: null,
+                type: "temp",
+                clientTempChatId: `temp-chat-${crypto.randomUUID()}`
             };
         }
 
@@ -90,7 +111,6 @@ export default function ChatProvider({ children }) {
             };
         }
 
-        // type === "chat"
         if (!data._id) {
             throw new Error("Invalid chat: chat must have an _id");
         }
@@ -344,6 +364,7 @@ export default function ChatProvider({ children }) {
         selectedMediaAttachments,
         setSelectedMediaAttachments,
         clearActiveChat,
+        createEmptyTempChat,
         clearActiveChatMessages,
 
         // fetched lists
