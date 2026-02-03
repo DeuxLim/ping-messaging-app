@@ -26,6 +26,7 @@ const findOrCreateChat = async (req, res) => {
 	try {
 		// Get request ID
 		const id = req.body.id;
+		const clientTempChatId = req.body.clientTempChatId ?? null;
 		if (!mongoose.Types.ObjectId.isValid(id) && id !== null) {
 			return res.status(400).json({ message: "Invalid ID format" });
 		}
@@ -122,6 +123,7 @@ const findOrCreateChat = async (req, res) => {
 			message: "created new chat",
 			data: {
 				isNew: true,
+				clientTempChatId,
 				chat: populatedChat,
 			},
 		});

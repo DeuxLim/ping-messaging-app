@@ -58,7 +58,7 @@ export default function ChatProvider({ children }) {
         if (isEmpty(data)) return null;
 
         const baseChat = {
-            _id: null,
+            _id: data._id ?? null,
             chatName: null,
             chatPhoto: null,
             admins: [],
@@ -86,6 +86,7 @@ export default function ChatProvider({ children }) {
                 ...data,
                 isGroup: data.participants?.length > 2,
                 type: "temp",
+                clientTempChatId: `temp-chat-${crypto.randomUUID()}`
             };
         }
 
