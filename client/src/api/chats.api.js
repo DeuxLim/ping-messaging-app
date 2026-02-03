@@ -12,8 +12,8 @@ export const getChatMessagesAPI = (chatId) => {
 	return fetchAPI.get(`/chats/${chatId}`);
 };
 
-export const createChatAPI = ({ id, participants, chatName }) => {
-	return fetchAPI.post(`/chats`, { id, participants, chatName });
+export const createChatAPI = ({ id, participants, chatName, clientTempChatId}) => {
+	return fetchAPI.post(`/chats`, { id, participants, chatName, clientTempChatId });
 };
 
 export const getMessagesAPI = (chatId) => {

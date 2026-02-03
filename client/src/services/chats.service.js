@@ -34,8 +34,8 @@ export const getChatMessages = async (chatId) => {
 	return Array.isArray(res) ? res : [];
 };
 
-export const createChat = async ({ id, participants, chatName }) => {
-	const res = await createChatAPI({ id, participants, chatName });
+export const createChat = async ({ id, participants, chatName, clientTempChatId }) => {
+	const res = await createChatAPI({ id, participants, chatName, clientTempChatId });
 
 	return res;
 };
