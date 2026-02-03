@@ -13,7 +13,7 @@ import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
 export default function ChatSearchInput() {
     const { currentUser } = useAuth();
     const { usersAndChatsList } = useChat();
-    const { setFilteredList, selectedChats, filteredList, setSelectedChats } = useActiveChat();
+    const { selectedChats, setSelectedChats } = useActiveChat();
 
     const chipRef = useRef(null);
     const [chipWidth, setChipWidth] = useState(56);
@@ -21,22 +21,32 @@ export default function ChatSearchInput() {
 
     const navigate = useNavigate();
 
+    /* ---------------- Chip width ---------------- */
+
     useEffect(() => {
         if (chipRef.current) setChipWidth(chipRef.current.offsetWidth + 12);
     }, [selectedChats]);
 
-    useEffect(() => {
-        if (!usersAndChatsList?.length) {
-            setFilteredList([]);
-            return;
-        }
+    /* ---------------- Search ---------------- */
+
+    // debounce hook requires a function — filtering is derived
+    const handleChatSearch = () => { };
+    const { query, handleChange } = useDebounceSearch(handleChatSearch, 400);
+
+    /* ---------------- FILTER (FIX) ---------------- */
+
+    const filteredList = useMemo(() => {
+        if (isEmpty(usersAndChatsList)) return [];
+
+        const selectedIds = new Set(selectedChats.map(c => c._id));
+        const search = query.trim().toLowerCase();
 
         const byUserId = new Map();
 
         usersAndChatsList.forEach(item => {
             let key = null;
 
-            // GROUP CHAT → standalone
+            // GROUP CHAT (standalone, can't be selected with other chat)
             if (item.type === "chat" && item.isGroup === true) {
                 key = item._id;
             }
@@ -62,33 +72,31 @@ export default function ChatSearchInput() {
 
             if (!key) return;
 
+            // ❌ filter out selected
+            if (selectedIds.has(item._id)) return;
+
+            // 🔍 search filter
+            if (search) {
+                const matches =
+                    item.type === "chat"
+                        ? item.participants?.some(user =>
+                            user.fullName?.toLowerCase().includes(search)
+                        )
+                        : item.fullName?.toLowerCase().includes(search);
+
+                if (!matches) return;
+            }
+
             // chat always wins over user
             if (!byUserId.has(key) || item.type === "chat") {
                 byUserId.set(key, item);
             }
         });
 
-        setFilteredList(Array.from(byUserId.values()));
-    }, [usersAndChatsList, currentUser._id, setFilteredList]);
+        return Array.from(byUserId.values());
+    }, [usersAndChatsList, selectedChats, query, currentUser._id]);
 
-    const handleChatSearch = (value) => {
-        const searchQuery = value.trim().toLowerCase();
-        if (isEmpty(searchQuery)) return setFilteredList(usersAndChatsList.filter(item => item.type !== "chat" && item.isGroup !== true));
-
-        const filtered = usersAndChatsList.filter(item => {
-            if (item.type === "chat") {
-                return item.participants?.some(user =>
-                    user.fullName?.toLowerCase().includes(searchQuery)
-                );
-            }
-            if (item.type === "user") {
-                return item.fullName?.toLowerCase().includes(searchQuery);
-            }
-            return false;
-        });
-
-        setFilteredList(filtered);
-    };
+    /* ---------------- Actions ---------------- */
 
     const removeSelectedChat = (id) => {
         setSelectedChats(prev => prev.filter(chat => chat._id !== id));
@@ -102,8 +110,10 @@ export default function ChatSearchInput() {
     };
 
     const handleBackClick = () => {
-        navigate("/chats", { replace: true })
+        navigate("/chats", { replace: true });
     };
+
+    /* ---------------- Render ---------------- */
 
     const chatNodes = useMemo(() => {
         if (isEmpty(filteredList)) return [];
@@ -112,7 +122,11 @@ export default function ChatSearchInput() {
                 key={`${item.type}-${item._id}`}
                 className="text-sm relative after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-[94%]"
             >
-                <ChatItem chatData={item} variant="compact" isSelecting={item.isGroup ? false : true} />
+                <ChatItem
+                    chatData={item}
+                    variant="compact"
+                    isSelecting={item.isGroup ? false : true}
+                />
             </div>
         ));
     }, [filteredList]);
@@ -121,8 +135,6 @@ export default function ChatSearchInput() {
         usersAndChatsList.length === 0
             ? <div className="text-gray-500">No results</div>
             : chatNodes;
-
-    const { query, handleChange } = useDebounceSearch(handleChatSearch, 400);
 
     return (
         <>
@@ -150,7 +162,11 @@ export default function ChatSearchInput() {
 
                             <div className="flex gap-2">
                                 {selectedChats.map(chat => {
-                                    const otherUser = chat.type === "chat" ? getOtherParticipant(chat.participants, currentUser?._id) : chat;
+                                    const otherUser =
+                                        chat.type === "chat"
+                                            ? getOtherParticipant(chat.participants, currentUser?._id)
+                                            : chat;
+
                                     return (
                                         <div
                                             key={chat._id}
@@ -181,23 +197,18 @@ export default function ChatSearchInput() {
                             onBlur={() => setIsFocused(false)}
                         />
 
-                        {/* Floating list, only when focused */}
+                        {/* Floating list */}
                         {isFocused && (
                             <div
                                 className="absolute bg-white max-h-96 shadow-2xl border border-gray-200 rounded-lg z-50 mt-1 p-4 flex flex-col gap-2 overflow-auto"
-                                style={{
-                                    left: chipWidth,
-                                    width: "260px"
-                                }}
-                                onMouseDown={(e) => e.preventDefault()} // keep input from blurring
+                                style={{ left: chipWidth, width: "260px" }}
+                                onMouseDown={(e) => e.preventDefault()}
                             >
                                 <div className="text-sm font-semibold text-gray-500">
                                     Your Contacts
                                 </div>
 
-                                <div>
-                                    {renderList}
-                                </div>
+                                <div>{renderList}</div>
                             </div>
                         )}
                     </div>
