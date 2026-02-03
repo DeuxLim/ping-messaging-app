@@ -61,8 +61,14 @@ export default function SidebarChats() {
         <section className="flex-1 px-2 py-3 flex flex-col gap-3 overflow-auto">
             <div className="text-sm flex flex-col gap-1">
                 <div className="transition-opacity duration-200 opacity-100">
-                    {tempChatPreview}
-                    {isLoading ? <SidebarChatsSkeleton count={8} /> : renderList}
+                    {isLoading ?
+                        <SidebarChatsSkeleton count={8} />
+                        : (
+                            <>
+                                {tempChatPreview}
+                                {renderList}
+                            </>
+                        )}
                 </div>
             </div>
         </section>
