@@ -3,9 +3,10 @@ import CenteredMessage from "../../common/CenteredMessage";
 import { useMemo } from "react";
 import SidebarChatsSkeleton from "./SidebarChatsSkeleton";
 import useChat from "../../../contexts/chat/useChat";
-import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
+import { useLocation } from "react-router";
 
 export default function SidebarChats() {
+    const { pathname } = useLocation();
     const {
         usersAndChatsList,
         searchResults,
@@ -13,9 +14,8 @@ export default function SidebarChats() {
         isLoading = false,
         error = null,
         activeChatData,
+        createEmptyTempChat,
     } = useChat();
-
-    const { selectedChats } = useActiveChat();
 
     const chatNodes = useMemo(() => {
         const filtered = isSearch
@@ -31,11 +31,14 @@ export default function SidebarChats() {
         ));
     }, [usersAndChatsList, isSearch, searchResults]);
 
+
+    const isNewChatRoute = pathname === "/chats/new";
+    const chatData = activeChatData ?? createEmptyTempChat();
     const tempChatPreview =
-        selectedChats.length > 0 && (
+        isNewChatRoute && (
             <ChatItem
-                key={activeChatData?._id}
-                chatData={activeChatData}
+                key={chatData?._id}
+                chatData={chatData}
                 variant="preview"
             />
         );

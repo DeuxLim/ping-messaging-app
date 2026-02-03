@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useEffect, useState, useMemo, memo } from "react";
-import { formatLastMessageDateTime } from "../../../utilities/utils";
+import { formatLastMessageDateTime, isEmpty } from "../../../utilities/utils";
 import useOtherParticipants from "../../../hooks/chat/useOtherParticipants";
 import ChatItemAvatar from "./chat-item/ChatItemAvatar";
 import ChatItemName from "./chat-item/ChatItemName";
@@ -79,7 +79,7 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
     // --- Handlers ---
     const handleChatSelect = () => {
         // Navigate to chat if user is not selecting OR the first selected chat is a group
-        if (!isSelecting || (selectedChats.length === 1 && selectedChats?.isGroup)) {
+        if (!isSelecting || (selectedChats?.length === 1 && selectedChats?.isGroup)) {
             navigate(`/chats/${chatData?._id}`);
         } else {
             setSelectedChats(prev => [...prev, chatData]);
@@ -98,22 +98,28 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
 
             {/* Display Photo */}
             <div className="flex justify-center items-center relative size-12">
-                {chatParticipants?.slice(0, 2).map((p, index) => {
-                    const displayPhotos = chatData?.isGroup ? (
-                        <div
-                            key={p?._id}
-                            className={`absolute ${index === 1 ? 'right-3.5 top-3' : 'left-3.5 bottom-3'}`}
-                        >
-                            <div className="size-9 rounded-full overflow-hidden">
-                                <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+                {!isEmpty(chatParticipants) ?
+                    chatParticipants?.slice(0, 2).map((p, index) => {
+                        const displayPhotos = chatData?.isGroup ? (
+                            <div
+                                key={p?._id}
+                                className={`absolute ${index === 1 ? 'right-3.5 top-3' : 'left-3.5 bottom-3'}`}
+                            >
+                                <div className="size-9 rounded-full overflow-hidden">
+                                    <AvatarImage chatPhotoUrl={p?.profilePicture?.url} />
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <ChatItemAvatar key={p?._id} data={{ chatPhotoUrl, userStatus }} />
-                    );
+                        ) : (
+                            <ChatItemAvatar key={p?._id} data={{ chatPhotoUrl, userStatus }} />
+                        );
 
-                    return displayPhotos;
-                })}
+                        return displayPhotos;
+                    })
+
+                    :
+
+                    <ChatItemAvatar key={crypto.randomUUID()} data={{ chatPhotoUrl: null, userStatus: null }} />
+                }
 
                 {/* Status Icon */}
                 {
@@ -130,19 +136,24 @@ function ChatItem({ chatData, variant, isSelecting = false }) {
                 {/* Chat Name */}
                 {variant !== "preview" && <ChatItemName data={{ isLastMsgSeen, chatData, currentUser, chatName, existingChat }} />}
                 {variant === "preview" && (() => {
-                    const names = activeChatData?.participants
-                        .filter(u => u?._id !== currentUser?._id)
-                        .map(u => u.firstName);
-
                     let usersDisplayName = "";
-
-                    if (names.length === 1) {
-                        usersDisplayName = names[0];
-                    } else if (names.length === 2) {
-                        usersDisplayName = `${names[0]} and ${names[1]}`;
+                    if (!isEmpty(activeChatData?.participants)) {
+                        const names = activeChatData?.participants
+                            .filter(u => u?._id !== currentUser?._id)
+                            .map(u => u.firstName);
+                        if (names?.length === 1) {
+                            usersDisplayName = names[0];
+                        } else if (names?.length === 2) {
+                            usersDisplayName = `${names[0]} and ${names[1]}`;
+                        } else {
+                            usersDisplayName = `${names?.slice(0, -1).join(", ")} and ${names[names?.length - 1]}`;
+                        }
                     } else {
-                        usersDisplayName = `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+                        if (isSelecting) {
+                            usersDisplayName = "New message ";
+                        }
                     }
+
 
                     return `New message to ${usersDisplayName}`;
                 })()}
