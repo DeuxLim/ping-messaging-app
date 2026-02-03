@@ -8,6 +8,7 @@ import useChat from "../../../contexts/chat/useChat";
 import useChatDisplay from "../../../contexts/chat/ChatDisplay/useChatDisplay";
 import useSocket from "../../../contexts/socket/useSocket";
 import { getChatMessages } from "../../../services/chats.service";
+import { isEmpty } from "../../../utilities/utils";
 
 export default function ChatContent() {
     const { token, currentUser } = useAuth();
@@ -58,6 +59,7 @@ export default function ChatContent() {
 
     // Scroll to bottom when messages change
     useLayoutEffect(() => {
+        if (isEmpty(activeChatMessages)) return;
         if (!messagesEndRef.current) return;
         messagesEndRef.current.scrollIntoView({ behavior: "auto" });
     }, [activeChatMessages, isTyping]);
