@@ -114,8 +114,11 @@ export default function ChatProvider({ children }) {
 
     const clearActiveChat = useCallback(() => {
         setActiveChatData(null);
+    }, [setActiveChatData]);
+
+    const clearActiveChatMessages = useCallback(() => {
         setActiveChatMessages([]);
-    }, [setActiveChatData, setActiveChatMessages]);
+    }, [setActiveChatMessages]);
 
     // ---- Socket Presence ----
     useEffect(() => {
@@ -341,6 +344,7 @@ export default function ChatProvider({ children }) {
         selectedMediaAttachments,
         setSelectedMediaAttachments,
         clearActiveChat,
+        clearActiveChatMessages,
 
         // fetched lists
         chatItems,
