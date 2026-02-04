@@ -135,13 +135,13 @@ export default function ChatLayout() {
 	}, [isSelectingChat, selectedChats, clearActiveChat, clearActiveChatMessages]);
 
 	// Cleanup on unmount
-	useEffect(() => {
-		return () => {
-			setSelectedChats([]);
-			clearActiveChat();
-			clearActiveChatMessages();
-		};
-	}, [setSelectedChats, clearActiveChat, clearActiveChatMessages]);
+	/* 	useEffect(() => {
+			return () => {
+				setSelectedChats([]);
+				clearActiveChat();
+				clearActiveChatMessages();
+			};
+		}, [setSelectedChats, clearActiveChat, clearActiveChatMessages]); */
 
 	/* ---------------- Guards ---------------- */
 
