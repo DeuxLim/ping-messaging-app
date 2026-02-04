@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import useChat from "../../../contexts/chat/useChat";
 import useAuth from "../../../contexts/auth/useAuth";
 import useSocket from "../../../contexts/socket/useSocket";
@@ -10,13 +10,15 @@ import { RxCross2 } from "react-icons/rx";
 import { LuCopyPlus } from "react-icons/lu";
 import { HiPaperAirplane } from "react-icons/hi2";
 import { createChat } from "../../../services/chats.service";
+import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
+import { joinChat } from "../../../realtime/presenceSocket";
 
 export default function ChatInput() {
 	const [message, setMessage] = useState("");
-	const { activeChatData, addOptimisticMessage } = useChat();
+	const { activeChatData, addOptimisticMessage, setNormalizedActiveChat, setActiveChatMessages, setChatItems } = useChat();
+	const { setSelectedChats } = useActiveChat();
 	const { currentUser } = useAuth();
 	const { socket } = useSocket();
-	const { chatId = null } = useParams();
 	const navigate = useNavigate();
 	const fileInputRef = useRef(null);
 	const [selectedMediaAttachments, setSelectedMediaAttachments] = useState([]);
@@ -26,32 +28,18 @@ export default function ChatInput() {
 		async (e) => {
 			e.preventDefault();
 			const trimmedMessage = message.trim();
-
-			const finalMessage =
-				!trimmedMessage && isEmpty(selectedMediaAttachments)
-					? "👍"
-					: trimmedMessage;
+			const finalMessage = !trimmedMessage && isEmpty(selectedMediaAttachments) ? "👍" : trimmedMessage;
 
 			try {
-				let chatIdToUse = activeChatData.type === "temp" ? null : activeChatData?._id;
-
-				// If no chat exists, create one first
-				if (!chatIdToUse) {
-					const res = await createChat({ id: chatId, participants: activeChatData.participants, chatName: activeChatData.chatName });
-					if (res?.error || !res?.data?.chat?._id) {
-						navigate("/chats", { replace: true });
-						return;
-					}
-					chatIdToUse = res.data.chat._id;
-					navigate(`/chats/${chatIdToUse}`, { replace: true });
-				}
-
-				const tempId = `temp-${crypto.randomUUID()}`;
+				// Send Optimistic Message
 				const now = new Date().toISOString();
+				let tempMessageId = `temp-message-${crypto.randomUUID()}`;
+				let chatData = activeChatData;
 
+				// Prepare message structure
 				const optimisticMessage = {
-					_id: tempId,
-					chatId: chatIdToUse,
+					_id: tempMessageId,
+					chat: chatData,
 					sender: {
 						_id: currentUser._id,
 						firstName: currentUser.firstName,
@@ -66,24 +54,104 @@ export default function ChatInput() {
 					type: "user",
 				};
 
-				addOptimisticMessage(optimisticMessage);
+				// Add optimistic message
+				addOptimisticMessage(optimisticMessage, chatData);
+
+				// Create chat if target chat is temporary
+				if (chatData.type === "temp") {
+					const res = await createChat({
+						id: null,
+						clientTempChatId: chatData?.clientTempChatId,
+						participants: chatData.participants,
+						chatName: chatData.chatName
+					});
+					chatData = res?.data?.chat;
+
+					if (res?.error || !res?.data?.chat?._id) {
+						navigate("/chats", { replace: true });
+						return;
+					}
+
+					joinChat(chatData?._id);
+
+				}
+
+				// update optimistic messages chat data
+				setActiveChatMessages(prev =>
+					prev.map((message) => {
+						if (message._id === tempMessageId) {
+							return { ...message, chat: chatData };
+						} else {
+							return message;
+						}
+					}
+					)
+				);
+
+				// For Main Chat Window 
+				setNormalizedActiveChat(chatData);
+
+				// For SideBar
+				setChatItems(prev => {
+					const chatKey = chatData.clientTempChatId;
+
+					const index = prev.findIndex(
+						chat => chat.clientTempChatId === chatKey
+					);
+
+					// not found
+					if (index === -1) {
+						return prev;
+					}
+
+					// update + move to top
+					const updatedChat = {
+						...prev[index],
+						...chatData,
+						clientTempChatId: null,
+						lastMessage: prev[index].lastMessage,
+					};
+
+					return [
+						updatedChat,
+						...prev.slice(0, index),
+						...prev.slice(index + 1),
+					];
+				});
+
+				setSelectedChats([]);
 
 				// Send message through socket
 				socket?.emit("sendMessage", {
-					tempId,
-					chatId: chatIdToUse,
+					tempMessageId: tempMessageId ?? null,
+					chatId: chatData._id,
 					senderId: currentUser._id,
 					text: finalMessage,
 					media: selectedMediaAttachments,
 				});
 
+				navigate(`/chats/${chatData._id}`, { replace: true });
 				setMessage("");
 				setSelectedMediaAttachments([]);
 			} catch (err) {
 				console.error("Message send failed:", err);
 			}
 		},
-		[message, chatId, currentUser, navigate, socket, activeChatData, selectedMediaAttachments, addOptimisticMessage]
+
+		// Dependencies
+		[
+			message,
+			currentUser,
+			navigate,
+			socket,
+			activeChatData,
+			selectedMediaAttachments,
+			addOptimisticMessage,
+			setActiveChatMessages,
+			setNormalizedActiveChat,
+			setChatItems,
+			setSelectedChats,
+		]
 	);
 
 	// ---- Typing Indicator ----
