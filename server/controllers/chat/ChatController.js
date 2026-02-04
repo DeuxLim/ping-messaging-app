@@ -119,12 +119,19 @@ const findOrCreateChat = async (req, res) => {
 			)
 			.populate("lastMessage");
 
+		const chat = populatedChat.toObject
+			? populatedChat.toObject()
+			: populatedChat;
+
+		const finalChat = clientTempChatId
+			? { ...chat, clientTempChatId }
+			: chat;
+
 		return res.status(200).json({
 			message: "created new chat",
 			data: {
 				isNew: true,
-				clientTempChatId,
-				chat: populatedChat,
+				chat: finalChat,
 			},
 		});
 	} catch (error) {
