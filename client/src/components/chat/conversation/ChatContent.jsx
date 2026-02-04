@@ -24,6 +24,7 @@ export default function ChatContent() {
     const isTyping = !!typingChats?.[activeChatData?._id];
     const typingUserIds = typingChats?.[activeChatData?._id] || [];
     const typingUsers = activeChatData?.participants?.filter((p) => typingUserIds.includes(p._id)) || [];
+    const activeChatMessagesRef = useRef(activeChatMessages);
 
     // Fetch chat messages
     useEffect(() => {
@@ -59,13 +60,12 @@ export default function ChatContent() {
 
     // Scroll to bottom when messages change
     useLayoutEffect(() => {
-        if (isEmpty(activeChatMessages)) return;
+        //if (isEmpty(activeChatMessages)) return;
         if (!messagesEndRef.current) return;
         messagesEndRef.current.scrollIntoView({ behavior: "auto" });
     }, [activeChatMessages, isTyping]);
 
     /* ----- HANDLE MESSAGE SEEN STATUS ----  */
-    const activeChatMessagesRef = useRef(activeChatMessages);
     const observerRef = useRef(null);
 
     // Keep ref updated
