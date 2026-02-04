@@ -7,6 +7,13 @@ export const joinChats = (chatIds) => {
 	socket.emit("user:joinAll", chatIds);
 };
 
+export const joinChat = (chatId) => {
+	const socket = getSocket();
+	if (!socket || !chatId) return;
+
+	socket.emit("user:joinChat", chatId);
+};
+
 export const announceOnline = (userId) => {
 	const socket = getSocket();
 	if (!socket) return;
