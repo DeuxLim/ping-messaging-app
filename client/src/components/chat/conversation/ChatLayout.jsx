@@ -22,7 +22,7 @@ export default function ChatLayout() {
 		setNormalizedActiveChat,
 	} = useChat();
 
-	const { selectedChats, setSelectedChats } = useActiveChat();
+	const { selectedChats } = useActiveChat();
 
 	const { chatId } = useParams();
 	const isSelectingChat = !!useMatch("/chats/new");
@@ -54,6 +54,9 @@ export default function ChatLayout() {
 	const handleNewChat = useCallback(async () => {
 		if (isEmpty(selectedChats)) return;
 
+		clearActiveChat();
+		clearActiveChatMessages();
+
 		const selectedUsers = selectedChats.map(item =>
 			item.type === "chat"
 				? getOtherParticipants(item.participants, currentUser._id)[0]
@@ -74,12 +77,15 @@ export default function ChatLayout() {
 
 		const messages = await getMessages(existingChat._id);
 		setActiveChatMessages(messages);
+		setNormalizedActiveChat(existingChat);
 	}, [
 		selectedChats,
 		currentUser,
 		findExistingOneToOneChat,
 		setNormalizedActiveChat,
 		setActiveChatMessages,
+		clearActiveChat,
+		clearActiveChatMessages
 	]);
 
 	const handleExistingChat = useCallback(() => {
