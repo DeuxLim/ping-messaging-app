@@ -35,12 +35,17 @@ export const socketHandler = (io) => {
 			});
 		});
 
+		socket.on("user:joinChat", (chatId) => {
+			if (!chatId) return;
+			const room = `chat:${chatId}`;
+			socket.join(room);
+		});
+
 		/** ─────────────── MESSAGES ─────────────── **/
 		socket.on(
 			"sendMessage",
 			async ({ chatId, senderId, text, media, tempMessageId }) => {
-				if (!chatId || !senderId || !text) return;
-
+				if (!chatId || !senderId) return;
 				const newMessage = await addMessageToChat({
 					chatId,
 					senderId,
@@ -50,6 +55,7 @@ export const socketHandler = (io) => {
 
 				const room = `chat:${chatId}`;
 
+				console.log("sending back received message...");
 				io.to(room).emit("receiveMessage", {
 					tempMessageId,
 					msg: newMessage,
@@ -93,7 +99,9 @@ export const socketHandler = (io) => {
 					newValue,
 				});
 
-				io.to(`chat:${chatId}`).emit("receiveMessage", systemMessage);
+				io.to(`chat:${chatId}`).emit("receiveMessage", {
+					msg: systemMessage,
+				});
 			},
 		);
 
@@ -116,7 +124,9 @@ export const socketHandler = (io) => {
 					newValue,
 				});
 
-				io.to(`chat:${chatId}`).emit("receiveMessage", systemMessage);
+				io.to(`chat:${chatId}`).emit("receiveMessage", {
+					msg: systemMessage,
+				});
 			},
 		);
 		/** ─────────────── Chat updates ─────────────── **/
