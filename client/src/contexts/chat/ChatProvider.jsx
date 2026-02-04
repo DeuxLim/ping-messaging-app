@@ -252,40 +252,52 @@ export default function ChatProvider({ children }) {
         };
     }, [socket, activeChatData, socketStatus]);
 
-    const addOptimisticMessage = (message) => {
-        setActiveChatMessages(prev => {
-            const safePrev = Array.isArray(prev) ? prev : [];
-            return [...safePrev, message];
-        });
+    const addOptimisticMessage = (message, targetChat) => {
+        if (!targetChat) return;
 
+        // 1️⃣ Append optimistic message.
+        setActiveChatMessages(prev => [...prev, message]);
+
+        // 2️⃣ Update ActiveChatData's last message data.
         setActiveChatData(prev => {
-            if (!prev) return prev;
+            if (!prev) return targetChat; // ✅ CRITICAL
             return { ...prev, lastMessage: message };
         });
-    };
 
-    const replaceOptimisticMessage = (tempId, msg) => {
-        setActiveChatMessages((prev) => {
-            let replaced = false;
+        // 3️⃣ Update chat list + move chat to top
+        setChatItems(prev => {
+            const chatKey = targetChat.clientTempChatId ?? targetChat._id;
 
-            const updated = prev.map((m) => {
-                if (m._id === tempId) {
-                    replaced = true;
-                    return { ...msg, status: "sent" };
-                }
-                return m;
-            });
+            const index = prev.findIndex(
+                chat => (chat.clientTempChatId ?? chat._id) === chatKey
+            );
 
-            return replaced ? updated : prev;
+            // not found → prepend temp/new chat
+            if (index === -1) {
+                return [{ ...targetChat, lastMessage: message }, ...prev];
+            }
+
+            // update + move to top
+            const updatedChat = {
+                ...prev[index],
+                lastMessage: message,
+            };
+
+            return [
+                updatedChat,
+                ...prev.slice(0, index),
+                ...prev.slice(index + 1),
+            ];
         });
-    };
 
-    const markMessageFailed = (tempId) => {
-        setActiveChatMessages((prev) =>
-            prev.map((m) =>
-                m._id === tempId ? { ...m, status: "failed" } : m
-            )
-        );
+        // 4️⃣ Remove messaged user from suggested list
+        setUserItems((prev) => {
+            if (!message?.sender?._id) return prev;
+
+            return prev.filter(
+                (user) => String(user?._id) !== String(message.sender._id)
+            );
+        });
     };
 
     /* ----- HANDLE MESSAGE SEEN STATUS ----  */
@@ -346,8 +358,10 @@ export default function ChatProvider({ children }) {
             }
         };
 
-        fetchChatData();
-    }, [isReady, isSearch]);
+        if (isEmpty(usersAndChatsList)) {
+            fetchChatData();
+        }
+    }, [isReady, isSearch, usersAndChatsList]);
 
     // ---- Context Value ----
     const values = {
@@ -355,8 +369,6 @@ export default function ChatProvider({ children }) {
         activeChatData,
         activeChatMessages,
         addOptimisticMessage,
-        replaceOptimisticMessage,
-        markMessageFailed,
         setActiveChatMessages,
         setNormalizedActiveChat,
         normalizeChat,
