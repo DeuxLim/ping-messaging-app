@@ -165,12 +165,12 @@ export default function ChatProvider({ children }) {
         // 2. update activeChatData.lastMessage
         // 3. update chatItems (move chat to top, update preview)
         // 4. remove messaged user from suggested list
-        socket.on("receiveMessage", ({ tempMessageId, msg }) => {
+        socket.on("receiveMessage", ({ tempMessageId, message }) => {
             setActiveChatMessages((prev) => {
                 const safePrev = Array.isArray(prev) ? prev : [];
 
                 const activeChatId = activeChatDataRef.current?._id;
-                if (!activeChatId || msg?.chat?._id !== activeChatId) {
+                if (!activeChatId || message?.chat?._id !== activeChatId) {
                     return safePrev;
                 }
 
@@ -181,7 +181,7 @@ export default function ChatProvider({ children }) {
                     const updated = safePrev.map((m) => {
                         if (m._id === tempMessageId) {
                             replaced = true;
-                            return { ...msg, status: "sent" };
+                            return { ...message, status: "sent" };
                         }
                         return m;
                     });
@@ -191,39 +191,39 @@ export default function ChatProvider({ children }) {
                 }
 
                 // 2) Prevent duplicates
-                const exists = safePrev.some((m) => m._id === msg._id);
+                const exists = safePrev.some((m) => m._id === message._id);
                 if (exists) return safePrev;
 
                 // 3) Append new message (receiver or fallback)
-                return [...safePrev, msg];
+                return [...safePrev, message];
             });
 
             // --- Update active chat lastMessage ---
             setActiveChatData((prev) => {
-                if (!prev || prev._id !== msg?.chat?._id) return prev;
-                return { ...prev, lastMessage: msg };
+                if (!prev || prev._id !== message?.chat?._id) return prev;
+                return { ...prev, lastMessage: message };
             });
 
             // --- Update chat list + move chat to top ---
             setChatItems((prev) => {
-                const exists = prev.some((chat) => chat?._id === msg?.chat?._id);
+                const exists = prev.some((chat) => chat?._id === message?.chat?._id);
                 let updatedChats;
 
                 if (exists) {
                     const updated = prev.map((chat) =>
-                        chat?._id === msg?.chat?._id ? { ...msg.chat } : chat
+                        chat?._id === message?.chat?._id ? { ...message.chat } : chat
                     );
 
                     const movedChat = updated.find(
-                        (chat) => chat?._id === msg?.chat?._id
+                        (chat) => chat?._id === message?.chat?._id
                     );
 
                     updatedChats = [
                         movedChat,
-                        ...updated.filter((chat) => chat?._id !== msg?.chat?._id),
+                        ...updated.filter((chat) => chat?._id !== message?.chat?._id),
                     ];
                 } else {
-                    updatedChats = [msg.chat, ...prev];
+                    updatedChats = [message.chat, ...prev];
                 }
 
                 return updatedChats;
@@ -231,10 +231,10 @@ export default function ChatProvider({ children }) {
 
             // --- Remove messaged user from suggested users ---
             setUserItems((prev) => {
-                if (!msg?.chat || !Array.isArray(msg?.chat?.participants)) return prev;
+                if (!message?.chat || !Array.isArray(message?.chat?.participants)) return prev;
 
-                const otherUser = msg.chat.participants.find(
-                    (p) => String(p?._id) !== String(msg.sender?._id)
+                const otherUser = message.chat.participants.find(
+                    (p) => String(p?._id) !== String(message.sender?._id)
                 );
 
                 if (!otherUser) return prev;
@@ -323,10 +323,10 @@ export default function ChatProvider({ children }) {
             // Only update active chat messages if we're viewing this chat
             if (activeChatDataRef.current?._id === chatId) {
                 setActiveChatMessages(prev =>
-                    prev.map(msg =>
-                        seenMessages.includes(msg._id)
-                            ? { ...msg, isSeen: true }
-                            : msg
+                    prev.map(message =>
+                        seenMessages.includes(message._id)
+                            ? { ...message, isSeen: true }
+                            : message
                     )
                 );
             }
