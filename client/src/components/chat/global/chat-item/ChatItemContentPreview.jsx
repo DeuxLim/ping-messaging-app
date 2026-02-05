@@ -10,6 +10,12 @@ export default function ChatItemContentPreview({ data }) {
         lastMessageDateTime
     } = data;
 
+    const mediaUrl = chatData?.lastMessage?.media[0]?.url;
+    const mediaType = chatData?.lastMessage?.media[0]?.type;
+    const article = /^[aeiou]/i.test(mediaType) ? 'an' : 'a';
+    const mediaMessagePreview = `${lastMessageSender} sent ${article} ${mediaType}`;
+    const messagePreview = `${lastMessageSender} sent a message`;
+
     return (
         <>
             {typingChats[chatData._id] ? (
@@ -26,11 +32,11 @@ export default function ChatItemContentPreview({ data }) {
                                 `you: ${chatData.lastMessage?.text || ""}`
                             ) : chatData.unreadCount > 0 && !isLastMsgSeen ? (
                                 unread
-                            ) : !isLastMsgSeen && lastMessageSender ? (
-                                `${lastMessageSender} sent a message`
-                            ) : (
-                                chatData.lastMessage?.text || ""
-                            )}
+                            ) : !isLastMsgSeen && lastMessageSender ?
+                                (mediaUrl) ? mediaMessagePreview : messagePreview
+                                : (
+                                    chatData.lastMessage?.text || ""
+                                )}
                         </span>
 
                     </div>
