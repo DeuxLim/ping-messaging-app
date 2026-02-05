@@ -213,11 +213,24 @@ export default function ChatInput() {
 
 			reader.readAsDataURL(file);
 		});
+
+		// reset file input so selecting the same file again triggers onChange
+		e.target.value = null;
 	};
 
 	const handleRemoveMedia = (toRemoveId) => {
-		setSelectedMediaAttachments(prev => prev.filter(selectedItem => selectedItem.id !== toRemoveId))
-	}
+		setSelectedMediaAttachments(prev => {
+			const updated = prev.filter(item => item.id !== toRemoveId);
+
+			// if no files left, clear file input value
+			// prevents same-file selection from being ignored
+			if (updated.length === 0 && fileInputRef.current) {
+				fileInputRef.current.value = null;
+			}
+
+			return updated;
+		});
+	};
 
 	const renderMedia = (media) => {
 		if (media.type.startsWith("image/")) {
@@ -249,6 +262,13 @@ export default function ChatInput() {
 			setMessage("");
 		}
 	}, [activeChatData]);
+
+	useEffect(() => {
+		return () => {
+			// revoke object URLs to avoid memory leaks from image/video previews
+			selectedMediaAttachments.forEach(m => URL.revokeObjectURL(m.previewUrl));
+		};
+	}, [selectedMediaAttachments]);
 
 	// ---- Render ----
 	return (
