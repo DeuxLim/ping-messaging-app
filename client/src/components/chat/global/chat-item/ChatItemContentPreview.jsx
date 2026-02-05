@@ -5,10 +5,14 @@ export default function ChatItemContentPreview({ data }) {
         chatData,
         isLastMsgSeen,
         currentUser,
-        unread,
         lastMessageSender,
         lastMessageDateTime
     } = data;
+
+    const unread = chatData?.type == "system" ?
+        `${chatData?.unreadCount} chat updates` :
+        (chatData?.unreadCount > 0) ?
+            `${chatData?.lastMessage?.sender?.firstName} sent ${chatData?.unreadCount} message${chatData?.unreadCount > 1 ? "s" : ""}` : "";
 
     const mediaUrl = chatData?.lastMessage?.media[0]?.url;
     const mediaType = chatData?.lastMessage?.media[0]?.type;
