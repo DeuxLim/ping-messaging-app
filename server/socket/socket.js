@@ -45,20 +45,34 @@ export const socketHandler = (io) => {
 		socket.on(
 			"sendMessage",
 			async ({ chatId, senderId, text, media, tempMessageId }) => {
-				if (!chatId || !senderId) return;
-				const newMessage = await addMessageToChat({
+				if (!senderId) return;
+
+				// service must:
+				// - create chat if needed
+				// - return participants
+				const { chat, message } = await addMessageToChat({
 					chatId,
 					senderId,
 					text,
 					media,
 				});
 
-				const room = `chat:${chatId}`;
+				const participants = chat.participants.map((p) =>
+					typeof p === "object" ? String(p._id) : String(p),
+				);
 
-				console.log("sending back received message...");
-				io.to(room).emit("receiveMessage", {
+				// emit to ALL participants
+				participants.forEach((userId) => {
+					io.to(`user:${userId}`).emit("receiveMessage", {
+						tempMessageId,
+						message,
+					});
+				});
+
+				// emit to chat room (for people actively viewing chat)
+				io.to(`chat:${chat._id}`).emit("receiveMessage", {
 					tempMessageId,
-					msg: newMessage,
+					message,
 				});
 			},
 		);
@@ -89,7 +103,7 @@ export const socketHandler = (io) => {
 				targetUser,
 				newValue,
 			}) => {
-				const systemMessage = await updateChat({
+				const { chat, message } = await updateChat({
 					chatId,
 					updatedFields,
 					systemAction,
@@ -99,8 +113,19 @@ export const socketHandler = (io) => {
 					newValue,
 				});
 
+				const participants = chat.participants.map((p) =>
+					typeof p === "object" ? String(p._id) : String(p),
+				);
+
+				// Emit to ALL participants
+				participants.forEach((userId) => {
+					io.to(`user:${userId}`).emit("receiveMessage", {
+						message,
+					});
+				});
+
 				io.to(`chat:${chatId}`).emit("receiveMessage", {
-					msg: systemMessage,
+					message,
 				});
 			},
 		);
@@ -115,7 +140,7 @@ export const socketHandler = (io) => {
 				initiator,
 				newValue,
 			}) => {
-				const systemMessage = await updateChat({
+				const { chat, message } = await updateChat({
 					chatId,
 					updatedFields,
 					systemAction,
@@ -124,8 +149,19 @@ export const socketHandler = (io) => {
 					newValue,
 				});
 
+				const participants = chat.participants.map((p) =>
+					typeof p === "object" ? String(p._id) : String(p),
+				);
+
+				// Emit to ALL participants
+				participants.forEach((userId) => {
+					io.to(`user:${userId}`).emit("receiveMessage", {
+						message,
+					});
+				});
+
 				io.to(`chat:${chatId}`).emit("receiveMessage", {
-					msg: systemMessage,
+					message,
 				});
 			},
 		);

@@ -10,6 +10,7 @@ import ChatSearchInput from "./ChatSearchInput";
 import useAuth from "../../../contexts/auth/useAuth";
 import useChat from "../../../contexts/chat/useChat";
 import useActiveChat from "../../../contexts/chat/ActiveChat/useActiveChat";
+import { joinChat } from "../../../realtime/presenceSocket";
 
 export default function ChatLayout() {
 	const { currentUser } = useAuth();
@@ -133,6 +134,11 @@ export default function ChatLayout() {
 		clearActiveChat();
 		clearActiveChatMessages();
 	}, [isSelectingChat, selectedChats, clearActiveChat, clearActiveChatMessages]);
+
+	useEffect(() => {
+		if (!activeChatData) return;
+		joinChat(activeChatData._id);
+	}, [activeChatData])
 
 	// Cleanup on unmount
 	/* 	useEffect(() => {

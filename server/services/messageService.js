@@ -91,7 +91,7 @@ export const addMessageToChat = async ({
 		);
 	}
 
-	return messageObject;
+	return { chat: messageObject.chat, message: messageObject };
 };
 
 function formatSystemMessage(template, data = {}) {
