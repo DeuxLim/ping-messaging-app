@@ -8,7 +8,6 @@ import useChat from "../../../contexts/chat/useChat";
 import useChatDisplay from "../../../contexts/chat/ChatDisplay/useChatDisplay";
 import useSocket from "../../../contexts/socket/useSocket";
 import { getChatMessages } from "../../../services/chats.service";
-import { isEmpty } from "../../../utilities/utils";
 
 export default function ChatContent() {
     const { token, currentUser } = useAuth();
